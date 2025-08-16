@@ -1,0 +1,147 @@
+server:
+  port: 9000
+
+spring:
+  application:
+    name: techwikiplus
+
+  # ANSI 컬러 출력 설정
+  output:
+    ansi:
+      enabled: always
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${SPRING_MYSQL_HOST}:${SPRING_MYSQL_PORT}/${SPRING_MYSQL_DATABASE}?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&cachePrepStmts=true&useServerPrepStmts=true
+    username: ${SPRING_MYSQL_USER}
+    password: ${SPRING_MYSQL_PASSWORD}
+    hikari:
+      maximum-pool-size: 30 # 최대 커넥션 풀 크기
+      minimum-idle: 10 # 최소 유휴 커넥션 수
+      connection-timeout: 30000 # 커넥션 타임아웃 (30초)
+      idle-timeout: 600000 # 유휴 커넥션 타임아웃 (10분)
+      max-lifetime: 1800000 # 커넥션 최대 수명 (30분)
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    clean-disabled: true
+  jpa:
+    open-in-view: false
+    show-sql: false  # SQL 로깅 비활성화 설정
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        # 배치 처리 설정
+        jdbc:
+          batch_size: 5000
+          batch_versioned_data: true
+          fetch_size: 1000
+        # SQL 순서 최적화
+        order_inserts: true
+        order_updates: true
+        # 통계 비활성화 (성능 향상)
+        generate_statistics: false
+        # 캐시 비활성화 (단순 성능에 집중)
+        cache:
+          use_second_level_cache: false
+          use_query_cache: false
+        # 메타데이터 접근 설정
+        # JDBC 메타데이터 접근 허용 (특정 dialect 기능 사용 가능)
+        boot:
+          allow_jdbc_metadata_access: true
+
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST}
+      port: ${SPRING_REDIS_PORT}
+      password: ${SPRING_REDIS_PASSWORD}
+
+  # Mail configuration
+  mail:
+    host: ${SPRING_MAIL_HOST}
+    port: ${SPRING_MAIL_PORT}
+    username: ${SPRING_MAIL_USERNAME}
+    password: ${SPRING_MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: ${SPRING_MAIL_SMTP_AUTH}
+          starttls:
+            enable: ${SPRING_MAIL_SMTP_STARTTLS}
+          connection-timeout: 5000
+          timeout: 5000
+          write-timeout: 5000
+
+# Springdoc OpenAPI 설정
+# REST Docs와 연동된 OpenAPI 문서를 Swagger UI로 제공
+# API 문서 접근 방법:
+# - OpenAPI YAML: http://localhost:9000/api-docs/openapi3.yml (REST Docs와 연동)
+# - Swagger UI: http://localhost:9000/swagger-ui/index.html
+springdoc:
+  api-docs:
+    enabled: true  # Swagger UI를 활성화할지 여부 설정
+  swagger-ui:
+    enabled: true
+    url: /api-docs/openapi3.yml  # REST Docs와 연동된 OpenAPI 문서 경로 지정
+
+# JWT Configuration
+jwt:
+  secret: ${SPRING_JWT_SECRET}
+  access-token-validity-in-seconds: 3600  # 1 hour
+  refresh-token-validity-in-seconds: 2592000  # 30 days
+
+# Actuator 설정 (모니터링 및 관리) - 보안 고려 필요
+# 운영 환경에서는 엔드포인트 노출 제한
+management:
+  server:
+    port: 9000  # 관리 전용 포트 (보안 상 분리, 방화벽/로드밸런서 설정)
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health      # 애플리케이션 상태 (필수)
+          - metrics     # 성능 지표 (모니터링용)
+          - prometheus  # Prometheus 메트릭 (모니터링용)
+          # info 엔드포인트는 제외 - 보안 상 정보 노출 방지
+          # flyway 엔드포인트는 제외 - DB 마이그레이션 정보 노출 방지
+          # datasource 엔드포인트는 제외 - DB 연결 정보 노출 방지
+  endpoint:
+    health:
+      show-details: never  # 상세 정보 숨김 설정 (보안 고려)
+      probes:
+        enabled: true
+      show-components: never  # 컴포넌트 정보 숨김 설정 (보안 고려)
+  # info 엔드포인트가 활성화될 경우 - 앱 정보/Git 정보 등 노출
+  health:
+    # 데이터베이스 상태 확인 (필수 컴포넌트, 장애 발생시 앱 실패)
+    db:
+      enabled: true
+    # Redis 상태 확인 (필수 컴포넌트, 장애 발생시 앱 실패)
+    redis:
+      enabled: true
+    # 디스크 공간 상태 확인 (필수 컴포넌트, 장애 발생시 앱 실패)
+    diskspace:
+      enabled: true
+    # Mail 상태 확인 (필수 컴포넌트, 장애 발생시 앱 실패)
+    mail:
+      enabled: true
+
+# 로깅 설정
+logging:
+  level:
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.springframework.data.jpa: INFO
+    org.flywaydb: INFO
+    me.helloc.techwikiplus: DEBUG
+  pattern:
+    console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr([%-5level]){spring} %clr([%logger{36}]){cyan} - %clr(%msg){faint}%n"
+
+# 애플리케이션 정보
+info:
+  app:
+    name: Techwikiplus
+    description: Techwikiplus API
+    version: '@project.version@'
+    profiles: ${spring.profiles.active:default}
