@@ -1,3 +1,7 @@
+# 로컬 개발용: docker compose -f docker-compose.infra.yml up -d
+# 운영 환경: docker compose -f docker-compose.infra.yml -f docker-compose.yml up -d --pull always (외부 이미지 우선 사용)
+
+# 전역 기본 설정
 x-logging: &default-logging
   driver: "json-file"
   options:
@@ -84,6 +88,9 @@ services:
       start_period: 10s
 
 networks:
+  web:
+  backend:
+    driver: bridge
   infrastructure:
     driver: bridge
 

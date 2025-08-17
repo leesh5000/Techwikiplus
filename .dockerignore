@@ -1,0 +1,80 @@
+# =============================================================================
+# Docker build context에서 제외할 파일들
+# =============================================================================
+
+# Git 관련
+.git/
+.gitignore
+.gitattributes
+
+# IDE 설정 파일들
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Gradle 빌드 결과물 (빌드 중에 생성되므로 제외)
+build/
+.gradle/
+gradle-app.setting
+
+# 테스트 결과 및 리포트
+**/test-results/
+**/reports/
+
+# 로그 파일들
+*.log
+logs/
+
+# 임시 파일들
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# OS 생성 파일들
+.DS_Store
+Thumbs.db
+
+# Node.js (만약 프론트엔드가 포함된 경우)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 환경 설정 파일들 (보안상 제외, 런타임에 주입)
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Docker 관련 파일들
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# 문서 파일들
+README.md
+HELP.md
+*.md
+docs/
+
+# 모니터링 설정 (런타임에 볼륨 마운트)
+monitoring/
+
+# 백업 파일들
+*.bak
+*.backup
+
+# 압축 파일들
+*.zip
+*.tar.gz
+*.rar
+
+# 프로젝트별 제외 파일들
+*.pid
+*.seed
+*.pid.lock

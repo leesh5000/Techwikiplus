@@ -94,8 +94,6 @@ jwt:
 # Actuator 설정 (모니터링 및 관리) - 보안 고려 필요
 # 운영 환경에서는 엔드포인트 노출 제한
 management:
-  server:
-    port: 9000  # 관리 전용 포트 (보안 상 분리, 방화벽/로드밸런서 설정)
   endpoints:
     web:
       exposure:
