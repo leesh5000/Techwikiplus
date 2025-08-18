@@ -62,7 +62,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
         // Given
         val email = "test@example.com"
         val verificationCode = "123456"
-        val cacheKey = "registration_code:$email"
+        val cacheKey = "user:registration_code:$email"
 
         // 사용자 생성 (PENDING 상태)
         val user = createPendingUser(email)
@@ -136,7 +136,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
         val email = "test@example.com"
         val correctCode = "123456"
         val wrongCode = "999999"
-        val cacheKey = "registration_code:$email"
+        val cacheKey = "user:registration_code:$email"
 
         // 사용자 생성 (PENDING 상태)
         val user = createPendingUser(email)
@@ -577,7 +577,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
         // Given
         val email = "test@example.com"
         val code = "123456"
-        val cacheKey = "registration_code:$email"
+        val cacheKey = "user:registration_code:$email"
 
         // 사용자 생성
         val user = createPendingUser(email)
@@ -638,7 +638,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
         // Given
         val email = "banned@example.com"
         val code = "123456"
-        val cacheKey = "registration_code:$email"
+        val cacheKey = "user:registration_code:$email"
 
         // 차단된 사용자 생성
         val bannedUser = createBannedUser(email)
@@ -672,7 +672,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
         // Given
         val email = "deleted@example.com"
         val code = "123456"
-        val cacheKey = "registration_code:$email"
+        val cacheKey = "user:registration_code:$email"
 
         // 삭제된 사용자 생성
         val deletedUser = createDeletedUser(email)

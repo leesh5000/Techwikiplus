@@ -18,7 +18,7 @@ class UserVerifyController(
     fun verify(
         @RequestBody request: Request,
     ): ResponseEntity<Void> {
-        useCase.execute(
+        useCase.handle(
             email = Email(request.email),
             code = RegistrationCode(request.registrationCode),
         )

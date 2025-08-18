@@ -147,7 +147,7 @@ class UserSignUpFacadeTest : FunSpec({
         )
 
         // then
-        val cacheKey = "registration_code:${email.value}"
+        val cacheKey = "user:registration_code:${email.value}"
         fakeCacheStore.contains(cacheKey) shouldBe true
 
         val storedCode = fakeCacheStore.get(cacheKey)
@@ -466,7 +466,7 @@ class UserSignUpFacadeTest : FunSpec({
 
         // 캐시 저장 검증 (성공한 케이스들만)
         results.forEach { user ->
-            val cacheKey = "registration_code:${user.email.value}"
+            val cacheKey = "user:registration_code:${user.email.value}"
             fakeCacheStore.contains(cacheKey) shouldBe true
         }
     }

@@ -18,7 +18,7 @@ class EmailVerifyService(
     private val cacheStore: CacheStore,
 ) {
     companion object {
-        private fun getRegistrationCodeKey(email: String): String = "registration_code:$email"
+        private fun getRegistrationCodeKey(email: String): String = "user:registration_code:$email"
 
         private val REGISTRATION_CODE_TTL_DURATION = Duration.ofMinutes(5)
     }

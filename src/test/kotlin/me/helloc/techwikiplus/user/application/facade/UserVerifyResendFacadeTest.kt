@@ -108,14 +108,14 @@ class UserVerifyResendFacadeTest : FunSpec({
             fakeUserRepository.save(pendingUser)
 
             // 기존 인증 코드가 있는 경우
-            val oldCacheKey = "registration_code:${email.value}"
+            val oldCacheKey = "user:registration_code:${email.value}"
             fakeCacheStore.put(oldCacheKey, "000000")
 
             // when
             userVerifyResendFacade.execute(email)
 
             // then
-            val cacheKey = "registration_code:${email.value}"
+            val cacheKey = "user:registration_code:${email.value}"
             fakeCacheStore.contains(cacheKey) shouldBe true
 
             val storedCode = fakeCacheStore.get(cacheKey)
@@ -245,7 +245,7 @@ class UserVerifyResendFacadeTest : FunSpec({
                 )
             fakeUserRepository.save(pendingUser)
 
-            val cacheKey = "registration_code:${email.value}"
+            val cacheKey = "user:registration_code:${email.value}"
             val codes = mutableSetOf<String>()
 
             // when

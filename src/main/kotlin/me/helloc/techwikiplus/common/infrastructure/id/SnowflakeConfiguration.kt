@@ -30,7 +30,7 @@ data class SnowflakeConfiguration(
          * nodeId 유효성 검증
          */
         fun validateNodeId(nodeId: Long): Long {
-            if (nodeId < 0 || nodeId > MAX_NODE_ID) {
+            if (nodeId !in 0..MAX_NODE_ID) {
                 throw IllegalArgumentException("NodeId must be between 0 and $MAX_NODE_ID, but got $nodeId")
             }
             return nodeId

@@ -16,7 +16,7 @@ class RedisLockManager(
 ) : LockManager {
     companion object {
         private val logger = LoggerFactory.getLogger(RedisLockManager::class.java)
-        private const val LOCK_PREFIX = "distributed_lock:"
+        private const val LOCK_PREFIX = "lock:"
         private const val UNLOCK_SCRIPT = """
             if redis.call("GET", KEYS[1]) == ARGV[1] then
                 return redis.call("DEL", KEYS[1])

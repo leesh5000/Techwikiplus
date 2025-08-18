@@ -43,8 +43,8 @@ class TestLockManager : LockManager {
         val lockObject = locks.computeIfAbsent(key) { Any() }
 
         return synchronized(lockObject) {
-            // 실제 락 동작을 시뮬레이션하기 위해 약간의 지연 추가
-            Thread.sleep(10)
+            // 실제 락 동작을 시뮬레이션하기 위해 매우 짧은 지연 추가
+            Thread.sleep(1)
             block()
         }
     }

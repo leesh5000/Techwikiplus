@@ -4,7 +4,7 @@ import me.helloc.techwikiplus.user.domain.model.Email
 import me.helloc.techwikiplus.user.domain.model.RegistrationCode
 
 interface UserVerifyUseCase {
-    fun execute(
+    fun handle(
         email: Email,
         code: RegistrationCode,
     )

@@ -108,7 +108,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
             )
 
         // 새로운 인증 코드가 캐시에 저장되었는지 검증
-        val cacheKey = "registration_code:$email"
+        val cacheKey = "user:registration_code:$email"
         val newCode = cacheStore.get(cacheKey)
         newCode shouldNotBe null
         newCode?.length shouldBe 6
@@ -123,7 +123,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
         val user = createPendingUser(email)
         userRepository.save(user)
 
-        val cacheKey = "registration_code:$email"
+        val cacheKey = "user:registration_code:$email"
         val oldCode = "123456"
         cacheStore.put(cacheKey, oldCode, Duration.ofMinutes(10))
 
@@ -182,7 +182,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
             )
 
         // 캐시에 코드가 저장되지 않았는지 검증
-        val cacheKey = "registration_code:$nonExistentEmail"
+        val cacheKey = "user:registration_code:$nonExistentEmail"
         cacheStore.get(cacheKey) shouldBe null
     }
 
@@ -390,7 +390,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
         userRepository.save(user)
 
         val request = UserVerifyResendController.Request(email = email)
-        val cacheKey = "registration_code:$email"
+        val cacheKey = "user:registration_code:$email"
 
         // When - 첫 번째 재발송
         mockMvc.perform(
@@ -456,7 +456,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
 
         // 코드가 정상적으로 저장되었는지 검증
         // Email 클래스가 이메일을 소문자로 정규화하므로 캐시 키도 소문자
-        val cacheKey = "registration_code:test@example.com"
+        val cacheKey = "user:registration_code:test@example.com"
         val code = cacheStore.get(cacheKey)
         code shouldNotBe null
         code?.length shouldBe 6
@@ -481,7 +481,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
             .andExpect(MockMvcResultMatchers.status().isOk)
 
         // 재발송된 코드 확인
-        val cacheKey = "registration_code:$email"
+        val cacheKey = "user:registration_code:$email"
         val newCode = cacheStore.get(cacheKey)
 
         // When - 새 코드로 인증 시도
