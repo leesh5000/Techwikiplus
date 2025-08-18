@@ -9,9 +9,11 @@
       "Bash(./gradlew compileTestKotlin:*)",
       "Bash(rm:*)",
       "Bash(./gradlew:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "outputStyle": "Explanatory"
 }

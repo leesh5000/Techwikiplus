@@ -1,0 +1,151 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:  # 수동 실행 가능
+
+env:
+  GRADLE_VERSION: 8.10.2
+  JAVA_VERSION: 21
+  AWS_REGION: ap-northeast-2  # 서울 리전
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    environment: AWS  # GitHub Environment 사용
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: ${{ env.GRADLE_VERSION }}
+          cache-read-only: false
+          
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+        
+      - name: Build application JAR
+        run: ./gradlew bootJar -x test --no-daemon
+        
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+          
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
+      - name: Extract metadata
+        id: meta
+        run: |
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_OUTPUT
+          echo "timestamp=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
+          
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.ECR_REGISTRY }}/techwikiplus:latest
+            ${{ secrets.ECR_REGISTRY }}/techwikiplus:${{ steps.meta.outputs.sha_short }}
+            ${{ secrets.ECR_REGISTRY }}/techwikiplus:${{ steps.meta.outputs.branch }}-${{ steps.meta.outputs.timestamp }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64
+          build-args: |
+            BUILD_DATE=${{ steps.meta.outputs.timestamp }}
+            GIT_COMMIT=${{ github.sha }}
+            VERSION=${{ steps.meta.outputs.sha_short }}
+            
+      - name: Create deployment summary
+        run: |
+          echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Docker Image Tags" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ secrets.ECR_REGISTRY }}/techwikiplus:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ secrets.ECR_REGISTRY }}/techwikiplus:${{ steps.meta.outputs.sha_short }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ secrets.ECR_REGISTRY }}/techwikiplus:${{ steps.meta.outputs.branch }}-${{ steps.meta.outputs.timestamp }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Build Information" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit SHA**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: \`${{ steps.meta.outputs.branch }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Time**: \`${{ steps.meta.outputs.timestamp }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Triggered by**: @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          
+  deploy-notification:
+    name: Deployment Notification
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: success()
+    
+    steps:
+      - name: Extract commit info
+        id: commit
+        run: |
+          echo "message=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
+          echo "author=$(git log -1 --pretty=%an)" >> $GITHUB_OUTPUT
+          
+      - name: Send deployment success notification
+        run: |
+          echo "✅ Docker image successfully built and pushed to ECR!"
+          echo "📦 Repository: ${{ secrets.ECR_REGISTRY }}/techwikiplus"
+          echo "🏷️ Tags: latest, $(git rev-parse --short HEAD)"
+          echo "👤 Deployed by: ${{ github.actor }}"
+          echo "💬 Commit: ${{ steps.commit.outputs.message }}"
+          
+  rollback-info:
+    name: Generate Rollback Instructions
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: success()
+    
+    steps:
+      - name: Generate rollback instructions
+        run: |
+          echo "## 🔄 Rollback Instructions" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "If you need to rollback this deployment, use the following commands:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "# Pull the previous image version" >> $GITHUB_STEP_SUMMARY
+          echo "docker pull ${{ secrets.ECR_REGISTRY }}/techwikiplus:<previous-sha>" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "# Tag it as latest" >> $GITHUB_STEP_SUMMARY
+          echo "docker tag ${{ secrets.ECR_REGISTRY }}/techwikiplus:<previous-sha> ${{ secrets.ECR_REGISTRY }}/techwikiplus:latest" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "# Push the tag" >> $GITHUB_STEP_SUMMARY
+          echo "docker push ${{ secrets.ECR_REGISTRY }}/techwikiplus:latest" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          
+  failure-notification:
+    name: Deployment Failure Notification
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: failure()
+    
+    steps:
+      - name: Send deployment failure notification
+        run: |
+          echo "❌ Deployment failed!"
+          echo "Please check the logs for more information."
+          exit 1

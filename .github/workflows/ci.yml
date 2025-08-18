@@ -1,0 +1,222 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+    types: [ opened, synchronize, reopened ]
+
+env:
+  GRADLE_VERSION: 8.10.2
+  JAVA_VERSION: 21
+  KOTLIN_VERSION: 1.9.25
+
+jobs:
+  # 병렬 실행을 위한 개별 Job 정의
+  compile:
+    name: Compile Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: ${{ env.GRADLE_VERSION }}
+          cache-read-only: false
+          
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+        
+      - name: Compile Kotlin code
+        run: ./gradlew compileKotlin compileTestKotlin --no-daemon
+        
+  lint:
+    name: Kotlin Lint Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: ${{ env.GRADLE_VERSION }}
+          cache-read-only: false
+          
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+        
+      - name: Run ktlint check
+        run: ./gradlew ktlintCheck --no-daemon
+        
+      - name: Upload ktlint reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ktlint-reports
+          path: build/reports/ktlint/
+          
+  format:
+    name: Code Format Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: ${{ env.GRADLE_VERSION }}
+          cache-read-only: false
+          
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+        
+      - name: Check code formatting
+        run: |
+          ./gradlew ktlintFormat --no-daemon
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "❌ Code formatting issues found. Please run './gradlew ktlintFormat' locally."
+            git diff
+            exit 1
+          fi
+          
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root_password
+          MYSQL_DATABASE: techwikiplus_test
+          MYSQL_USER: test_user
+          MYSQL_PASSWORD: test_password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+          
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+          
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: ${{ env.GRADLE_VERSION }}
+          cache-read-only: false
+          
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+        
+      - name: Wait for MySQL
+        run: |
+          until mysqladmin ping -h 127.0.0.1 -P 3306 --silent; do
+            echo 'Waiting for MySQL...'
+            sleep 2
+          done
+          
+      - name: Run tests
+        env:
+          SPRING_PROFILES_ACTIVE: test
+          SPRING_MYSQL_HOST: localhost
+          SPRING_MYSQL_PORT: 3306
+          SPRING_MYSQL_DATABASE: techwikiplus_test
+          SPRING_MYSQL_USER: test_user
+          SPRING_MYSQL_PASSWORD: test_password
+          SPRING_REDIS_HOST: localhost
+          SPRING_REDIS_PORT: 6379
+          SPRING_JWT_SECRET: test-secret-key-for-jwt-authentication-minimum-32-bytes
+          SPRING_MAIL_HOST: localhost
+          SPRING_MAIL_PORT: 1025
+        run: ./gradlew test --no-daemon
+        
+      - name: Generate test report
+        if: always()
+        run: ./gradlew test --no-daemon || true
+        
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            build/test-results/
+            build/reports/tests/
+            
+      - name: Upload coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: build/reports/jacoco/
+          
+  # 모든 체크가 통과했는지 확인하는 최종 Job
+  ci-success:
+    name: CI Success
+    needs: [compile, lint, format, test]
+    runs-on: ubuntu-latest
+    if: success()
+    
+    steps:
+      - name: CI Pipeline Success
+        run: |
+          echo "✅ All CI checks passed successfully!"
+          echo "📊 Test Results: Available in artifacts"
+          echo "🎯 Ready for review and merge"
+          
+  # CI 실패 시 알림
+  ci-failure:
+    name: CI Failure Notification
+    needs: [compile, lint, format, test]
+    runs-on: ubuntu-latest
+    if: failure()
+    
+    steps:
+      - name: CI Pipeline Failed
+        run: |
+          echo "❌ CI Pipeline failed. Please check the logs above."
+          exit 1
