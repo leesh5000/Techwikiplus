@@ -9,7 +9,7 @@ import me.helloc.techwikiplus.user.domain.exception.UserErrorCode
 import me.helloc.techwikiplus.user.domain.model.UserId
 import me.helloc.techwikiplus.user.domain.model.UserToken
 import me.helloc.techwikiplus.user.domain.service.port.TokenManager
-import java.util.*
+import java.util.Date
 
 class JwtTokenManager(
     secret: String,

@@ -31,9 +31,7 @@ fun ResourceSnippetParametersBuilder.withStandardErrorResponse(): ResourceSnippe
  * @param additionalFields 추가할 커스텀 필드들
  * @return 빌더 체인을 위한 ResourceSnippetParametersBuilder 인스턴스
  */
-fun ResourceSnippetParametersBuilder.withErrorResponseFields(
-    vararg additionalFields: FieldDescriptor,
-): ResourceSnippetParametersBuilder {
+fun ResourceSnippetParametersBuilder.withErrorResponseFields(vararg additionalFields: FieldDescriptor): ResourceSnippetParametersBuilder {
     val allFields = ErrorResponseDocumentation.withAdditionalFields(*additionalFields)
     this.responseFields(*allFields)
     this.responseSchema(ErrorResponseDocumentation.standardSchema)

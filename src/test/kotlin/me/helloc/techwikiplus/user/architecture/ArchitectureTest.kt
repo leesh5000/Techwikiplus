@@ -19,7 +19,7 @@ class ArchitectureTest {
         importedClasses =
             ClassFileImporter()
                 .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
-                .importPackages("me.helloc.techwikiplus.service")
+                .importPackages("me.helloc.techwikiplus.user")
     }
 
     @Nested
@@ -176,12 +176,12 @@ class ArchitectureTest {
         }
 
         @Test
-        @DisplayName("애플리케이션 서비스(Facade)는 application.facade 패키지에 있어야 한다")
+        @DisplayName("애플리케이션 서비스(Facade)는 application 패키지에 있어야 한다")
         fun applicationServicesShouldBeInApplicationServicePackage() {
             val rule =
                 classes()
                     .that().haveSimpleNameEndingWith("Facade")
-                    .should().resideInAPackage("..application.facade..")
+                    .should().resideInAPackage("..application..")
 
             rule.check(importedClasses)
         }

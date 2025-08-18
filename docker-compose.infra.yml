@@ -88,9 +88,6 @@ services:
       start_period: 10s
 
 networks:
-  web:
-  backend:
-    driver: bridge
   infrastructure:
     driver: bridge
 

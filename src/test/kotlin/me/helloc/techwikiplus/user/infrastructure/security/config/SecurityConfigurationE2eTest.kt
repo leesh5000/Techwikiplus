@@ -52,7 +52,7 @@ class SecurityConfigurationE2eTest : BaseE2eTest() {
         mockMvc.perform(
             post("/api/v1/users/login")
                 .contentType("application/json")
-                .content("""{"email":"test@example.com","password":"password"}"""),
+                .content("""{"email":"test@example.com","password":"Password!23"}"""),
         ).andExpect(status().is4xxClientError) // 400 Bad Request 또는 401 Unauthorized 예상
     }
 
@@ -62,7 +62,7 @@ class SecurityConfigurationE2eTest : BaseE2eTest() {
         mockMvc.perform(
             post("/api/v1/users/signup")
                 .contentType("application/json")
-                .content("""{"email":"test@example.com","password":"password","nickname":"test"}"""),
+                .content("""{"email":"test@example.com","password":"Password!23","nickname":"test"}"""),
         ).andExpect(status().is4xxClientError) // 400 Bad Request 예상 (유효성 검증 실패)
     }
 
@@ -78,7 +78,7 @@ class SecurityConfigurationE2eTest : BaseE2eTest() {
 
     @Test
     fun `헬스체크 엔드포인트는 인증 없이 접근 가능해야 함`() {
-        mockMvc.perform(get("/health"))
+        mockMvc.perform(get("/actuator/health"))
             .andExpect(status().isOk) // 헬스체크는 정상적으로 200 OK를 반환해야 함
     }
 
@@ -126,7 +126,7 @@ class SecurityConfigurationE2eTest : BaseE2eTest() {
         mockMvc.perform(
             post("/api/v1/users/login")
                 .contentType("application/json")
-                .content("""{"email":"test@example.com","password":"password"}"""),
+                .content("""{"email":"test@example.com","password":"Password!23"}"""),
         ).andExpect(status().is4xxClientError) // 400 Bad Request 예상 (CSRF가 아닌 유효성 검증 실패)
     }
 }

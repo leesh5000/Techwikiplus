@@ -21,11 +21,12 @@ class TestContainersInitializer : ApplicationContextInitializer<ConfigurableAppl
         val mailhogProperties = MailHogTestContainer.getProperties()
 
         // JWT 설정 추가 (최소 256비트/32바이트 이상의 시크릿 키 필요)
-        val jwtProperties = mapOf(
-            "jwt.secret" to "test-secret-key-for-e2e-testing-must-be-at-least-32-bytes-long-for-HS256",
-            "jwt.access-token-validity-in-seconds" to "3600",
-            "jwt.refresh-token-validity-in-seconds" to "2592000"
-        )
+        val jwtProperties =
+            mapOf(
+                "jwt.secret" to "test-secret-key-for-e2e-testing-must-be-at-least-32-bytes-long-for-HS256",
+                "jwt.access-token-validity-in-seconds" to "3600",
+                "jwt.refresh-token-validity-in-seconds" to "2592000",
+            )
 
         // 모든 TestContainer 설정 병합
         val properties = mysqlProperties + redisProperties + mailhogProperties + jwtProperties

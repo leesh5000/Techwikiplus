@@ -10,6 +10,26 @@ Techwikiplus is a Spring Boot application built with Kotlin that provides user a
 
 - 모든 응답은 한글로 하세요.
 
+## 커밋 규칙
+
+- 모든 커밋은 작업 단위별로 잘게 나누어 커밋하세요.
+- 하나의 커밋에 두 개 이상의 작업 단위가 섞이지 않도록 하시오.
+
+## 코딩 규칙
+
+### Kotlin 코딩 스타일
+- `Enum.values()` 대신 `Enum.entries` 사용 (Kotlin 1.9+)
+- Wildcard import 금지
+- ktlint 규칙 준수 필수
+
+### 테스트 코드 규칙
+- **Kotest 프레임워크** 사용
+- **FIRST 원칙** 준수 (Fast, Independent, Repeatable, Self-validating, Timely)
+- **테스트 격리성** 보장
+- 단위 테스트는 **Fake 객체** 사용 (예: `FakeUserRepository`, `FakeClockHolder`)
+- 통합 테스트는 **TestContainers** 사용 (MySQL, Redis)
+- E2E 테스트는 `BaseE2eTest` 상속하여 Spring REST Docs 자동 생성
+
 ## Build and Run Commands
 
 ### Build
@@ -149,18 +169,3 @@ The project uses Spring REST Docs with OpenAPI integration:
 Flyway manages database schema:
 - Migrations in: `src/main/resources/db/migration/`
 - Naming convention: `V{version}__{description}.sql`
-
-## 코딩 규칙
-
-### Kotlin 코딩 스타일
-- `Enum.values()` 대신 `Enum.entries` 사용 (Kotlin 1.9+)
-- Wildcard import 금지
-- ktlint 규칙 준수 필수
-
-### 테스트 코드 규칙
-- **Kotest 프레임워크** 사용
-- **FIRST 원칙** 준수 (Fast, Independent, Repeatable, Self-validating, Timely)
-- **테스트 격리성** 보장
-- 단위 테스트는 **Fake 객체** 사용 (예: `FakeUserRepository`, `FakeClockHolder`)
-- 통합 테스트는 **TestContainers** 사용 (MySQL, Redis)
-- E2E 테스트는 `BaseE2eTest` 상속하여 Spring REST Docs 자동 생성

@@ -3,7 +3,7 @@ package me.helloc.techwikiplus.common.infrastructure.security.jwt
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import me.helloc.techwikiplus.user.interfaces.web.ErrorResponse
+import me.helloc.techwikiplus.common.interfaces.web.ErrorResponse
 import me.helloc.techwikiplus.user.interfaces.web.UserErrorCodeMapper
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus

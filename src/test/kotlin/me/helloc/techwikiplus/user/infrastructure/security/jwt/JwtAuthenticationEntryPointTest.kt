@@ -11,8 +11,8 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import me.helloc.techwikiplus.common.infrastructure.security.jwt.JwtAuthenticationEntryPoint
 import me.helloc.techwikiplus.common.infrastructure.security.jwt.UserStatusAuthenticationException
+import me.helloc.techwikiplus.common.interfaces.web.ErrorResponse
 import me.helloc.techwikiplus.user.domain.exception.UserErrorCode
-import me.helloc.techwikiplus.user.interfaces.web.ErrorResponse
 import me.helloc.techwikiplus.user.interfaces.web.UserErrorCodeMapper
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType

@@ -1,7 +1,7 @@
-package me.helloc.techwikiplus.user.interfaces.web
+package me.helloc.techwikiplus.common.interfaces.web
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
-import me.helloc.techwikiplus.user.domain.exception.UserDomainException
+import me.helloc.techwikiplus.common.interfaces.web.ErrorResponse.Companion.of
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -11,23 +11,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
-@RestControllerAdvice(basePackages = ["me.helloc.techwikiplus.service.user"])
-class GlobalExceptionHandler(
-    private val userErrorCodeMapper: UserErrorCodeMapper,
-) {
+@RestControllerAdvice(basePackages = ["me.helloc.techwikiplus"])
+class GlobalExceptionHandler() {
     private val logger = LoggerFactory.getLogger(javaClass)
-
-    @ExceptionHandler(UserDomainException::class)
-    fun handleDomainException(e: UserDomainException): ResponseEntity<ErrorResponse> {
-        val httpStatus = userErrorCodeMapper.mapToHttpStatus(e.userErrorCode)
-        val message = userErrorCodeMapper.mapToMessage(e.userErrorCode, e.params)
-
-        logger.warn("Domain exception occurred - ErrorCode: {}, Status: {}", e.userErrorCode, httpStatus)
-
-        return ResponseEntity
-            .status(httpStatus)
-            .body(ErrorResponse.Companion.of(e.userErrorCode.name, message))
-    }
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
     fun handleHttpMessageNotReadable(e: HttpMessageNotReadableException): ResponseEntity<ErrorResponse> {
@@ -41,12 +27,12 @@ class GlobalExceptionHandler(
 
             return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.Companion.of("MISSING_REQUIRED_FIELD", safeMessage))
+                .body(of("MISSING_REQUIRED_FIELD", safeMessage))
         }
 
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body(ErrorResponse.Companion.of("INVALID_REQUEST_BODY", "잘못된 요청 형식입니다. JSON 형식을 확인해주세요"))
+            .body(of("INVALID_REQUEST_BODY", "잘못된 요청 형식입니다. JSON 형식을 확인해주세요"))
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
@@ -68,7 +54,7 @@ class GlobalExceptionHandler(
 
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body(ErrorResponse.Companion.of("VALIDATION_ERROR", message))
+            .body(of("VALIDATION_ERROR", message))
     }
 
     @ExceptionHandler(HttpMediaTypeNotSupportedException::class)
@@ -77,7 +63,7 @@ class GlobalExceptionHandler(
 
         return ResponseEntity
             .status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
-            .body(ErrorResponse.Companion.of("UNSUPPORTED_MEDIA_TYPE", "지원하지 않는 Content-Type입니다. 요청 타입을 확인하세요"))
+            .body(of("UNSUPPORTED_MEDIA_TYPE", "지원하지 않는 Content-Type입니다. 요청 타입을 확인하세요"))
     }
 
     @ExceptionHandler(IllegalArgumentException::class)
@@ -86,7 +72,7 @@ class GlobalExceptionHandler(
 
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body(ErrorResponse.Companion.of("INVALID_ARGUMENT", e.message ?: "잘못된 인자입니다"))
+            .body(of("INVALID_ARGUMENT", e.message ?: "잘못된 인자입니다"))
     }
 
     @ExceptionHandler(RuntimeException::class)
@@ -94,7 +80,7 @@ class GlobalExceptionHandler(
         logger.error("Unexpected runtime exception: {}", e.javaClass.simpleName, e)
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(ErrorResponse.Companion.of("INTERNAL_ERROR", "예기치 않은 오류가 발생했습니다"))
+            .body(of("INTERNAL_ERROR", "예기치 않은 오류가 발생했습니다"))
     }
 
     @ExceptionHandler(Exception::class)
@@ -102,6 +88,6 @@ class GlobalExceptionHandler(
         logger.error("Unexpected exception: {}", e.javaClass.simpleName, e)
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(ErrorResponse.Companion.of("INTERNAL_ERROR", "시스템 오류가 발생했습니다"))
+            .body(of("INTERNAL_ERROR", "시스템 오류가 발생했습니다"))
     }
 }

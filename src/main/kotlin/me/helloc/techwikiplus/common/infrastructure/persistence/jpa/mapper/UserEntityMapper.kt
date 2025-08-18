@@ -1,5 +1,6 @@
 package me.helloc.techwikiplus.common.infrastructure.persistence.jpa.mapper
 
+import me.helloc.techwikiplus.common.infrastructure.persistence.jpa.entity.UserEntity
 import me.helloc.techwikiplus.user.domain.model.Email
 import me.helloc.techwikiplus.user.domain.model.EncodedPassword
 import me.helloc.techwikiplus.user.domain.model.Nickname
@@ -7,7 +8,6 @@ import me.helloc.techwikiplus.user.domain.model.User
 import me.helloc.techwikiplus.user.domain.model.UserId
 import me.helloc.techwikiplus.user.domain.model.UserRole
 import me.helloc.techwikiplus.user.domain.model.UserStatus
-import me.helloc.techwikiplus.common.infrastructure.persistence.jpa.entity.UserEntity
 import org.springframework.stereotype.Component
 
 @Component

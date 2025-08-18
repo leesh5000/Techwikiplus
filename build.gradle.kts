@@ -152,8 +152,8 @@ openapi3 {
     // TODO: 다중 서버 설정 구현 필요
     setServer("http://localhost:9000")
 
-    title = "TechWikiPlus User Service API"
-    description = "User Service API Documentation"
+    title = "TechWikiPlus API"
+    description = "TechWikiPlus API Documentation"
     version = System.getenv("IMAGE_TAG") ?: "LOCAL_VERSION"
     format = "yml"
     outputDirectory = "build/api-spec"

@@ -25,7 +25,7 @@ class SecurityConfiguration(
                 csrf.disable()
             }
             .cors { cors ->
-                cors.disable()  // API Gateway에서 CORS 처리
+                cors.disable() // API Gateway에서 CORS 처리
             }
             .sessionManagement { session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -68,6 +68,4 @@ class SecurityConfiguration(
 
         return http.build()
     }
-
-
 }
