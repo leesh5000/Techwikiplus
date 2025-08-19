@@ -12,7 +12,9 @@
       "Bash(pkill:*)",
       "Bash(mkdir:*)",
       "Bash(echo \"$PS1\")",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(timeout:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []

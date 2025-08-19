@@ -1,30 +1,42 @@
 package me.helloc.techwikiplus.post.application.facade
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import me.helloc.techwikiplus.common.infrastructure.FakeAuthorizationPort
 import me.helloc.techwikiplus.common.infrastructure.FakeClockHolder
 import me.helloc.techwikiplus.common.infrastructure.FakePostIdGenerator
 import me.helloc.techwikiplus.common.infrastructure.FakePostRepository
 import me.helloc.techwikiplus.post.application.CreatePostFacade
+import me.helloc.techwikiplus.post.domain.exception.PostDomainException
+import me.helloc.techwikiplus.post.domain.exception.PostErrorCode
 import me.helloc.techwikiplus.post.domain.model.PostBody
 import me.helloc.techwikiplus.post.domain.model.PostId
 import me.helloc.techwikiplus.post.domain.model.PostStatus
 import me.helloc.techwikiplus.post.domain.model.PostTitle
+import me.helloc.techwikiplus.post.domain.service.PostAuthorizationService
 import me.helloc.techwikiplus.post.domain.service.PostRegister
+import me.helloc.techwikiplus.user.domain.model.UserId
+import me.helloc.techwikiplus.user.domain.model.UserRole
 import java.time.Instant
 
 class CreatePostFacadeTest : DescribeSpec({
     lateinit var facade: CreatePostFacade
     lateinit var postRegister: PostRegister
+    lateinit var postAuthorizationService: PostAuthorizationService
     lateinit var postRepository: FakePostRepository
     lateinit var postIdGenerator: FakePostIdGenerator
     lateinit var clockHolder: FakeClockHolder
+    lateinit var authorizationPort: FakeAuthorizationPort
 
     beforeEach {
         postRepository = FakePostRepository()
         postIdGenerator = FakePostIdGenerator()
         clockHolder = FakeClockHolder(Instant.parse("2025-01-01T00:00:00Z"))
+        authorizationPort = FakeAuthorizationPort()
+        // 기본적으로 ADMIN 권한을 설정하여 테스트가 통과하도록 함
+        authorizationPort.setCurrentUser(UserId(1L), UserRole.ADMIN)
 
         postRegister =
             PostRegister(
@@ -33,9 +45,15 @@ class CreatePostFacadeTest : DescribeSpec({
                 repository = postRepository,
             )
 
+        postAuthorizationService =
+            PostAuthorizationService(
+                authorizationPort = authorizationPort,
+            )
+
         facade =
             CreatePostFacade(
                 postRegister = postRegister,
+                postAuthorizationService = postAuthorizationService,
             )
     }
 
@@ -270,6 +288,55 @@ class CreatePostFacadeTest : DescribeSpec({
                 savedPost.status shouldBe PostStatus.DRAFT // PostRegister가 설정하는 기본값
                 savedPost.createdAt shouldBe expectedTime // PostRegister가 ClockHolder를 사용
                 savedPost.updatedAt shouldBe expectedTime
+            }
+        }
+
+        context("권한 검증") {
+            it("ADMIN 권한이 있는 사용자는 게시글을 생성할 수 있다") {
+                // Given: ADMIN 권한 설정
+                authorizationPort.setCurrentUser(UserId(100L), UserRole.ADMIN)
+                val title = PostTitle("ADMIN이 작성한 게시글")
+                val body = PostBody("ADMIN 권한을 가진 사용자가 작성한 게시글입니다. 정상적으로 등록되어야 합니다.")
+
+                // When: 게시글 생성
+                val result = facade.handle(title, body)
+
+                // Then: 성공적으로 생성
+                result shouldNotBe null
+                val savedPost = postRepository.findBy(result)
+                savedPost shouldNotBe null
+                savedPost!!.title shouldBe title
+                savedPost.body shouldBe body
+            }
+
+            it("USER 권한만 있는 사용자는 게시글을 생성할 수 없다") {
+                // Given: USER 권한 설정
+                authorizationPort.setCurrentUser(UserId(200L), UserRole.USER)
+                val title = PostTitle("일반 사용자가 시도한 게시글")
+                val body = PostBody("일반 사용자가 작성을 시도한 게시글입니다. 권한 부족으로 실패해야 합니다.")
+
+                // When & Then: 예외 발생
+                val exception =
+                    shouldThrow<PostDomainException> {
+                        facade.handle(title, body)
+                    }
+                exception.postErrorCode shouldBe PostErrorCode.UNAUTHORIZED_ACCESS
+                postRepository.count() shouldBe 0
+            }
+
+            it("인증되지 않은 사용자는 게시글을 생성할 수 없다") {
+                // Given: 인증되지 않은 상태
+                authorizationPort.clearCurrentUser()
+                val title = PostTitle("익명 사용자가 시도한 게시글")
+                val body = PostBody("인증되지 않은 사용자가 작성을 시도한 게시글입니다. 권한 부족으로 실패해야 합니다.")
+
+                // When & Then: 예외 발생
+                val exception =
+                    shouldThrow<PostDomainException> {
+                        facade.handle(title, body)
+                    }
+                exception.postErrorCode shouldBe PostErrorCode.UNAUTHORIZED_ACCESS
+                postRepository.count() shouldBe 0
             }
         }
     }

@@ -1,9 +1,9 @@
-package me.helloc.techwikiplus.user.domain.service.port
+package me.helloc.techwikiplus.common.domain.service.port
 
 import me.helloc.techwikiplus.user.domain.model.UserId
 import me.helloc.techwikiplus.user.domain.model.UserRole
 
-interface UserAuthorizationPort {
+interface AuthorizationPort {
     fun getCurrentUserId(): UserId?
 
     fun requireAuthenticated(): UserId

@@ -6,9 +6,18 @@ import me.helloc.techwikiplus.common.config.BaseE2eTest
 import me.helloc.techwikiplus.common.config.annotations.E2eTest
 import me.helloc.techwikiplus.common.config.documentation.withStandardErrorResponse
 import me.helloc.techwikiplus.common.infrastructure.id.SnowflakePostIdGenerator
+import me.helloc.techwikiplus.common.infrastructure.security.jwt.JwtTokenManager
 import me.helloc.techwikiplus.post.domain.model.PostId
 import me.helloc.techwikiplus.post.domain.model.PostStatus
 import me.helloc.techwikiplus.post.domain.service.port.PostRepository
+import me.helloc.techwikiplus.user.domain.model.Email
+import me.helloc.techwikiplus.user.domain.model.EncodedPassword
+import me.helloc.techwikiplus.user.domain.model.Nickname
+import me.helloc.techwikiplus.user.domain.model.User
+import me.helloc.techwikiplus.user.domain.model.UserId
+import me.helloc.techwikiplus.user.domain.model.UserRole
+import me.helloc.techwikiplus.user.domain.model.UserStatus
+import me.helloc.techwikiplus.user.domain.service.port.UserRepository
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
@@ -19,6 +28,7 @@ import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import java.time.Instant
 
 /**
  * CreatePostController E2E 테스트
@@ -44,9 +54,18 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
     @Autowired
     private lateinit var postIdGenerator: SnowflakePostIdGenerator
 
+    @Autowired
+    private lateinit var userRepository: UserRepository
+
+    @Autowired
+    private lateinit var jwtTokenManager: JwtTokenManager
+
     @Test
     fun `POST posts - 유효한 게시글 데이터로 201 Created를 반환해야 한다`() {
-        // Given
+        // Given - ADMIN 사용자 생성
+        val adminUser = createTestUser(role = UserRole.ADMIN)
+        val adminToken = jwtTokenManager.generateAccessToken(adminUser.id).token
+
         val request =
             CreatePostController.Request(
                 title = "테스트 게시글 제목",
@@ -58,6 +77,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
 
         mockMvc.perform(
             RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer $adminToken")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)),
@@ -117,7 +137,10 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
 
     @Test
     fun `POST posts - 제목이 비어있는 경우 400 Bad Request를 반환해야 한다`() {
-        // Given
+        // Given - ADMIN 사용자 생성
+        val adminUser = createTestUser(role = UserRole.ADMIN)
+        val adminToken = jwtTokenManager.generateAccessToken(adminUser.id).token
+
         val request =
             CreatePostController.Request(
                 title = "",
@@ -127,12 +150,13 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
         // When & Then
         mockMvc.perform(
             RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer $adminToken")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)),
         )
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("TITLE_EMPTY"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("BLANK_TITLE"))
             .andDo(
                 documentWithResource(
                     "빈 제목으로 게시글 생성",
@@ -154,7 +178,10 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
 
     @Test
     fun `POST posts - 제목이 150자를 초과하는 경우 400 Bad Request를 반환해야 한다`() {
-        // Given
+        // Given - ADMIN 사용자 생성
+        val adminUser = createTestUser(role = UserRole.ADMIN)
+        val adminToken = jwtTokenManager.generateAccessToken(adminUser.id).token
+
         val longTitle = "가".repeat(151)
         val request =
             CreatePostController.Request(
@@ -165,6 +192,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
         // When & Then
         mockMvc.perform(
             RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer $adminToken")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)),
@@ -192,7 +220,10 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
 
     @Test
     fun `POST posts - 본문이 비어있는 경우 400 Bad Request를 반환해야 한다`() {
-        // Given
+        // Given - ADMIN 사용자 생성
+        val adminUser = createTestUser(role = UserRole.ADMIN)
+        val adminToken = jwtTokenManager.generateAccessToken(adminUser.id).token
+
         val request =
             CreatePostController.Request(
                 title = "테스트 게시글 제목",
@@ -202,12 +233,13 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
         // When & Then
         mockMvc.perform(
             RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer $adminToken")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)),
         )
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("CONTENT_EMPTY"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("BLANK_CONTENT"))
             .andDo(
                 documentWithResource(
                     "빈 본문으로 게시글 생성",
@@ -229,7 +261,10 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
 
     @Test
     fun `POST posts - 본문이 30자 미만인 경우 400 Bad Request를 반환해야 한다`() {
-        // Given
+        // Given - ADMIN 사용자 생성
+        val adminUser = createTestUser(role = UserRole.ADMIN)
+        val adminToken = jwtTokenManager.generateAccessToken(adminUser.id).token
+
         val request =
             CreatePostController.Request(
                 title = "테스트 게시글 제목",
@@ -239,6 +274,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
         // When & Then
         mockMvc.perform(
             RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer $adminToken")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)),
@@ -266,7 +302,10 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
 
     @Test
     fun `POST posts - 본문이 50000자를 초과하는 경우 400 Bad Request를 반환해야 한다`() {
-        // Given
+        // Given - ADMIN 사용자 생성
+        val adminUser = createTestUser(role = UserRole.ADMIN)
+        val adminToken = jwtTokenManager.generateAccessToken(adminUser.id).token
+
         val longBody = "가".repeat(50001)
         val request =
             CreatePostController.Request(
@@ -277,6 +316,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
         // When & Then
         mockMvc.perform(
             RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer $adminToken")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)),
@@ -304,7 +344,10 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
 
     @Test
     fun `POST posts - 제목에 특수문자가 포함된 경우에도 정상 생성되어야 한다`() {
-        // Given
+        // Given - ADMIN 사용자 생성
+        val adminUser = createTestUser(role = UserRole.ADMIN)
+        val adminToken = jwtTokenManager.generateAccessToken(adminUser.id).token
+
         val request =
             CreatePostController.Request(
                 title = "Spring Boot 3.0 & Kotlin 1.9 - 새로운 기능들!",
@@ -314,6 +357,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
         // When & Then
         mockMvc.perform(
             RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer $adminToken")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)),
@@ -324,7 +368,10 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
 
     @Test
     fun `POST posts - 동일한 제목으로 여러 게시글을 생성할 수 있어야 한다`() {
-        // Given
+        // Given - ADMIN 사용자 생성
+        val adminUser = createTestUser(role = UserRole.ADMIN)
+        val adminToken = jwtTokenManager.generateAccessToken(adminUser.id).token
+
         val sameTitle = "중복 가능한 제목"
         val request1 =
             CreatePostController.Request(
@@ -341,6 +388,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
         var locationHeader1: String? = null
         mockMvc.perform(
             RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer $adminToken")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request1)),
@@ -354,6 +402,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
         var locationHeader2: String? = null
         mockMvc.perform(
             RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer $adminToken")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request2)),
@@ -382,7 +431,10 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
 
     @Test
     fun `POST posts - 연속으로 여러 게시글을 생성할 수 있어야 한다`() {
-        // Given
+        // Given - ADMIN 사용자 생성
+        val adminUser = createTestUser(role = UserRole.ADMIN)
+        val adminToken = jwtTokenManager.generateAccessToken(adminUser.id).token
+
         val requests =
             (1..5).map { i ->
                 CreatePostController.Request(
@@ -397,6 +449,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
         requests.forEach { request ->
             mockMvc.perform(
                 RestDocumentationRequestBuilders.post("/api/v1/posts")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer $adminToken")
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)),
@@ -428,8 +481,182 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    fun `POST posts - ADMIN 권한이 있는 사용자만 게시글을 생성할 수 있다`() {
+        // Given - ADMIN 사용자 생성
+        val adminUser = createTestUser(role = UserRole.ADMIN)
+        val adminToken = jwtTokenManager.generateAccessToken(adminUser.id).token
+
+        val request =
+            CreatePostController.Request(
+                title = "ADMIN이 작성한 게시글",
+                body = "ADMIN 권한을 가진 사용자가 작성한 게시글입니다. 정상적으로 생성되어야 합니다.",
+            )
+
+        // When & Then
+        var locationHeader: String? = null
+
+        mockMvc.perform(
+            RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer $adminToken")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)),
+        )
+            .andExpect(MockMvcResultMatchers.status().isCreated)
+            .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
+            .andDo { result ->
+                locationHeader = result.response.getHeader(HttpHeaders.LOCATION)
+            }
+            .andDo(
+                documentWithResource(
+                    "ADMIN 권한으로 게시글 생성 성공",
+                    builder()
+                        .tag("Post Management")
+                        .summary("게시글 생성 - ADMIN 권한")
+                        .description(
+                            """
+                            ADMIN 권한을 가진 사용자가 게시글을 생성합니다.
+                            
+                            게시글 생성은 ADMIN 권한을 가진 사용자만 가능합니다.
+                            Authorization 헤더에 유효한 JWT 토큰이 필요하며,
+                            해당 토큰의 사용자가 ADMIN 권한을 가지고 있어야 합니다.
+                            """.trimIndent(),
+                        )
+                        .requestHeaders(
+                            headerWithName(HttpHeaders.AUTHORIZATION)
+                                .description("Bearer {JWT 토큰}"),
+                        )
+                        .requestFields(
+                            fieldWithPath("title")
+                                .type(JsonFieldType.STRING)
+                                .description("게시글 제목"),
+                            fieldWithPath("body")
+                                .type(JsonFieldType.STRING)
+                                .description("게시글 본문"),
+                        )
+                        .responseHeaders(
+                            headerWithName(HttpHeaders.LOCATION)
+                                .description("생성된 게시글의 URI"),
+                        )
+                        .requestSchema(
+                            schema(
+                                "${CreatePostController::class.simpleName}" +
+                                    ".${CreatePostController.Request::class.simpleName}",
+                            ),
+                        )
+                        .build(),
+                ),
+            )
+
+        // Then - DB 저장 확인
+        val postId = locationHeader?.substringAfterLast("/")?.toLongOrNull()
+        postId shouldNotBe null
+
+        val savedPost = postRepository.findBy(PostId(postId!!))
+        savedPost shouldNotBe null
+        savedPost!!.title.value shouldBe request.title
+    }
+
+    @Test
+    fun `POST posts - USER 권한만 있는 사용자는 게시글을 생성할 수 없다`() {
+        // Given - 일반 USER 생성
+        val normalUser = createTestUser(role = UserRole.USER)
+        val userToken = jwtTokenManager.generateAccessToken(normalUser.id).token
+
+        val request =
+            CreatePostController.Request(
+                title = "일반 사용자가 시도한 게시글",
+                body = "일반 사용자가 작성을 시도한 게시글입니다. 권한이 없어 실패해야 합니다.",
+            )
+
+        // When & Then
+        mockMvc.perform(
+            RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer $userToken")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)),
+        )
+            .andExpect(MockMvcResultMatchers.status().isForbidden)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("UNAUTHORIZED_ACCESS"))
+            .andDo(
+                documentWithResource(
+                    "USER 권한으로 게시글 생성 실패",
+                    builder()
+                        .tag("Post Management")
+                        .summary("게시글 생성 - 권한 부족")
+                        .description(
+                            """
+                            USER 권한만 가진 사용자가 게시글 생성을 시도하면 403 Forbidden을 반환합니다.
+                            
+                            게시글 생성은 ADMIN 권한이 필요하므로,
+                            일반 USER는 게시글을 생성할 수 없습니다.
+                            """.trimIndent(),
+                        )
+                        .requestHeaders(
+                            headerWithName(HttpHeaders.AUTHORIZATION)
+                                .description("Bearer {JWT 토큰}"),
+                        )
+                        .requestSchema(
+                            schema(
+                                "${CreatePostController::class.simpleName}" +
+                                    ".${CreatePostController.Request::class.simpleName}",
+                            ),
+                        )
+                        .withStandardErrorResponse()
+                        .build(),
+                ),
+            )
+    }
+
+    @Test
+    fun `POST posts - 인증되지 않은 사용자는 게시글을 생성할 수 없다`() {
+        // Given - 인증 헤더 없이 요청
+        val request =
+            CreatePostController.Request(
+                title = "인증되지 않은 사용자의 게시글",
+                body = "인증 없이 게시글을 작성하려는 시도입니다. 401 응답을 받아야 합니다.",
+            )
+
+        // When & Then
+        mockMvc.perform(
+            RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)),
+        )
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+            .andDo(
+                documentWithResource(
+                    "인증 없이 게시글 생성 시도",
+                    builder()
+                        .tag("Post Management")
+                        .summary("게시글 생성 - 인증 필요")
+                        .description(
+                            """
+                            인증되지 않은 사용자가 게시글 생성을 시도하면 401 Unauthorized를 반환합니다.
+                            
+                            게시글 생성을 위해서는 유효한 JWT 토큰이 필요합니다.
+                            """.trimIndent(),
+                        )
+                        .requestSchema(
+                            schema(
+                                "${CreatePostController::class.simpleName}" +
+                                    ".${CreatePostController.Request::class.simpleName}",
+                            ),
+                        )
+                        .withStandardErrorResponse()
+                        .build(),
+                ),
+            )
+    }
+
+    @Test
     fun `POST posts - 제목과 본문의 앞뒤 공백은 자동으로 제거되어야 한다`() {
-        // Given
+        // Given - ADMIN 사용자 생성
+        val adminUser = createTestUser(role = UserRole.ADMIN)
+        val adminToken = jwtTokenManager.generateAccessToken(adminUser.id).token
+
         val request =
             CreatePostController.Request(
                 title = "  앞뒤 공백이 있는 제목  ",
@@ -441,6 +668,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
 
         mockMvc.perform(
             RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer $adminToken")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)),
@@ -460,6 +688,34 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
         savedPost.body.value shouldBe "앞뒤 공백이 있는 본문 내용입니다. 이 공백들은 자동으로 제거되어야 합니다."
     }
 
+    /**
+     * 테스트용 사용자 생성 헬퍼 메서드
+     */
+    private fun createTestUser(
+        email: String = "test${System.nanoTime()}@test.com",
+        nickname: String = "User${System.nanoTime() % 100000}",
+        role: UserRole = UserRole.USER,
+    ): User {
+        val now = Instant.now()
+        // Snowflake ID Generator를 사용하여 고유한 ID 생성
+        val userId = UserId(System.nanoTime())
+        val user =
+            User(
+                id = userId,
+                email = Email(email),
+                nickname = Nickname(nickname),
+                // No-op encoded password for test
+                encodedPassword = EncodedPassword("{noop}password123!"),
+                status = UserStatus.ACTIVE,
+                role = role,
+                createdAt = now,
+                modifiedAt = now,
+            )
+
+        // 테스트 데이터베이스에 사용자 저장
+        return userRepository.save(user)
+    }
+
     // Kotlin DSL for assertions
     private infix fun Any?.shouldBe(expected: Any?) {
         if (this != expected) {
@@ -473,4 +729,3 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
         }
     }
 }
-
