@@ -3,10 +3,10 @@ package me.helloc.techwikiplus.user.interfaces.web
 import com.epages.restdocs.apispec.ResourceSnippetParameters
 import com.epages.restdocs.apispec.Schema
 import io.kotest.matchers.shouldBe
+import me.helloc.techwikiplus.common.config.BaseE2eTest
+import me.helloc.techwikiplus.common.config.annotations.E2eTest
+import me.helloc.techwikiplus.common.config.documentation.withStandardErrorResponse
 import me.helloc.techwikiplus.common.infrastructure.cache.RedisCacheStore
-import me.helloc.techwikiplus.user.config.BaseE2eTest
-import me.helloc.techwikiplus.user.config.annotations.E2eTest
-import me.helloc.techwikiplus.user.config.documentation.withStandardErrorResponse
 import me.helloc.techwikiplus.user.domain.model.Email
 import me.helloc.techwikiplus.user.domain.model.Nickname
 import me.helloc.techwikiplus.user.domain.model.RawPassword

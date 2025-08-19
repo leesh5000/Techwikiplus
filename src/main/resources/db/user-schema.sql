@@ -1,4 +1,4 @@
--- MySQL RDB Schema for User Service
+-- MySQL RDB Schema for User
 CREATE TABLE users (
                     id BIGINT PRIMARY KEY NOT NULL COMMENT 'ID(PK): Snowflake ID)',
                     email VARCHAR(255) UNIQUE NOT NULL COMMENT '이메일 (이메일을 만족하는 형식의 문자열)',

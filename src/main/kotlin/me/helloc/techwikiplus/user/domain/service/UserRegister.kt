@@ -1,5 +1,6 @@
 package me.helloc.techwikiplus.user.domain.service
 
+import me.helloc.techwikiplus.common.domain.service.port.ClockHolder
 import me.helloc.techwikiplus.user.domain.exception.UserDomainException
 import me.helloc.techwikiplus.user.domain.exception.UserErrorCode
 import me.helloc.techwikiplus.user.domain.model.Email
@@ -7,7 +8,6 @@ import me.helloc.techwikiplus.user.domain.model.EncodedPassword
 import me.helloc.techwikiplus.user.domain.model.Nickname
 import me.helloc.techwikiplus.user.domain.model.RawPassword
 import me.helloc.techwikiplus.user.domain.model.User
-import me.helloc.techwikiplus.user.domain.service.port.ClockHolder
 import me.helloc.techwikiplus.user.domain.service.port.LockManager
 import me.helloc.techwikiplus.user.domain.service.port.PasswordEncryptor
 import me.helloc.techwikiplus.user.domain.service.port.UserIdGenerator

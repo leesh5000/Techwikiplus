@@ -4,6 +4,8 @@ import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import me.helloc.techwikiplus.common.infrastructure.FakePasswordEncryptor
+import me.helloc.techwikiplus.common.infrastructure.FakeTokenManager
 import me.helloc.techwikiplus.user.domain.exception.UserDomainException
 import me.helloc.techwikiplus.user.domain.exception.UserErrorCode
 import me.helloc.techwikiplus.user.domain.model.Email
@@ -14,8 +16,6 @@ import me.helloc.techwikiplus.user.domain.model.User
 import me.helloc.techwikiplus.user.domain.model.UserId
 import me.helloc.techwikiplus.user.domain.model.UserRole
 import me.helloc.techwikiplus.user.domain.model.UserStatus
-import me.helloc.techwikiplus.user.infrastructure.FakePasswordEncryptor
-import me.helloc.techwikiplus.user.infrastructure.FakeTokenManager
 import java.time.Instant
 
 class UserAuthenticatorTest : FunSpec({

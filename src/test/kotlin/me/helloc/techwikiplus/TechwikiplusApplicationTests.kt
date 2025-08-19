@@ -1,6 +1,6 @@
 package me.helloc.techwikiplus
 
-import me.helloc.techwikiplus.user.config.testcontainers.TestContainersInitializer
+import me.helloc.techwikiplus.common.config.testcontainers.TestContainersInitializer
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles

@@ -3,6 +3,7 @@ package me.helloc.techwikiplus.user.application.facade
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
+import me.helloc.techwikiplus.common.infrastructure.FakeUserRepository
 import me.helloc.techwikiplus.user.application.UserProfileFacade
 import me.helloc.techwikiplus.user.domain.exception.UserDomainException
 import me.helloc.techwikiplus.user.domain.exception.UserErrorCode
@@ -14,7 +15,6 @@ import me.helloc.techwikiplus.user.domain.model.UserId
 import me.helloc.techwikiplus.user.domain.model.UserRole
 import me.helloc.techwikiplus.user.domain.model.UserStatus
 import me.helloc.techwikiplus.user.domain.service.UserReader
-import me.helloc.techwikiplus.user.infrastructure.FakeUserRepository
 import java.time.Instant
 
 class UserProfileFacadeTest : DescribeSpec({

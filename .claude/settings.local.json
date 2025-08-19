@@ -10,10 +10,17 @@
       "Bash(rm:*)",
       "Bash(./gradlew:*)",
       "Bash(pkill:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(echo \"$PS1\")",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "echo \"📁 $(basename \"$PWD\") | 🌿 $(git branch --show-current 2>/dev/null || echo 'no-git') | ⚡ techwikiplus\"",
+    "padding": 1
   },
   "outputStyle": "Explanatory"
 }

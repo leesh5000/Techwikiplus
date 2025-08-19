@@ -1,7 +1,7 @@
 package me.helloc.techwikiplus.user.domain.service
 
+import me.helloc.techwikiplus.common.domain.service.port.ClockHolder
 import me.helloc.techwikiplus.user.domain.model.User
-import me.helloc.techwikiplus.user.domain.service.port.ClockHolder
 import me.helloc.techwikiplus.user.domain.service.port.UserRepository
 import org.springframework.stereotype.Service
 import java.time.Instant

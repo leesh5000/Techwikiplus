@@ -4,6 +4,13 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import me.helloc.techwikiplus.common.infrastructure.FakeCacheStore
+import me.helloc.techwikiplus.common.infrastructure.FakeClockHolder
+import me.helloc.techwikiplus.common.infrastructure.FakeMailSender
+import me.helloc.techwikiplus.common.infrastructure.FakeUserRepository
+import me.helloc.techwikiplus.common.infrastructure.NoOpLockManager
+import me.helloc.techwikiplus.common.infrastructure.SlowLockManager
+import me.helloc.techwikiplus.common.infrastructure.TestLockManager
 import me.helloc.techwikiplus.user.application.UserVerifyFacade
 import me.helloc.techwikiplus.user.domain.exception.UserDomainException
 import me.helloc.techwikiplus.user.domain.exception.UserErrorCode
@@ -20,13 +27,6 @@ import me.helloc.techwikiplus.user.domain.service.UserModifier
 import me.helloc.techwikiplus.user.domain.service.UserReader
 import me.helloc.techwikiplus.user.domain.service.UserVerifyLockService
 import me.helloc.techwikiplus.user.domain.service.port.LockManagerException
-import me.helloc.techwikiplus.user.infrastructure.FakeCacheStore
-import me.helloc.techwikiplus.user.infrastructure.FakeClockHolder
-import me.helloc.techwikiplus.user.infrastructure.FakeMailSender
-import me.helloc.techwikiplus.user.infrastructure.FakeUserRepository
-import me.helloc.techwikiplus.user.infrastructure.NoOpLockManager
-import me.helloc.techwikiplus.user.infrastructure.SlowLockManager
-import me.helloc.techwikiplus.user.infrastructure.TestLockManager
 import java.time.Instant
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors

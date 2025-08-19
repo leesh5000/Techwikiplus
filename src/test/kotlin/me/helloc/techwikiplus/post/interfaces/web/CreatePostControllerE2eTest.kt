@@ -1,0 +1,476 @@
+package me.helloc.techwikiplus.post.interfaces.web
+
+import com.epages.restdocs.apispec.ResourceSnippetParameters.Companion.builder
+import com.epages.restdocs.apispec.Schema.Companion.schema
+import me.helloc.techwikiplus.common.config.BaseE2eTest
+import me.helloc.techwikiplus.common.config.annotations.E2eTest
+import me.helloc.techwikiplus.common.config.documentation.withStandardErrorResponse
+import me.helloc.techwikiplus.common.infrastructure.id.SnowflakePostIdGenerator
+import me.helloc.techwikiplus.post.domain.model.PostId
+import me.helloc.techwikiplus.post.domain.model.PostStatus
+import me.helloc.techwikiplus.post.domain.service.port.PostRepository
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders
+import org.springframework.restdocs.payload.JsonFieldType
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.test.context.TestPropertySource
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+
+/**
+ * CreatePostController E2E 테스트
+ *
+ * - 전체 애플리케이션 컨텍스트 로드
+ * - TestContainers를 통한 실제 DB 연동
+ * - 운영 환경과 동일한 설정
+ * - End-to-End 검증
+ * - API 문서 자동 생성 (generateDocs = true)
+ */
+@E2eTest(generateDocs = true)
+@TestPropertySource(
+    properties = [
+        "spring.application.name=techwikiplus-post",
+        "spring.application.version=1.0.0-INTEGRATION",
+        "api.documentation.enabled=true",
+    ],
+)
+class CreatePostControllerE2eTest : BaseE2eTest() {
+    @Autowired
+    private lateinit var postRepository: PostRepository
+
+    @Autowired
+    private lateinit var postIdGenerator: SnowflakePostIdGenerator
+
+    @Test
+    fun `POST posts - 유효한 게시글 데이터로 201 Created를 반환해야 한다`() {
+        // Given
+        val request =
+            CreatePostController.Request(
+                title = "테스트 게시글 제목",
+                body = "이것은 테스트 게시글의 본문 내용입니다. 최소 30자 이상의 내용을 포함하고 있습니다.",
+            )
+
+        // When & Then
+        var locationHeader: String? = null
+
+        mockMvc.perform(
+            RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)),
+        )
+            .andExpect(MockMvcResultMatchers.status().isCreated)
+            .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
+            .andDo { result ->
+                locationHeader = result.response.getHeader(HttpHeaders.LOCATION)
+            }
+            .andDo(
+                documentWithResource(
+                    "게시글 생성 성공",
+                    builder()
+                        .tag("Post Management")
+                        .summary("게시글 생성")
+                        .description(
+                            """
+                            새로운 게시글을 생성합니다.
+                            
+                            게시글이 성공적으로 생성되면 201 Created 상태 코드와 함께
+                            Location 헤더에 생성된 게시글의 URI가 반환됩니다.
+                            생성된 게시글은 기본적으로 DRAFT 상태로 저장됩니다.
+                            """.trimIndent(),
+                        )
+                        .requestFields(
+                            fieldWithPath("title")
+                                .type(JsonFieldType.STRING)
+                                .description("게시글 제목 (최대 150자, 빈 값 불가)"),
+                            fieldWithPath("body")
+                                .type(JsonFieldType.STRING)
+                                .description("게시글 본문 (최소 30자, 최대 50000자)"),
+                        )
+                        .responseHeaders(
+                            headerWithName(HttpHeaders.LOCATION)
+                                .description("생성된 게시글의 URI"),
+                        )
+                        .requestSchema(
+                            schema(
+                                "${CreatePostController::class.simpleName}" +
+                                    ".${CreatePostController.Request::class.simpleName}",
+                            ),
+                        )
+                        .build(),
+                ),
+            )
+
+        // Then - DB 저장 확인
+        val postId = locationHeader?.substringAfterLast("/")?.toLongOrNull()
+        postId shouldNotBe null
+
+        val savedPost = postRepository.findBy(PostId(postId!!))
+        savedPost shouldNotBe null
+        savedPost!!.title.value shouldBe request.title
+        savedPost.body.value shouldBe request.body
+        savedPost.status shouldBe PostStatus.DRAFT
+    }
+
+    @Test
+    fun `POST posts - 제목이 비어있는 경우 400 Bad Request를 반환해야 한다`() {
+        // Given
+        val request =
+            CreatePostController.Request(
+                title = "",
+                body = "이것은 테스트 게시글의 본문 내용입니다. 최소 30자 이상의 내용을 포함하고 있습니다.",
+            )
+
+        // When & Then
+        mockMvc.perform(
+            RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)),
+        )
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("TITLE_EMPTY"))
+            .andDo(
+                documentWithResource(
+                    "빈 제목으로 게시글 생성",
+                    builder()
+                        .tag("Post Management")
+                        .summary("게시글 생성 - 빈 제목")
+                        .description("제목이 비어있는 경우 400 Bad Request를 반환합니다.")
+                        .requestSchema(
+                            schema(
+                                "${CreatePostController::class.simpleName}" +
+                                    ".${CreatePostController.Request::class.simpleName}",
+                            ),
+                        )
+                        .withStandardErrorResponse()
+                        .build(),
+                ),
+            )
+    }
+
+    @Test
+    fun `POST posts - 제목이 150자를 초과하는 경우 400 Bad Request를 반환해야 한다`() {
+        // Given
+        val longTitle = "가".repeat(151)
+        val request =
+            CreatePostController.Request(
+                title = longTitle,
+                body = "이것은 테스트 게시글의 본문 내용입니다. 최소 30자 이상의 내용을 포함하고 있습니다.",
+            )
+
+        // When & Then
+        mockMvc.perform(
+            RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)),
+        )
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("TITLE_TOO_LONG"))
+            .andDo(
+                documentWithResource(
+                    "너무 긴 제목으로 게시글 생성",
+                    builder()
+                        .tag("Post Management")
+                        .summary("게시글 생성 - 제목 길이 초과")
+                        .description("제목이 150자를 초과하는 경우 400 Bad Request를 반환합니다.")
+                        .requestSchema(
+                            schema(
+                                "${CreatePostController::class.simpleName}" +
+                                    ".${CreatePostController.Request::class.simpleName}",
+                            ),
+                        )
+                        .withStandardErrorResponse()
+                        .build(),
+                ),
+            )
+    }
+
+    @Test
+    fun `POST posts - 본문이 비어있는 경우 400 Bad Request를 반환해야 한다`() {
+        // Given
+        val request =
+            CreatePostController.Request(
+                title = "테스트 게시글 제목",
+                body = "",
+            )
+
+        // When & Then
+        mockMvc.perform(
+            RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)),
+        )
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("CONTENT_EMPTY"))
+            .andDo(
+                documentWithResource(
+                    "빈 본문으로 게시글 생성",
+                    builder()
+                        .tag("Post Management")
+                        .summary("게시글 생성 - 빈 본문")
+                        .description("본문이 비어있는 경우 400 Bad Request를 반환합니다.")
+                        .requestSchema(
+                            schema(
+                                "${CreatePostController::class.simpleName}" +
+                                    ".${CreatePostController.Request::class.simpleName}",
+                            ),
+                        )
+                        .withStandardErrorResponse()
+                        .build(),
+                ),
+            )
+    }
+
+    @Test
+    fun `POST posts - 본문이 30자 미만인 경우 400 Bad Request를 반환해야 한다`() {
+        // Given
+        val request =
+            CreatePostController.Request(
+                title = "테스트 게시글 제목",
+                body = "짧은 내용",
+            )
+
+        // When & Then
+        mockMvc.perform(
+            RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)),
+        )
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("CONTENT_TOO_SHORT"))
+            .andDo(
+                documentWithResource(
+                    "너무 짧은 본문으로 게시글 생성",
+                    builder()
+                        .tag("Post Management")
+                        .summary("게시글 생성 - 본문 길이 부족")
+                        .description("본문이 30자 미만인 경우 400 Bad Request를 반환합니다.")
+                        .requestSchema(
+                            schema(
+                                "${CreatePostController::class.simpleName}" +
+                                    ".${CreatePostController.Request::class.simpleName}",
+                            ),
+                        )
+                        .withStandardErrorResponse()
+                        .build(),
+                ),
+            )
+    }
+
+    @Test
+    fun `POST posts - 본문이 50000자를 초과하는 경우 400 Bad Request를 반환해야 한다`() {
+        // Given
+        val longBody = "가".repeat(50001)
+        val request =
+            CreatePostController.Request(
+                title = "테스트 게시글 제목",
+                body = longBody,
+            )
+
+        // When & Then
+        mockMvc.perform(
+            RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)),
+        )
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("CONTENT_TOO_LONG"))
+            .andDo(
+                documentWithResource(
+                    "너무 긴 본문으로 게시글 생성",
+                    builder()
+                        .tag("Post Management")
+                        .summary("게시글 생성 - 본문 길이 초과")
+                        .description("본문이 50000자를 초과하는 경우 400 Bad Request를 반환합니다.")
+                        .requestSchema(
+                            schema(
+                                "${CreatePostController::class.simpleName}" +
+                                    ".${CreatePostController.Request::class.simpleName}",
+                            ),
+                        )
+                        .withStandardErrorResponse()
+                        .build(),
+                ),
+            )
+    }
+
+    @Test
+    fun `POST posts - 제목에 특수문자가 포함된 경우에도 정상 생성되어야 한다`() {
+        // Given
+        val request =
+            CreatePostController.Request(
+                title = "Spring Boot 3.0 & Kotlin 1.9 - 새로운 기능들!",
+                body = "Spring Boot 3.0과 Kotlin 1.9의 새로운 기능들을 소개합니다. 이 버전에서는 많은 개선사항이 있습니다.",
+            )
+
+        // When & Then
+        mockMvc.perform(
+            RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)),
+        )
+            .andExpect(MockMvcResultMatchers.status().isCreated)
+            .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
+    }
+
+    @Test
+    fun `POST posts - 동일한 제목으로 여러 게시글을 생성할 수 있어야 한다`() {
+        // Given
+        val sameTitle = "중복 가능한 제목"
+        val request1 =
+            CreatePostController.Request(
+                title = sameTitle,
+                body = "첫 번째 게시글의 내용입니다. 제목은 같지만 내용은 다릅니다.",
+            )
+        val request2 =
+            CreatePostController.Request(
+                title = sameTitle,
+                body = "두 번째 게시글의 내용입니다. 제목은 같지만 내용이 완전히 다릅니다.",
+            )
+
+        // When - 첫 번째 게시글 생성
+        var locationHeader1: String? = null
+        mockMvc.perform(
+            RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request1)),
+        )
+            .andExpect(MockMvcResultMatchers.status().isCreated)
+            .andDo { result ->
+                locationHeader1 = result.response.getHeader(HttpHeaders.LOCATION)
+            }
+
+        // When - 두 번째 게시글 생성
+        var locationHeader2: String? = null
+        mockMvc.perform(
+            RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request2)),
+        )
+            .andExpect(MockMvcResultMatchers.status().isCreated)
+            .andDo { result ->
+                locationHeader2 = result.response.getHeader(HttpHeaders.LOCATION)
+            }
+
+        // Then - 두 게시글이 서로 다른 ID를 가져야 함
+        val postId1 = locationHeader1?.substringAfterLast("/")?.toLongOrNull()
+        val postId2 = locationHeader2?.substringAfterLast("/")?.toLongOrNull()
+
+        postId1 shouldNotBe null
+        postId2 shouldNotBe null
+        postId1 shouldNotBe postId2
+
+        val post1 = postRepository.findBy(PostId(postId1!!))
+        val post2 = postRepository.findBy(PostId(postId2!!))
+
+        post1?.title?.value shouldBe sameTitle
+        post2?.title?.value shouldBe sameTitle
+        post1?.body?.value shouldBe request1.body
+        post2?.body?.value shouldBe request2.body
+    }
+
+    @Test
+    fun `POST posts - 연속으로 여러 게시글을 생성할 수 있어야 한다`() {
+        // Given
+        val requests =
+            (1..5).map { i ->
+                CreatePostController.Request(
+                    title = "연속 생성 테스트 게시글 $i",
+                    body = "이것은 연속 생성 테스트를 위한 게시글 번호 $i 의 본문 내용입니다.",
+                )
+            }
+
+        // When & Then
+        val locationHeaders = mutableListOf<String>()
+
+        requests.forEach { request ->
+            mockMvc.perform(
+                RestDocumentationRequestBuilders.post("/api/v1/posts")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)),
+            )
+                .andExpect(MockMvcResultMatchers.status().isCreated)
+                .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
+                .andDo { result ->
+                    result.response.getHeader(HttpHeaders.LOCATION)?.let {
+                        locationHeaders.add(it)
+                    }
+                }
+        }
+
+        // Then - 모든 게시글이 다른 ID를 가져야 함
+        val postIds =
+            locationHeaders.mapNotNull {
+                it.substringAfterLast("/").toLongOrNull()
+            }
+
+        postIds.size shouldBe 5
+        postIds.toSet().size shouldBe 5 // 모든 ID가 고유함
+
+        // DB에 모든 게시글이 저장되었는지 확인
+        postIds.forEachIndexed { index, id ->
+            val post = postRepository.findBy(PostId(id))
+            post shouldNotBe null
+            post?.title?.value shouldBe "연속 생성 테스트 게시글 ${index + 1}"
+        }
+    }
+
+    @Test
+    fun `POST posts - 제목과 본문의 앞뒤 공백은 자동으로 제거되어야 한다`() {
+        // Given
+        val request =
+            CreatePostController.Request(
+                title = "  앞뒤 공백이 있는 제목  ",
+                body = "   앞뒤 공백이 있는 본문 내용입니다. 이 공백들은 자동으로 제거되어야 합니다.   ",
+            )
+
+        // When & Then
+        var locationHeader: String? = null
+
+        mockMvc.perform(
+            RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)),
+        )
+            .andExpect(MockMvcResultMatchers.status().isCreated)
+            .andDo { result ->
+                locationHeader = result.response.getHeader(HttpHeaders.LOCATION)
+            }
+
+        // Then - DB에 저장된 값에서 공백이 제거되었는지 확인
+        val postId = locationHeader?.substringAfterLast("/")?.toLongOrNull()
+        postId shouldNotBe null
+
+        val savedPost = postRepository.findBy(PostId(postId!!))
+        savedPost shouldNotBe null
+        savedPost!!.title.value shouldBe "앞뒤 공백이 있는 제목"
+        savedPost.body.value shouldBe "앞뒤 공백이 있는 본문 내용입니다. 이 공백들은 자동으로 제거되어야 합니다."
+    }
+
+    // Kotlin DSL for assertions
+    private infix fun Any?.shouldBe(expected: Any?) {
+        if (this != expected) {
+            throw AssertionError("Expected: $expected, but was: $this")
+        }
+    }
+
+    private infix fun Any?.shouldNotBe(expected: Any?) {
+        if (this == expected) {
+            throw AssertionError("Expected not to be: $expected")
+        }
+    }
+}
+

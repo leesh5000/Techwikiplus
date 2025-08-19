@@ -5,12 +5,12 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import me.helloc.techwikiplus.common.infrastructure.NoOpLockManager
+import me.helloc.techwikiplus.common.infrastructure.SlowLockManager
+import me.helloc.techwikiplus.common.infrastructure.TestLockManager
+import me.helloc.techwikiplus.common.infrastructure.TrackingLockManager
 import me.helloc.techwikiplus.user.domain.model.Email
 import me.helloc.techwikiplus.user.domain.service.port.LockManagerException
-import me.helloc.techwikiplus.user.infrastructure.NoOpLockManager
-import me.helloc.techwikiplus.user.infrastructure.SlowLockManager
-import me.helloc.techwikiplus.user.infrastructure.TestLockManager
-import me.helloc.techwikiplus.user.infrastructure.TrackingLockManager
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
