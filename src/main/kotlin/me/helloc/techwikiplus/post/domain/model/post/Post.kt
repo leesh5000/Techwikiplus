@@ -1,7 +1,9 @@
-package me.helloc.techwikiplus.post.domain.model
+package me.helloc.techwikiplus.post.domain.model.post
 
 import me.helloc.techwikiplus.post.domain.exception.PostDomainException
 import me.helloc.techwikiplus.post.domain.exception.PostErrorCode
+import me.helloc.techwikiplus.post.domain.model.tag.PostTag
+import me.helloc.techwikiplus.post.domain.model.tag.TagName
 import java.time.Instant
 
 class Post(
@@ -11,9 +13,78 @@ class Post(
     val status: PostStatus,
     val createdAt: Instant,
     val updatedAt: Instant,
+    val tags: List<PostTag> = emptyList(),
 ) {
     init {
         // PostId validation is already done in the PostId value object
+        require(tags.size <= MAX_TAGS) {
+            "Post cannot have more than $MAX_TAGS tags"
+        }
+    }
+
+    fun addTag(tagName: TagName, displayOrder: Int? = null): Post {
+        if (tags.size >= MAX_TAGS) {
+            throw PostDomainException(
+                postErrorCode = PostErrorCode.TOO_MANY_TAGS,
+                params = arrayOf(MAX_TAGS),
+            )
+        }
+
+        if (tags.any { it.tagName == tagName }) {
+            throw PostDomainException(
+                postErrorCode = PostErrorCode.DUPLICATE_TAG,
+                params = arrayOf(tagName.value),
+            )
+        }
+
+        val order = displayOrder ?: tags.size
+        val newTags = tags + PostTag(tagName, order)
+        val sortedTags = newTags.sortedBy { it.displayOrder }
+
+        return copy(tags = sortedTags)
+    }
+
+    fun removeTag(tagName: TagName): Post {
+        val newTags = tags.filterNot { it.tagName == tagName }
+            .mapIndexed { index, postTag ->
+                postTag.copy(displayOrder = index)
+            }
+        return copy(tags = newTags)
+    }
+
+    fun replaceTags(newTagNames: List<TagName>): Post {
+        if (newTagNames.size > MAX_TAGS) {
+            throw PostDomainException(
+                postErrorCode = PostErrorCode.TOO_MANY_TAGS,
+                params = arrayOf(MAX_TAGS),
+            )
+        }
+
+        val uniqueTagNames = newTagNames.distinct()
+        if (uniqueTagNames.size != newTagNames.size) {
+            throw PostDomainException(
+                postErrorCode = PostErrorCode.DUPLICATE_TAG,
+            )
+        }
+
+        val newTags = uniqueTagNames.mapIndexed { index, tagName ->
+            PostTag(tagName, index)
+        }
+        return copy(tags = newTags)
+    }
+
+    fun reorderTags(orderedTagNames: List<TagName>): Post {
+        val currentTagNames = tags.map { it.tagName }.toSet()
+        val orderedTagNamesSet = orderedTagNames.toSet()
+
+        if (orderedTagNamesSet != currentTagNames) {
+            throw IllegalArgumentException("Tag list mismatch: provided tags do not match current tags")
+        }
+
+        val newTags = orderedTagNames.mapIndexed { index, tagName ->
+            PostTag(tagName, index)
+        }
+        return copy(tags = newTags)
     }
 
     fun copy(
@@ -23,6 +94,7 @@ class Post(
         status: PostStatus = this.status,
         createdAt: Instant = this.createdAt,
         updatedAt: Instant = this.updatedAt,
+        tags: List<PostTag> = this.tags,
     ): Post {
         return Post(
             id = id,
@@ -31,6 +103,7 @@ class Post(
             status = status,
             createdAt = createdAt,
             updatedAt = updatedAt,
+            tags = tags,
         )
     }
 
@@ -131,6 +204,8 @@ class Post(
     }
 
     companion object {
+        const val MAX_TAGS = 10
+
         fun create(
             id: PostId,
             title: PostTitle,
@@ -138,7 +213,12 @@ class Post(
             status: PostStatus = PostStatus.DRAFT,
             createdAt: Instant,
             updatedAt: Instant = createdAt,
+            tags: List<TagName> = emptyList(),
         ): Post {
+            val postTags = tags.mapIndexed { index, tagName ->
+                PostTag(tagName, index)
+            }
+            
             return Post(
                 id = id,
                 title = title,
@@ -146,6 +226,7 @@ class Post(
                 status = status,
                 createdAt = createdAt,
                 updatedAt = updatedAt,
+                tags = postTags,
             )
         }
     }

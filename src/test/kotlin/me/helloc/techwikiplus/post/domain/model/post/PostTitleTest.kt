@@ -1,4 +1,4 @@
-package me.helloc.techwikiplus.post.domain.model
+package me.helloc.techwikiplus.post.domain.model.post
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec

@@ -1,8 +1,8 @@
 package me.helloc.techwikiplus.post.application
 
-import me.helloc.techwikiplus.post.domain.model.PostBody
-import me.helloc.techwikiplus.post.domain.model.PostId
-import me.helloc.techwikiplus.post.domain.model.PostTitle
+import me.helloc.techwikiplus.post.domain.model.post.PostBody
+import me.helloc.techwikiplus.post.domain.model.post.PostId
+import me.helloc.techwikiplus.post.domain.model.post.PostTitle
 import me.helloc.techwikiplus.post.domain.service.PostAuthorizationService
 import me.helloc.techwikiplus.post.domain.service.PostRegister
 import me.helloc.techwikiplus.post.interfaces.web.port.CreatePostUseCase

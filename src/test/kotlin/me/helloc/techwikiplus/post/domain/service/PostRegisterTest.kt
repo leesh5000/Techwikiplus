@@ -6,10 +6,10 @@ import io.kotest.matchers.shouldNotBe
 import me.helloc.techwikiplus.common.infrastructure.FakeClockHolder
 import me.helloc.techwikiplus.common.infrastructure.FakePostIdGenerator
 import me.helloc.techwikiplus.common.infrastructure.FakePostRepository
-import me.helloc.techwikiplus.post.domain.model.PostBody
-import me.helloc.techwikiplus.post.domain.model.PostId
-import me.helloc.techwikiplus.post.domain.model.PostStatus
-import me.helloc.techwikiplus.post.domain.model.PostTitle
+import me.helloc.techwikiplus.post.domain.model.post.PostBody
+import me.helloc.techwikiplus.post.domain.model.post.PostId
+import me.helloc.techwikiplus.post.domain.model.post.PostStatus
+import me.helloc.techwikiplus.post.domain.model.post.PostTitle
 import java.time.Instant
 
 class PostRegisterTest : DescribeSpec({

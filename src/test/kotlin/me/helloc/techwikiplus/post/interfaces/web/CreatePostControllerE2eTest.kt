@@ -7,8 +7,8 @@ import me.helloc.techwikiplus.common.config.annotations.E2eTest
 import me.helloc.techwikiplus.common.config.documentation.withStandardErrorResponse
 import me.helloc.techwikiplus.common.infrastructure.id.SnowflakePostIdGenerator
 import me.helloc.techwikiplus.common.infrastructure.security.jwt.JwtTokenManager
-import me.helloc.techwikiplus.post.domain.model.PostId
-import me.helloc.techwikiplus.post.domain.model.PostStatus
+import me.helloc.techwikiplus.post.domain.model.post.PostId
+import me.helloc.techwikiplus.post.domain.model.post.PostStatus
 import me.helloc.techwikiplus.post.domain.service.port.PostRepository
 import me.helloc.techwikiplus.user.domain.model.Email
 import me.helloc.techwikiplus.user.domain.model.EncodedPassword

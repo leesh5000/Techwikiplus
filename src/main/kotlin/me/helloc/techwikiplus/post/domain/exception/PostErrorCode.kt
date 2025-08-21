@@ -35,6 +35,14 @@ enum class PostErrorCode {
     DELETE_POST_FAILED,
     PUBLISH_POST_FAILED,
 
+    // Tag Validation
+    BLANK_TAG,
+    TAG_TOO_SHORT,
+    TAG_TOO_LONG,
+    TAG_CONTAINS_INVALID_CHAR,
+    TOO_MANY_TAGS,
+    DUPLICATE_TAG,
+
     // Generic
     VALIDATION_ERROR,
     DOMAIN_ERROR,

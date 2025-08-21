@@ -1,4 +1,4 @@
-package me.helloc.techwikiplus.post.domain.model
+package me.helloc.techwikiplus.post.domain.model.post
 
 enum class PostStatus {
     DRAFT,

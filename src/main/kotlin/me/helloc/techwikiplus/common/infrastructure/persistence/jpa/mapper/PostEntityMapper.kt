@@ -1,11 +1,11 @@
 package me.helloc.techwikiplus.common.infrastructure.persistence.jpa.mapper
 
 import me.helloc.techwikiplus.common.infrastructure.persistence.jpa.entity.PostEntity
-import me.helloc.techwikiplus.post.domain.model.Post
-import me.helloc.techwikiplus.post.domain.model.PostBody
-import me.helloc.techwikiplus.post.domain.model.PostId
-import me.helloc.techwikiplus.post.domain.model.PostStatus
-import me.helloc.techwikiplus.post.domain.model.PostTitle
+import me.helloc.techwikiplus.post.domain.model.post.Post
+import me.helloc.techwikiplus.post.domain.model.post.PostBody
+import me.helloc.techwikiplus.post.domain.model.post.PostId
+import me.helloc.techwikiplus.post.domain.model.post.PostStatus
+import me.helloc.techwikiplus.post.domain.model.post.PostTitle
 import org.springframework.stereotype.Component
 
 @Component

@@ -1,4 +1,4 @@
-package me.helloc.techwikiplus.post.domain.model
+package me.helloc.techwikiplus.post.domain.model.post
 
 import me.helloc.techwikiplus.post.domain.exception.PostDomainException
 import me.helloc.techwikiplus.post.domain.exception.PostErrorCode

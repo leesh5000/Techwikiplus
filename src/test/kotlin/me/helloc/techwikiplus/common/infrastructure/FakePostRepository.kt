@@ -1,7 +1,8 @@
 package me.helloc.techwikiplus.common.infrastructure
 
-import me.helloc.techwikiplus.post.domain.model.Post
-import me.helloc.techwikiplus.post.domain.model.PostId
+import me.helloc.techwikiplus.post.domain.model.post.Post
+import me.helloc.techwikiplus.post.domain.model.post.PostId
+import me.helloc.techwikiplus.post.domain.model.tag.TagName
 import me.helloc.techwikiplus.post.domain.service.port.PostRepository
 
 class FakePostRepository : PostRepository {
@@ -13,6 +14,18 @@ class FakePostRepository : PostRepository {
 
     override fun existsBy(id: PostId): Boolean {
         return storage.containsKey(id)
+    }
+
+    override fun findByTag(
+        tagName: TagName,
+        offset: Int,
+        limit: Int
+    ): List<Post> {
+        return storage.values.filter { post ->
+            post.tags.any { it.tagName == tagName }
+        }.sortedByDescending { it.createdAt }
+            .drop(offset)
+            .take(limit)
     }
 
     override fun save(post: Post): Post {

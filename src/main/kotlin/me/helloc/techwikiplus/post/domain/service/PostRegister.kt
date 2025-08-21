@@ -1,9 +1,9 @@
 package me.helloc.techwikiplus.post.domain.service
 
 import me.helloc.techwikiplus.common.domain.service.port.ClockHolder
-import me.helloc.techwikiplus.post.domain.model.Post
-import me.helloc.techwikiplus.post.domain.model.PostBody
-import me.helloc.techwikiplus.post.domain.model.PostTitle
+import me.helloc.techwikiplus.post.domain.model.post.Post
+import me.helloc.techwikiplus.post.domain.model.post.PostBody
+import me.helloc.techwikiplus.post.domain.model.post.PostTitle
 import me.helloc.techwikiplus.post.domain.service.port.PostIdGenerator
 import me.helloc.techwikiplus.post.domain.service.port.PostRepository
 import org.springframework.stereotype.Service
