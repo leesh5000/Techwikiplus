@@ -42,7 +42,7 @@ class CustomUserDetailsServiceTest : DescribeSpec({
                         role = UserRole.USER,
                         status = UserStatus.ACTIVE,
                         createdAt = Instant.now(),
-                        modifiedAt = Instant.now(),
+                        updatedAt = Instant.now(),
                     )
 
                 every { userRepository.findBy(any<UserId>()) } returns user
@@ -75,7 +75,7 @@ class CustomUserDetailsServiceTest : DescribeSpec({
                         role = UserRole.ADMIN,
                         status = UserStatus.ACTIVE,
                         createdAt = Instant.now(),
-                        modifiedAt = Instant.now(),
+                        updatedAt = Instant.now(),
                     )
 
                 every { userRepository.findBy(any<UserId>()) } returns admin
@@ -100,7 +100,7 @@ class CustomUserDetailsServiceTest : DescribeSpec({
                         role = UserRole.USER,
                         status = UserStatus.DELETED,
                         createdAt = Instant.now(),
-                        modifiedAt = Instant.now(),
+                        updatedAt = Instant.now(),
                     )
 
                 every { userRepository.findBy(any<UserId>()) } returns deletedUser
@@ -125,7 +125,7 @@ class CustomUserDetailsServiceTest : DescribeSpec({
                         role = UserRole.USER,
                         status = UserStatus.BANNED,
                         createdAt = Instant.now(),
-                        modifiedAt = Instant.now(),
+                        updatedAt = Instant.now(),
                     )
 
                 every { userRepository.findBy(any<UserId>()) } returns bannedUser

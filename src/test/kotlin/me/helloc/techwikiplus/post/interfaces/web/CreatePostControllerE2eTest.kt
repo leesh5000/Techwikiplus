@@ -70,6 +70,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
             CreatePostController.Request(
                 title = "테스트 게시글 제목",
                 body = "이것은 테스트 게시글의 본문 내용입니다. 최소 30자 이상의 내용을 포함하고 있습니다.",
+                tags = listOf("springboot", "react"),
             )
 
         // When & Then
@@ -109,6 +110,9 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
                             fieldWithPath("body")
                                 .type(JsonFieldType.STRING)
                                 .description("게시글 본문 (최소 30자, 최대 50000자)"),
+                            fieldWithPath("tags")
+                                .type(JsonFieldType.ARRAY)
+                                .description("게시글 태그 (선택 사항, 최대 10개, 각 태그는 최대 30자)"),
                         )
                         .responseHeaders(
                             headerWithName(HttpHeaders.LOCATION)
@@ -490,6 +494,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
             CreatePostController.Request(
                 title = "ADMIN이 작성한 게시글",
                 body = "ADMIN 권한을 가진 사용자가 작성한 게시글입니다. 정상적으로 생성되어야 합니다.",
+                tags = listOf("springboot", "react"),
             )
 
         // When & Then
@@ -533,6 +538,9 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
                             fieldWithPath("body")
                                 .type(JsonFieldType.STRING)
                                 .description("게시글 본문"),
+                            fieldWithPath("tags")
+                                .type(JsonFieldType.ARRAY)
+                                .description("게시글 태그"),
                         )
                         .responseHeaders(
                             headerWithName(HttpHeaders.LOCATION)
@@ -625,7 +633,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)),
         )
-            .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+            .andExpect(MockMvcResultMatchers.status().isForbidden)
             .andDo(
                 documentWithResource(
                     "인증 없이 게시글 생성 시도",
@@ -634,9 +642,9 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
                         .summary("게시글 생성 - 인증 필요")
                         .description(
                             """
-                            인증되지 않은 사용자가 게시글 생성을 시도하면 401 Unauthorized를 반환합니다.
+                            인증되지 않은 사용자가 게시글 생성을 시도하면 403 Forbidden를 반환합니다.
                             
-                            게시글 생성을 위해서는 유효한 JWT 토큰이 필요합니다.
+                            게시글 생성은 관리자 계정만 가능합니다.
                             """.trimIndent(),
                         )
                         .requestSchema(
@@ -649,6 +657,374 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
                         .build(),
                 ),
             )
+    }
+
+    // 동시성 테스트는 CreatePostConcurrentE2eTest로 이동됨
+    // @Transactional이 없는 환경에서 실행되어야 올바른 동시성 검증이 가능
+
+    /* 이동됨: `POST posts - 동시에 여러 사용자가 같은 태그로 게시글을 생성할 수 있어야 한다`
+        // 동시성 테스트 모범 사례:
+        // 1. CyclicBarrier를 사용하여 모든 스레드가 동시에 시작하도록 보장
+        // 2. CompletableFuture로 비동기 작업 처리
+        // 3. 명확한 타임아웃 설정으로 데드락 방지
+        // 4. 자원 정리 (executor shutdown)
+
+        // Given - 여러 ADMIN 사용자 생성
+        val concurrentUsers = 10
+        val adminUsers =
+            (1..concurrentUsers).map { index ->
+                createTestUser(
+                    email = "concurrent_admin_$index@test.com",
+                    nickname = "ConcurrentAdmin$index",
+                    role = UserRole.ADMIN,
+                )
+            }
+        val adminTokens =
+            adminUsers.map { user ->
+                jwtTokenManager.generateAccessToken(user.id).token
+            }
+
+        // 동일한 태그 사용 - 분산 락 테스트를 위해
+        val sharedTags = listOf("concurrent", "test", "spring")
+
+        // 동시성 제어를 위한 CyclicBarrier
+        val startBarrier = CyclicBarrier(concurrentUsers + 1) // +1 for main thread
+        val executor = Executors.newFixedThreadPool(concurrentUsers)
+        val results = mutableListOf<CompletableFuture<Pair<Boolean, String?>>>()
+
+        try {
+            // When - 동시 요청 시작
+            adminTokens.forEachIndexed { index, token ->
+                val future =
+                    CompletableFuture.supplyAsync(
+                        {
+                            try {
+                                startBarrier.await(10, TimeUnit.SECONDS) // 동기화 지점
+
+                                val request =
+                                    CreatePostController.Request(
+                                        title = "동시성 테스트 ${index + 1}",
+                                        body = "동시 생성 테스트입니다. 사용자 ${index + 1}이 작성했습니다. 최소 30자 이상의 내용을 포함합니다.",
+                                        tags = sharedTags,
+                                    )
+
+                                var locationHeader: String? = null
+                                mockMvc.perform(
+                                    RestDocumentationRequestBuilders.post("/api/v1/posts")
+                                        .header(HttpHeaders.AUTHORIZATION, "Bearer $token")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .accept(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(request)),
+                                )
+                                    .andExpect(MockMvcResultMatchers.status().isCreated)
+                                    .andDo { result ->
+                                        locationHeader = result.response.getHeader(HttpHeaders.LOCATION)
+                                    }
+
+                                Pair(true, locationHeader)
+                            } catch (e: Exception) {
+                                println("Error in thread ${index + 1}: ${e.message}")
+                                Pair(false, e.message)
+                            }
+                        },
+                        executor,
+                    )
+                results.add(future)
+            }
+
+            // 모든 스레드가 준비되면 동시에 시작
+            startBarrier.await(10, TimeUnit.SECONDS)
+
+            // Then - 결과 검증
+            val completedResults = results.map { it.get(30, TimeUnit.SECONDS) }
+
+            // 모든 요청이 성공해야 함
+            val successCount = completedResults.count { it.first }
+            successCount shouldBe concurrentUsers
+
+            // 생성된 게시글 ID 추출 및 검증
+            val postIds =
+                completedResults
+                    .filter { it.first }
+                    .mapNotNull { it.second?.substringAfterLast("/")?.toLongOrNull() }
+
+            // 모든 ID가 고유해야 함
+            postIds.size shouldBe concurrentUsers
+            postIds.toSet().size shouldBe concurrentUsers
+
+            // 각 게시글의 태그 확인
+            postIds.forEach { id ->
+                val post = postRepository.findBy(PostId(id))
+                post shouldNotBe null
+                post?.tags?.map { it.tagName.value }?.toSet() shouldBe sharedTags.toSet()
+            }
+        } finally {
+            // 자원 정리
+            executor.shutdown()
+            if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                executor.shutdownNow()
+            }
+        }
+    } */
+
+    /* 이동됨: `POST posts - Snowflake ID Generator는 동시 요청에서도 고유한 ID를 생성해야 한다`
+        // 동시성 테스트 모범 사례:
+        // 1. CountDownLatch로 정확한 동시 시작 제어
+        // 2. 충분한 수의 동시 요청으로 ID 충돌 가능성 테스트
+        // 3. Snowflake ID의 순서 보장 검증
+
+        // Given
+        val adminUser = createTestUser(role = UserRole.ADMIN)
+        val adminToken = jwtTokenManager.generateAccessToken(adminUser.id).token
+
+        val concurrentRequests = 50 // 충분히 많은 동시 요청
+        val startLatch = CountDownLatch(1)
+        val readyLatch = CountDownLatch(concurrentRequests)
+        val executor = Executors.newFixedThreadPool(concurrentRequests)
+        val futures = mutableListOf<CompletableFuture<Long?>>()
+
+        try {
+            // When - 동시 요청 준비
+            repeat(concurrentRequests) { index ->
+                val future =
+                    CompletableFuture.supplyAsync(
+                        {
+                            try {
+                                readyLatch.countDown() // 준비 완료 신호
+                                startLatch.await(10, TimeUnit.SECONDS) // 시작 신호 대기
+
+                                val request =
+                                    CreatePostController.Request(
+                                        title = "Snowflake ID 테스트 $index",
+                                        body = "동시에 생성되는 게시글입니다. Snowflake ID의 고유성을 테스트합니다. 최소 30자 이상.",
+                                    )
+
+                                var locationHeader: String? = null
+                                mockMvc.perform(
+                                    RestDocumentationRequestBuilders.post("/api/v1/posts")
+                                        .header(HttpHeaders.AUTHORIZATION, "Bearer $adminToken")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .accept(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(request)),
+                                )
+                                    .andExpect(MockMvcResultMatchers.status().isCreated)
+                                    .andDo { result ->
+                                        locationHeader = result.response.getHeader(HttpHeaders.LOCATION)
+                                    }
+
+                                locationHeader?.substringAfterLast("/")?.toLongOrNull()
+                            } catch (e: Exception) {
+                                println("Error in request $index: ${e.message}")
+                                null
+                            }
+                        },
+                        executor,
+                    )
+                futures.add(future)
+            }
+
+            // 모든 스레드가 준비될 때까지 대기
+            readyLatch.await(10, TimeUnit.SECONDS)
+
+            // 동시에 모든 요청 시작
+            startLatch.countDown()
+
+            // Then - 결과 검증
+            val postIds = futures.mapNotNull { it.get(30, TimeUnit.SECONDS) }
+
+            // 모든 요청이 성공해야 함
+            postIds.size shouldBe concurrentRequests
+
+            // 모든 ID가 고유해야 함 (중복 방지)
+            val uniqueIds = postIds.toSet()
+            uniqueIds.size shouldBe concurrentRequests
+
+            // Snowflake ID의 특성: 시간 순서 보장
+            // 정렬했을 때 모든 ID가 증가 순서여야 함
+            val sortedIds = postIds.sorted()
+            sortedIds.zipWithNext().all { (prev, next) -> prev < next } shouldBe true
+
+            // ID 범위 검증 (모두 양수여야 함)
+            postIds.all { it > 0 } shouldBe true
+        } finally {
+            executor.shutdown()
+            if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                executor.shutdownNow()
+            }
+        }
+    } */
+
+    /* 이동됨: `POST posts - 동시에 같은 제목으로 게시글을 생성해도 모두 성공해야 한다`
+        // 동시성 테스트 모범 사례:
+        // 제목 중복이 허용되는지 검증
+        // 비지니스 로직상 제목 중복은 허용되어야 함
+
+        // Given
+        val userCount = 5
+        val adminUsers =
+            (1..userCount).map { index ->
+                createTestUser(
+                    email = "same_title_test_$index@test.com",
+                    nickname = "SameTitleAdmin$index",
+                    role = UserRole.ADMIN,
+                )
+            }
+        val adminTokens =
+            adminUsers.map { user ->
+                jwtTokenManager.generateAccessToken(user.id).token
+            }
+
+        val sharedTitle = "동시에 생성되는 동일한 제목"
+        val barrier = CyclicBarrier(userCount)
+        val executor = Executors.newFixedThreadPool(userCount)
+        val futures = mutableListOf<CompletableFuture<Long?>>()
+
+        try {
+            // When
+            adminTokens.forEachIndexed { index, token ->
+                val future =
+                    CompletableFuture.supplyAsync(
+                        {
+                            try {
+                                barrier.await(10, TimeUnit.SECONDS)
+
+                                val request =
+                                    CreatePostController.Request(
+                                        title = sharedTitle,
+                                        body = "사용자 ${index + 1}이 작성한 고유한 내용입니다. 제목은 동일하지만 내용은 다릅니다. 최소 30자.",
+                                    )
+
+                                var locationHeader: String? = null
+                                mockMvc.perform(
+                                    RestDocumentationRequestBuilders.post("/api/v1/posts")
+                                        .header(HttpHeaders.AUTHORIZATION, "Bearer $token")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .accept(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(request)),
+                                )
+                                    .andExpect(MockMvcResultMatchers.status().isCreated)
+                                    .andDo { result ->
+                                        locationHeader = result.response.getHeader(HttpHeaders.LOCATION)
+                                    }
+
+                                locationHeader?.substringAfterLast("/")?.toLongOrNull()
+                            } catch (e: Exception) {
+                                println("Error for user ${index + 1}: ${e.message}")
+                                null
+                            }
+                        },
+                        executor,
+                    )
+                futures.add(future)
+            }
+
+            // Then
+            val postIds = futures.mapNotNull { it.get(30, TimeUnit.SECONDS) }
+
+            // 모든 게시글이 성공적으로 생성되어야 함
+            postIds.size shouldBe userCount
+
+            // 각 게시글은 고유한 ID를 가져야 함
+            postIds.toSet().size shouldBe userCount
+
+            // 모든 게시글이 동일한 제목을 가져야 함
+            postIds.forEach { id ->
+                val post = postRepository.findBy(PostId(id))
+                post shouldNotBe null
+                post?.title?.value shouldBe sharedTitle
+            }
+        } finally {
+            executor.shutdown()
+            if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                executor.shutdownNow()
+            }
+        }
+    } */
+
+    @Test
+    fun `POST posts - 중복된 태그는 자동으로 제거되어야 한다`() {
+        // Given - ADMIN 사용자 생성
+        val adminUser = createTestUser(role = UserRole.ADMIN)
+        val adminToken = jwtTokenManager.generateAccessToken(adminUser.id).token
+
+        val request =
+            CreatePostController.Request(
+                title = "중복 태그 테스트 게시글",
+                body = "중복된 태그를 포함한 게시글입니다. 중복된 태그는 자동으로 제거되어야 합니다.",
+                tags = listOf("kotlin", "spring", "kotlin", "java", "spring", "kotlin", "java"),
+            )
+
+        // When & Then
+        var locationHeader: String? = null
+
+        mockMvc.perform(
+            RestDocumentationRequestBuilders.post("/api/v1/posts")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer $adminToken")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)),
+        )
+            .andExpect(MockMvcResultMatchers.status().isCreated)
+            .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
+            .andDo { result ->
+                locationHeader = result.response.getHeader(HttpHeaders.LOCATION)
+            }
+            .andDo(
+                documentWithResource(
+                    "중복 태그 제거하여 게시글 생성",
+                    builder()
+                        .tag("Post Management")
+                        .summary("게시글 생성 - 중복 태그 제거")
+                        .description(
+                            """
+                            중복된 태그를 포함하여 게시글을 생성하면 중복이 자동으로 제거됩니다.
+                            
+                            예시: ["kotlin", "spring", "kotlin", "java", "spring", "kotlin", "java"]
+                            결과: ["kotlin", "spring", "java"] (중복 제거됨)
+                            """.trimIndent(),
+                        )
+                        .requestHeaders(
+                            headerWithName(HttpHeaders.AUTHORIZATION)
+                                .description("Bearer {JWT 토큰}"),
+                        )
+                        .requestFields(
+                            fieldWithPath("title")
+                                .type(JsonFieldType.STRING)
+                                .description("게시글 제목"),
+                            fieldWithPath("body")
+                                .type(JsonFieldType.STRING)
+                                .description("게시글 본문"),
+                            fieldWithPath("tags")
+                                .type(JsonFieldType.ARRAY)
+                                .description("게시글 태그 (중복 포함 가능)"),
+                        )
+                        .responseHeaders(
+                            headerWithName(HttpHeaders.LOCATION)
+                                .description("생성된 게시글의 URI"),
+                        )
+                        .requestSchema(
+                            schema(
+                                "${CreatePostController::class.simpleName}" +
+                                    ".${CreatePostController.Request::class.simpleName}",
+                            ),
+                        )
+                        .build(),
+                ),
+            )
+
+        // Then - DB에 저장된 태그에서 중복이 제거되었는지 확인
+        val postId = locationHeader?.substringAfterLast("/")?.toLongOrNull()
+        postId shouldNotBe null
+
+        val savedPost = postRepository.findBy(PostId(postId!!))
+        savedPost shouldNotBe null
+        
+        // 중복이 제거된 태그 확인
+        val savedTags = savedPost!!.tags.map { it.tagName.value }.toSet()
+        savedTags shouldBe setOf("kotlin", "spring", "java")
+        
+        // 태그 개수 확인 (중복 제거 후 3개여야 함)
+        savedPost.tags.size shouldBe 3
     }
 
     @Test
@@ -709,7 +1085,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
                 status = UserStatus.ACTIVE,
                 role = role,
                 createdAt = now,
-                modifiedAt = now,
+                updatedAt = now,
             )
 
         // 테스트 데이터베이스에 사용자 저장

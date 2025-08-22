@@ -74,7 +74,7 @@ class UserVerifyResendFacadeTest : FunSpec({
                     status = UserStatus.PENDING,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2024-12-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2024-12-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2024-12-01T00:00:00Z"),
                 )
             fakeUserRepository.save(pendingUser)
 
@@ -103,7 +103,7 @@ class UserVerifyResendFacadeTest : FunSpec({
                     status = UserStatus.PENDING,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2024-12-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2024-12-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2024-12-01T00:00:00Z"),
                 )
             fakeUserRepository.save(pendingUser)
 
@@ -137,7 +137,7 @@ class UserVerifyResendFacadeTest : FunSpec({
                     status = UserStatus.PENDING,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2024-12-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2024-12-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2024-12-01T00:00:00Z"),
                 )
             fakeUserRepository.save(pendingUser)
 
@@ -164,7 +164,7 @@ class UserVerifyResendFacadeTest : FunSpec({
                     status = UserStatus.PENDING,
                     role = UserRole.USER,
                     createdAt = createdTime,
-                    modifiedAt = createdTime,
+                    updatedAt = createdTime,
                 )
             fakeUserRepository.save(pendingUser)
 
@@ -179,8 +179,8 @@ class UserVerifyResendFacadeTest : FunSpec({
             updatedUser shouldNotBe null
             updatedUser!!.createdAt shouldBe createdTime
             // User.setPending()은 이미 PENDING 상태인 경우 동일한 객체를 반환하므로
-            // modifiedAt은 변경되지 않음
-            updatedUser.modifiedAt shouldBe createdTime
+            // updatedAt은 변경되지 않음
+            updatedUser.updatedAt shouldBe createdTime
         }
 
         test("ACTIVE 상태의 사용자로 재전송 시도 시 NOT_FOUND_PENDING_USER 예외가 발생한다") {
@@ -195,7 +195,7 @@ class UserVerifyResendFacadeTest : FunSpec({
                     status = UserStatus.ACTIVE,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2024-12-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2024-12-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2024-12-01T00:00:00Z"),
                 )
             fakeUserRepository.save(activeUser)
 
@@ -241,7 +241,7 @@ class UserVerifyResendFacadeTest : FunSpec({
                     status = UserStatus.PENDING,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2024-12-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2024-12-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2024-12-01T00:00:00Z"),
                 )
             fakeUserRepository.save(pendingUser)
 
@@ -276,7 +276,7 @@ class UserVerifyResendFacadeTest : FunSpec({
                     status = UserStatus.BANNED,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2024-12-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2024-12-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2024-12-01T00:00:00Z"),
                 )
             fakeUserRepository.save(bannedUser)
 
@@ -302,7 +302,7 @@ class UserVerifyResendFacadeTest : FunSpec({
                     status = UserStatus.DORMANT,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2024-12-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2024-12-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2024-12-01T00:00:00Z"),
                 )
             fakeUserRepository.save(dormantUser)
 
@@ -328,7 +328,7 @@ class UserVerifyResendFacadeTest : FunSpec({
                     status = UserStatus.PENDING,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2024-12-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2024-12-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2024-12-01T00:00:00Z"),
                 )
             fakeUserRepository.save(pendingUser)
 

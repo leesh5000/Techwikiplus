@@ -8,6 +8,9 @@ import me.helloc.techwikiplus.common.infrastructure.FakeAuthorizationPort
 import me.helloc.techwikiplus.common.infrastructure.FakeClockHolder
 import me.helloc.techwikiplus.common.infrastructure.FakePostIdGenerator
 import me.helloc.techwikiplus.common.infrastructure.FakePostRepository
+import me.helloc.techwikiplus.common.infrastructure.FakeTagIdGenerator
+import me.helloc.techwikiplus.common.infrastructure.FakeTagRepository
+import me.helloc.techwikiplus.common.infrastructure.NoOpLockManager
 import me.helloc.techwikiplus.post.application.CreatePostFacade
 import me.helloc.techwikiplus.post.domain.exception.PostDomainException
 import me.helloc.techwikiplus.post.domain.exception.PostErrorCode
@@ -17,6 +20,7 @@ import me.helloc.techwikiplus.post.domain.model.post.PostStatus
 import me.helloc.techwikiplus.post.domain.model.post.PostTitle
 import me.helloc.techwikiplus.post.domain.service.PostAuthorizationService
 import me.helloc.techwikiplus.post.domain.service.PostRegister
+import me.helloc.techwikiplus.post.domain.service.TagService
 import me.helloc.techwikiplus.user.domain.model.UserId
 import me.helloc.techwikiplus.user.domain.model.UserRole
 import java.time.Instant
@@ -25,16 +29,24 @@ class CreatePostFacadeTest : DescribeSpec({
     lateinit var facade: CreatePostFacade
     lateinit var postRegister: PostRegister
     lateinit var postAuthorizationService: PostAuthorizationService
+    lateinit var tagService: TagService
     lateinit var postRepository: FakePostRepository
+    lateinit var tagRepository: FakeTagRepository
     lateinit var postIdGenerator: FakePostIdGenerator
+    lateinit var tagIdGenerator: FakeTagIdGenerator
     lateinit var clockHolder: FakeClockHolder
     lateinit var authorizationPort: FakeAuthorizationPort
+    lateinit var lockManager: NoOpLockManager
 
     beforeEach {
         postRepository = FakePostRepository()
+        tagRepository = FakeTagRepository()
         postIdGenerator = FakePostIdGenerator()
+        tagIdGenerator = FakeTagIdGenerator()
         clockHolder = FakeClockHolder(Instant.parse("2025-01-01T00:00:00Z"))
         authorizationPort = FakeAuthorizationPort()
+        lockManager = NoOpLockManager()
+
         // 기본적으로 ADMIN 권한을 설정하여 테스트가 통과하도록 함
         authorizationPort.setCurrentUser(UserId(1L), UserRole.ADMIN)
 
@@ -50,10 +62,17 @@ class CreatePostFacadeTest : DescribeSpec({
                 authorizationPort = authorizationPort,
             )
 
+        tagService =
+            TagService(
+                tagRepository = tagRepository,
+                lockManager = lockManager,
+            )
+
         facade =
             CreatePostFacade(
                 postRegister = postRegister,
                 postAuthorizationService = postAuthorizationService,
+                tagService = tagService,
             )
     }
 
@@ -320,7 +339,7 @@ class CreatePostFacadeTest : DescribeSpec({
                     shouldThrow<PostDomainException> {
                         facade.handle(title, body)
                     }
-                exception.postErrorCode shouldBe PostErrorCode.UNAUTHORIZED_ACCESS
+                exception.postErrorCode shouldBe PostErrorCode.FORBIDDEN_POST_ROLE
                 postRepository.count() shouldBe 0
             }
 
@@ -335,7 +354,7 @@ class CreatePostFacadeTest : DescribeSpec({
                     shouldThrow<PostDomainException> {
                         facade.handle(title, body)
                     }
-                exception.postErrorCode shouldBe PostErrorCode.UNAUTHORIZED_ACCESS
+                exception.postErrorCode shouldBe PostErrorCode.FORBIDDEN_POST_ROLE
                 postRepository.count() shouldBe 0
             }
         }

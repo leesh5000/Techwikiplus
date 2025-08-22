@@ -39,6 +39,8 @@ class SecurityConfiguration(
                         "/api/v1/users/verify",
                         "/api/v1/users/verify/resend",
                         "/api/v1/users/refresh",
+                        "/api/v1/posts",
+                        "/api/v1/posts/{postId}",
                     ).permitAll()
                     // Actuator 엔드포인트 (헬스체크 및 모니터링)
                     .requestMatchers(

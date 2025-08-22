@@ -47,7 +47,7 @@ class EmailVerifyServiceTest : FunSpec({
                 status = UserStatus.PENDING,
                 role = UserRole.USER,
                 createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
             )
 
         // when
@@ -75,7 +75,7 @@ class EmailVerifyServiceTest : FunSpec({
                 status = UserStatus.PENDING,
                 role = UserRole.USER,
                 createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
             )
 
         // when
@@ -102,7 +102,7 @@ class EmailVerifyServiceTest : FunSpec({
                 status = UserStatus.PENDING,
                 role = UserRole.USER,
                 createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
             )
 
         // when
@@ -195,7 +195,7 @@ class EmailVerifyServiceTest : FunSpec({
                 status = UserStatus.PENDING,
                 role = UserRole.USER,
                 createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
             )
 
         val user2 =
@@ -207,7 +207,7 @@ class EmailVerifyServiceTest : FunSpec({
                 status = UserStatus.PENDING,
                 role = UserRole.USER,
                 createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
             )
 
         // when
@@ -244,7 +244,7 @@ class EmailVerifyServiceTest : FunSpec({
                 status = UserStatus.PENDING,
                 role = UserRole.USER,
                 createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
             )
 
         // when

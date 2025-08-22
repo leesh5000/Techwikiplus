@@ -85,7 +85,7 @@ class MyProfileControllerE2eTest : BaseE2eTest() {
                 // 1일 전
                 createdAt = Instant.now().minusSeconds(86400),
                 // 1시간 전
-                modifiedAt = Instant.now().minusSeconds(3600),
+                updatedAt = Instant.now().minusSeconds(3600),
             )
         activeUser = userRepository.save(activeUser)
         // Snowflake ID 충돌 방지
@@ -101,7 +101,7 @@ class MyProfileControllerE2eTest : BaseE2eTest() {
                 status = UserStatus.ACTIVE,
                 // 2일 전
                 createdAt = Instant.now().minusSeconds(172800),
-                modifiedAt = Instant.now(),
+                updatedAt = Instant.now(),
             )
         adminUser = userRepository.save(adminUser)
 
@@ -115,7 +115,7 @@ class MyProfileControllerE2eTest : BaseE2eTest() {
                 role = UserRole.USER,
                 status = UserStatus.PENDING,
                 createdAt = Instant.now(),
-                modifiedAt = Instant.now(),
+                updatedAt = Instant.now(),
             )
         pendingUser = userRepository.save(pendingUser)
 
@@ -131,7 +131,7 @@ class MyProfileControllerE2eTest : BaseE2eTest() {
                 // 1년 전
                 createdAt = Instant.now().minusSeconds(31536000),
                 // 90일 전
-                modifiedAt = Instant.now().minusSeconds(7776000),
+                updatedAt = Instant.now().minusSeconds(7776000),
             )
         dormantUser = userRepository.save(dormantUser)
 
@@ -146,7 +146,7 @@ class MyProfileControllerE2eTest : BaseE2eTest() {
                 status = UserStatus.BANNED,
                 // 7일 전
                 createdAt = Instant.now().minusSeconds(604800),
-                modifiedAt = Instant.now(),
+                updatedAt = Instant.now(),
             )
         bannedUser = userRepository.save(bannedUser)
 
@@ -161,7 +161,7 @@ class MyProfileControllerE2eTest : BaseE2eTest() {
                 status = UserStatus.DELETED,
                 // 30일 전
                 createdAt = Instant.now().minusSeconds(2592000),
-                modifiedAt = Instant.now(),
+                updatedAt = Instant.now(),
             )
         deletedUser = userRepository.save(deletedUser)
 
@@ -196,7 +196,7 @@ class MyProfileControllerE2eTest : BaseE2eTest() {
             .andExpect(MockMvcResultMatchers.jsonPath("$.role").value("USER"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("ACTIVE"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.createdAt").exists())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.modifiedAt").exists())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.updatedAt").exists())
             .andDo(
                 documentWithResource(
                     "내 프로필 조회 성공",
@@ -235,7 +235,7 @@ class MyProfileControllerE2eTest : BaseE2eTest() {
                             fieldWithPath("createdAt")
                                 .type(JsonFieldType.STRING)
                                 .description("계정 생성 시간 (ISO-8601 형식)"),
-                            fieldWithPath("modifiedAt")
+                            fieldWithPath("updatedAt")
                                 .type(JsonFieldType.STRING)
                                 .description("계정 최종 수정 시간 (ISO-8601 형식)"),
                         )
@@ -649,7 +649,7 @@ class MyProfileControllerE2eTest : BaseE2eTest() {
                     .value(Matchers.matchesPattern("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*")),
             )
             .andExpect(
-                MockMvcResultMatchers.jsonPath("$.modifiedAt")
+                MockMvcResultMatchers.jsonPath("$.updatedAt")
                     .value(Matchers.matchesPattern("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*")),
             )
     }

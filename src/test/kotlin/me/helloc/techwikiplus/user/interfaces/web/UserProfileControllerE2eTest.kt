@@ -75,7 +75,7 @@ class UserProfileControllerE2eTest : BaseE2eTest() {
                 role = UserRole.USER,
                 status = UserStatus.ACTIVE,
                 createdAt = Instant.now(),
-                modifiedAt = Instant.now(),
+                updatedAt = Instant.now(),
             )
         testUser = userRepository.save(testUser)
         // Snowflake ID 충돌 방지
@@ -89,7 +89,7 @@ class UserProfileControllerE2eTest : BaseE2eTest() {
                 role = UserRole.ADMIN,
                 status = UserStatus.ACTIVE,
                 createdAt = Instant.now(),
-                modifiedAt = Instant.now(),
+                updatedAt = Instant.now(),
             )
         adminUser = userRepository.save(adminUser)
         // Snowflake ID 충돌 방지
@@ -103,7 +103,7 @@ class UserProfileControllerE2eTest : BaseE2eTest() {
                 role = UserRole.USER,
                 status = UserStatus.ACTIVE,
                 createdAt = Instant.now(),
-                modifiedAt = Instant.now(),
+                updatedAt = Instant.now(),
             )
         otherUser = userRepository.save(otherUser)
 
@@ -133,7 +133,7 @@ class UserProfileControllerE2eTest : BaseE2eTest() {
             .andExpect(MockMvcResultMatchers.jsonPath("$.role").value("USER"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("ACTIVE"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.createdAt").exists())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.modifiedAt").exists())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.updatedAt").exists())
             .andDo(
                 documentWithResource(
                     "사용자 프로필 조회 성공",
@@ -175,7 +175,7 @@ class UserProfileControllerE2eTest : BaseE2eTest() {
                             PayloadDocumentation.fieldWithPath("createdAt")
                                 .type(JsonFieldType.STRING)
                                 .description("계정 생성 시간 (ISO-8601)"),
-                            PayloadDocumentation.fieldWithPath("modifiedAt")
+                            PayloadDocumentation.fieldWithPath("updatedAt")
                                 .type(JsonFieldType.STRING)
                                 .description("계정 수정 시간 (ISO-8601)"),
                         )
@@ -431,7 +431,7 @@ class UserProfileControllerE2eTest : BaseE2eTest() {
                 role = UserRole.USER,
                 status = UserStatus.DORMANT,
                 createdAt = Instant.now(),
-                modifiedAt = Instant.now(),
+                updatedAt = Instant.now(),
             )
         userRepository.save(dormantUser)
 
@@ -484,7 +484,7 @@ class UserProfileControllerE2eTest : BaseE2eTest() {
                 role = UserRole.USER,
                 status = UserStatus.DELETED,
                 createdAt = Instant.now(),
-                modifiedAt = Instant.now(),
+                updatedAt = Instant.now(),
             )
         userRepository.save(deletedUser)
 

@@ -714,7 +714,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
             status = UserStatus.PENDING,
             role = UserRole.USER,
             createdAt = Instant.now(),
-            modifiedAt = Instant.now(),
+            updatedAt = Instant.now(),
         )
     }
 
@@ -730,7 +730,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
             status = UserStatus.ACTIVE,
             role = UserRole.USER,
             createdAt = Instant.now(),
-            modifiedAt = Instant.now(),
+            updatedAt = Instant.now(),
         )
     }
 
@@ -746,7 +746,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
             status = UserStatus.BANNED,
             role = UserRole.USER,
             createdAt = Instant.now(),
-            modifiedAt = Instant.now(),
+            updatedAt = Instant.now(),
         )
     }
 
@@ -762,7 +762,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
             status = UserStatus.DELETED,
             role = UserRole.USER,
             createdAt = Instant.now(),
-            modifiedAt = Instant.now(),
+            updatedAt = Instant.now(),
         )
     }
 }

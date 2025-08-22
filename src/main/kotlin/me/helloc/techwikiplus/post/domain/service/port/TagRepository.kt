@@ -9,11 +9,16 @@ interface TagRepository {
 
     fun findByName(name: TagName): Tag?
 
+    fun findByNames(names: List<TagName>): List<Tag>
+
     fun findOrCreateByName(name: TagName): Tag
 
     fun findPopularTags(limit: Int): List<Tag>
 
-    fun findByNamePrefix(prefix: String, limit: Int): List<Tag>
+    fun findByNamePrefix(
+        prefix: String,
+        limit: Int,
+    ): List<Tag>
 
     fun save(tag: Tag): Tag
 

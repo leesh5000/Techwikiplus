@@ -2,6 +2,7 @@ package me.helloc.techwikiplus.post.interfaces.web
 
 import me.helloc.techwikiplus.post.domain.model.post.PostBody
 import me.helloc.techwikiplus.post.domain.model.post.PostTitle
+import me.helloc.techwikiplus.post.domain.model.tag.TagName
 import me.helloc.techwikiplus.post.interfaces.web.port.CreatePostUseCase
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -18,10 +19,13 @@ class CreatePostController(
     fun create(
         @RequestBody request: Request,
     ): ResponseEntity<Void> {
+        val tagNames = request.tags?.map { TagName(it) } ?: emptyList()
+
         val postId =
             useCase.handle(
                 title = PostTitle(request.title),
                 body = PostBody(request.body),
+                tags = tagNames,
             )
 
         val headers = HttpHeaders()
@@ -36,5 +40,6 @@ class CreatePostController(
     data class Request(
         val title: String,
         val body: String,
+        val tags: List<String>? = null,
     )
 }

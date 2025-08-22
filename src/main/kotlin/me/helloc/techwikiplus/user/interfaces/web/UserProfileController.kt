@@ -30,7 +30,7 @@ class UserProfileController(
         val role: String,
         val status: String,
         val createdAt: Instant,
-        val modifiedAt: Instant,
+        val updatedAt: Instant,
     ) {
         companion object {
             fun from(result: UserProfileUseCase.Result): Response =
@@ -41,7 +41,7 @@ class UserProfileController(
                     role = result.role.name,
                     status = result.status.name,
                     createdAt = result.createdAt,
-                    modifiedAt = result.modifiedAt,
+                    updatedAt = result.updatedAt,
                 )
         }
     }

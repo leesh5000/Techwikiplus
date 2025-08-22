@@ -10,7 +10,7 @@ enum class PostErrorCode {
     // Post Management
     DUPLICATE_TITLE,
     INVALID_POST_STATE,
-    UNAUTHORIZED_ACCESS,
+    FORBIDDEN_POST_ROLE,
 
     // Title Validation
     BLANK_TITLE,

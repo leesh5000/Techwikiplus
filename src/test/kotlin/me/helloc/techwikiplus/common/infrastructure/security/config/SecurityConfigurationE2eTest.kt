@@ -116,7 +116,7 @@ class SecurityConfigurationE2eTest : BaseE2eTest() {
             role = UserRole.USER,
             status = UserStatus.ACTIVE,
             createdAt = Instant.now(),
-            modifiedAt = Instant.now(),
+            updatedAt = Instant.now(),
         )
     }
 

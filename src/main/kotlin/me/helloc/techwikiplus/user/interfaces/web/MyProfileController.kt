@@ -22,7 +22,7 @@ class MyProfileController(
         val role: String,
         val status: String,
         val createdAt: String,
-        val modifiedAt: String,
+        val updatedAt: String,
     ) {
         companion object {
             fun from(result: MyProfileUseCase.Result): Response {
@@ -33,7 +33,7 @@ class MyProfileController(
                     role = result.role.name,
                     status = result.status.name,
                     createdAt = result.createdAt.toString(),
-                    modifiedAt = result.modifiedAt.toString(),
+                    updatedAt = result.updatedAt.toString(),
                 )
             }
         }

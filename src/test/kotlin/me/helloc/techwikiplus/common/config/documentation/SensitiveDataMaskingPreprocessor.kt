@@ -107,7 +107,7 @@ class SensitiveDataMaskingPreprocessor : OperationPreprocessor {
             }
         }
 
-        // createdAt, modifiedAt 필드 마스킹
+        // createdAt, updatedAt 필드 마스킹
         if (node.has("createdAt")) {
             val createdAtValue = node.get("createdAt").asText()
             if (ISO_TIMESTAMP_PATTERN.matches(createdAtValue)) {
@@ -115,10 +115,10 @@ class SensitiveDataMaskingPreprocessor : OperationPreprocessor {
             }
         }
 
-        if (node.has("modifiedAt")) {
-            val modifiedAtValue = node.get("modifiedAt").asText()
-            if (ISO_TIMESTAMP_PATTERN.matches(modifiedAtValue)) {
-                node.set<TextNode>("modifiedAt", TextNode("<ISO_TIMESTAMP>"))
+        if (node.has("updatedAt")) {
+            val updatedAtValue = node.get("updatedAt").asText()
+            if (ISO_TIMESTAMP_PATTERN.matches(updatedAtValue)) {
+                node.set<TextNode>("updatedAt", TextNode("<ISO_TIMESTAMP>"))
             }
         }
 

@@ -66,69 +66,78 @@ class TagNameTest : DescribeSpec({
 
         context("빈 태그명인 경우") {
             it("빈 문자열이면 예외가 발생한다") {
-                val exception = shouldThrow<PostDomainException> {
-                    TagName("")
-                }
+                val exception =
+                    shouldThrow<PostDomainException> {
+                        TagName("")
+                    }
                 exception.postErrorCode shouldBe PostErrorCode.BLANK_TAG
             }
 
             it("공백만 있는 문자열이면 예외가 발생한다") {
-                val exception = shouldThrow<PostDomainException> {
-                    TagName("   ")
-                }
+                val exception =
+                    shouldThrow<PostDomainException> {
+                        TagName("   ")
+                    }
                 exception.postErrorCode shouldBe PostErrorCode.BLANK_TAG
             }
         }
 
         context("태그명 길이가 유효하지 않은 경우") {
             it("1자이면 예외가 발생한다") {
-                val exception = shouldThrow<PostDomainException> {
-                    TagName("a")
-                }
+                val exception =
+                    shouldThrow<PostDomainException> {
+                        TagName("a")
+                    }
                 exception.postErrorCode shouldBe PostErrorCode.TAG_TOO_SHORT
             }
 
             it("31자이면 예외가 발생한다") {
-                val exception = shouldThrow<PostDomainException> {
-                    TagName("a".repeat(31))
-                }
+                val exception =
+                    shouldThrow<PostDomainException> {
+                        TagName("a".repeat(31))
+                    }
                 exception.postErrorCode shouldBe PostErrorCode.TAG_TOO_LONG
             }
         }
 
         context("허용되지 않는 문자가 포함된 경우") {
             it("중간에 공백이 포함되면 예외가 발생한다") {
-                val exception = shouldThrow<PostDomainException> {
-                    TagName("spring boot")
-                }
+                val exception =
+                    shouldThrow<PostDomainException> {
+                        TagName("spring boot")
+                    }
                 exception.postErrorCode shouldBe PostErrorCode.TAG_CONTAINS_INVALID_CHAR
             }
 
             it("특수문자 @가 포함되면 예외가 발생한다") {
-                val exception = shouldThrow<PostDomainException> {
-                    TagName("spring@boot")
-                }
+                val exception =
+                    shouldThrow<PostDomainException> {
+                        TagName("spring@boot")
+                    }
                 exception.postErrorCode shouldBe PostErrorCode.TAG_CONTAINS_INVALID_CHAR
             }
 
             it("특수문자 #이 포함되면 예외가 발생한다") {
-                val exception = shouldThrow<PostDomainException> {
-                    TagName("#spring")
-                }
+                val exception =
+                    shouldThrow<PostDomainException> {
+                        TagName("#spring")
+                    }
                 exception.postErrorCode shouldBe PostErrorCode.TAG_CONTAINS_INVALID_CHAR
             }
 
             it("특수문자 !가 포함되면 예외가 발생한다") {
-                val exception = shouldThrow<PostDomainException> {
-                    TagName("spring!")
-                }
+                val exception =
+                    shouldThrow<PostDomainException> {
+                        TagName("spring!")
+                    }
                 exception.postErrorCode shouldBe PostErrorCode.TAG_CONTAINS_INVALID_CHAR
             }
 
             it("점(.)이 포함되면 예외가 발생한다") {
-                val exception = shouldThrow<PostDomainException> {
-                    TagName("node.js")
-                }
+                val exception =
+                    shouldThrow<PostDomainException> {
+                        TagName("node.js")
+                    }
                 exception.postErrorCode shouldBe PostErrorCode.TAG_CONTAINS_INVALID_CHAR
             }
         }
@@ -138,7 +147,7 @@ class TagNameTest : DescribeSpec({
         it("같은 값을 가진 TagName은 동일하다") {
             val tagName1 = TagName("spring")
             val tagName2 = TagName("spring")
-            
+
             tagName1 shouldBe tagName2
             tagName1.hashCode() shouldBe tagName2.hashCode()
         }
@@ -146,7 +155,7 @@ class TagNameTest : DescribeSpec({
         it("대소문자가 다르더라도 정규화 후 같으면 동일하다") {
             val tagName1 = TagName("Spring")
             val tagName2 = TagName("SPRING")
-            
+
             tagName1 shouldBe tagName2
             tagName1.hashCode() shouldBe tagName2.hashCode()
         }
@@ -154,7 +163,7 @@ class TagNameTest : DescribeSpec({
         it("다른 값을 가진 TagName은 동일하지 않다") {
             val tagName1 = TagName("spring")
             val tagName2 = TagName("kotlin")
-            
+
             tagName1 shouldNotBe tagName2
         }
     }

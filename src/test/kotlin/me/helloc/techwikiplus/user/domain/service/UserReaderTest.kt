@@ -44,7 +44,7 @@ class UserReaderTest : FunSpec({
                     status = UserStatus.ACTIVE,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                 )
             repository.save(user)
 

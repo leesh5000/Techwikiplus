@@ -74,7 +74,7 @@ class UserRegisterTest : DescribeSpec({
                 result.encodedPassword shouldBe EncodedPassword("encoded_Password123!")
                 result.status shouldBe UserStatus.PENDING
                 result.createdAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
-                result.modifiedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
+                result.updatedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
 
                 val savedUser = repository.findBy(email)
                 savedUser shouldNotBe null
@@ -117,7 +117,7 @@ class UserRegisterTest : DescribeSpec({
                         encodedPassword = EncodedPassword("encoded_password"),
                         nickname = Nickname("existinguser"),
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
                 repository.save(existingUser)
 
@@ -150,7 +150,7 @@ class UserRegisterTest : DescribeSpec({
                         encodedPassword = EncodedPassword("encoded_password"),
                         nickname = existingNickname,
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
                 repository.save(existingUser)
 
@@ -228,14 +228,14 @@ class UserRegisterTest : DescribeSpec({
                         encodedPassword = EncodedPassword("encoded_password"),
                         nickname = Nickname("originalname"),
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
                 repository.save(originalUser)
 
                 val updatedUser =
                     originalUser.copy(
                         nickname = Nickname("updatedname"),
-                        modifiedAt = clockHolder.now(),
+                        updatedAt = clockHolder.now(),
                     )
 
                 // When: 사용자 정보 업데이트 실행
@@ -246,7 +246,7 @@ class UserRegisterTest : DescribeSpec({
                 val savedUser = repository.findBy(UserId(1000001L))
                 savedUser shouldNotBe null
                 savedUser?.nickname shouldBe Nickname("updatedname")
-                savedUser?.modifiedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
+                savedUser?.updatedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
             }
 
             it("존재하지 않는 사용자도 저장할 수 있다") {
@@ -262,7 +262,7 @@ class UserRegisterTest : DescribeSpec({
                         encodedPassword = EncodedPassword("encoded_password"),
                         nickname = Nickname("newuser"),
                         createdAt = clockHolder.now(),
-                        modifiedAt = clockHolder.now(),
+                        updatedAt = clockHolder.now(),
                     )
 
                 // When: 새로운 사용자 저장 실행
@@ -288,14 +288,14 @@ class UserRegisterTest : DescribeSpec({
                         nickname = Nickname("testuser"),
                         status = UserStatus.ACTIVE,
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
                 repository.save(activeUser)
 
                 val dormantUser =
                     activeUser.copy(
                         status = UserStatus.DORMANT,
-                        modifiedAt = clockHolder.now(),
+                        updatedAt = clockHolder.now(),
                     )
 
                 // When: 사용자 상태 변경 실행

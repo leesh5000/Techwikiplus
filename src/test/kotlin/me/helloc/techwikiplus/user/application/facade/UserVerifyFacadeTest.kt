@@ -74,7 +74,7 @@ class UserVerifyFacadeTest : DescribeSpec({
                         status = UserStatus.PENDING,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2024-12-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2024-12-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2024-12-01T00:00:00Z"),
                     )
                 fakeUserRepository.save(pendingUser)
 
@@ -89,7 +89,7 @@ class UserVerifyFacadeTest : DescribeSpec({
                 val activatedUser = fakeUserRepository.findBy(email)
                 activatedUser?.status shouldBe UserStatus.ACTIVE
                 activatedUser?.isActive() shouldBe true
-                activatedUser?.modifiedAt shouldBe fakeClockHolder.now()
+                activatedUser?.updatedAt shouldBe fakeClockHolder.now()
             }
         }
 
@@ -132,7 +132,7 @@ class UserVerifyFacadeTest : DescribeSpec({
                         status = UserStatus.PENDING,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2024-12-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2024-12-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2024-12-01T00:00:00Z"),
                     )
                 fakeUserRepository.save(pendingUser)
 
@@ -193,7 +193,7 @@ class UserVerifyFacadeTest : DescribeSpec({
                         status = UserStatus.ACTIVE,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2024-12-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2024-12-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2024-12-01T00:00:00Z"),
                     )
                 fakeUserRepository.save(activeUser)
 
@@ -249,7 +249,7 @@ class UserVerifyFacadeTest : DescribeSpec({
                         status = UserStatus.PENDING,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2024-12-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2024-12-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2024-12-01T00:00:00Z"),
                     )
                 fakeUserRepository.save(pendingUser)
 
@@ -308,7 +308,7 @@ class UserVerifyFacadeTest : DescribeSpec({
                         status = UserStatus.PENDING,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2024-12-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2024-12-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2024-12-01T00:00:00Z"),
                     )
                 fakeUserRepository.save(pendingUser)
 
@@ -340,7 +340,7 @@ class UserVerifyFacadeTest : DescribeSpec({
                         status = UserStatus.PENDING,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2024-12-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2024-12-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2024-12-01T00:00:00Z"),
                     )
 
                 val validCode = RegistrationCode("123456")
@@ -461,7 +461,7 @@ class UserVerifyFacadeTest : DescribeSpec({
                         status = UserStatus.PENDING,
                         role = UserRole.USER,
                         createdAt = createdTime,
-                        modifiedAt = createdTime,
+                        updatedAt = createdTime,
                     )
                 fakeUserRepository.save(pendingUser)
 
@@ -475,7 +475,7 @@ class UserVerifyFacadeTest : DescribeSpec({
                 // then
                 val activatedUser = fakeUserRepository.findBy(email)
                 activatedUser?.createdAt shouldBe createdTime
-                activatedUser?.modifiedAt shouldBe fixedTime
+                activatedUser?.updatedAt shouldBe fixedTime
             }
         }
 
@@ -518,7 +518,7 @@ class UserVerifyFacadeTest : DescribeSpec({
                         status = UserStatus.PENDING,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2024-12-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2024-12-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2024-12-01T00:00:00Z"),
                     )
                 fakeUserRepository.save(pendingUser)
 
@@ -578,7 +578,7 @@ class UserVerifyFacadeTest : DescribeSpec({
                         status = UserStatus.BANNED,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2024-12-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2024-12-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2024-12-01T00:00:00Z"),
                     )
                 fakeUserRepository.save(bannedUser)
 
@@ -627,7 +627,7 @@ class UserVerifyFacadeTest : DescribeSpec({
                             status = UserStatus.PENDING,
                             role = UserRole.USER,
                             createdAt = Instant.parse("2024-12-01T00:00:00Z"),
-                            modifiedAt = Instant.parse("2024-12-01T00:00:00Z"),
+                            updatedAt = Instant.parse("2024-12-01T00:00:00Z"),
                         )
                     fakeUserRepository.save(pendingUser)
                     fakeCacheStore.put(cacheKey, code.value)
@@ -692,7 +692,7 @@ class UserVerifyFacadeTest : DescribeSpec({
                                 status = UserStatus.PENDING,
                                 role = UserRole.USER,
                                 createdAt = Instant.parse("2024-12-01T00:00:00Z"),
-                                modifiedAt = Instant.parse("2024-12-01T00:00:00Z"),
+                                updatedAt = Instant.parse("2024-12-01T00:00:00Z"),
                             )
                         fakeUserRepository.save(user)
                         fakeCacheStore.put("user:registration_code:${email.value}", code.value)
@@ -755,7 +755,7 @@ class UserVerifyFacadeTest : DescribeSpec({
                             status = UserStatus.PENDING,
                             role = UserRole.USER,
                             createdAt = Instant.parse("2024-12-01T00:00:00Z"),
-                            modifiedAt = Instant.parse("2024-12-01T00:00:00Z"),
+                            updatedAt = Instant.parse("2024-12-01T00:00:00Z"),
                         )
                     fakeUserRepository.save(pendingUser)
 

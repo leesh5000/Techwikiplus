@@ -18,7 +18,7 @@ class PostErrorCodeMapper {
             // Post Management
             PostErrorCode.DUPLICATE_TITLE -> HttpStatus.CONFLICT
             PostErrorCode.INVALID_POST_STATE -> HttpStatus.CONFLICT
-            PostErrorCode.UNAUTHORIZED_ACCESS -> HttpStatus.FORBIDDEN
+            PostErrorCode.FORBIDDEN_POST_ROLE -> HttpStatus.FORBIDDEN
 
             // Title Validation
             PostErrorCode.BLANK_TITLE,
@@ -92,7 +92,7 @@ class PostErrorCodeMapper {
                     } else {
                         "유효하지 않은 게시글 상태입니다"
                     }
-                PostErrorCode.UNAUTHORIZED_ACCESS -> "게시글에 대한 접근 권한이 없습니다"
+                PostErrorCode.FORBIDDEN_POST_ROLE -> "게시글 작성 권한이 없습니다"
 
                 // Title Validation
                 PostErrorCode.BLANK_TITLE -> "제목은 필수 입력 항목입니다"

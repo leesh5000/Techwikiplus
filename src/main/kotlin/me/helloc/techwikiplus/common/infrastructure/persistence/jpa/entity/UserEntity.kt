@@ -39,7 +39,7 @@ open class UserEntity(
     @Column(name = "created_at", nullable = false)
     open val createdAt: Instant,
     @Column(name = "modified_at", nullable = false)
-    open val modifiedAt: Instant,
+    open val updatedAt: Instant,
 ) {
     // JPA requires a no-arg constructor
     protected constructor() : this(
@@ -50,7 +50,7 @@ open class UserEntity(
         status = "PENDING",
         role = "USER",
         createdAt = Instant.now(),
-        modifiedAt = Instant.now(),
+        updatedAt = Instant.now(),
     )
 
     override fun equals(other: Any?): Boolean {
@@ -66,6 +66,6 @@ open class UserEntity(
 
     override fun toString(): String {
         return "UserEntity(id='$id', email='$email', nickname='$nickname', " +
-            "status='$status', role='$role', createdAt=$createdAt, modifiedAt=$modifiedAt)"
+            "status='$status', role='$role', createdAt=$createdAt, updatedAt=$updatedAt)"
     }
 }

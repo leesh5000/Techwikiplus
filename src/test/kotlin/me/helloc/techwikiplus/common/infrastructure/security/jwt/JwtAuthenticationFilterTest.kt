@@ -65,7 +65,7 @@ class JwtAuthenticationFilterTest : DescribeSpec({
                         role = UserRole.USER,
                         status = UserStatus.ACTIVE,
                         createdAt = Instant.now(),
-                        modifiedAt = Instant.now(),
+                        updatedAt = Instant.now(),
                     )
 
                 request.addHeader("Authorization", "Bearer $token")
@@ -101,7 +101,7 @@ class JwtAuthenticationFilterTest : DescribeSpec({
                         role = UserRole.USER,
                         status = UserStatus.DORMANT,
                         createdAt = Instant.now(),
-                        modifiedAt = Instant.now(),
+                        updatedAt = Instant.now(),
                     )
 
                 request.addHeader("Authorization", "Bearer $token")
@@ -142,7 +142,7 @@ class JwtAuthenticationFilterTest : DescribeSpec({
                         role = UserRole.USER,
                         status = UserStatus.BANNED,
                         createdAt = Instant.now(),
-                        modifiedAt = Instant.now(),
+                        updatedAt = Instant.now(),
                     )
 
                 request.addHeader("Authorization", "Bearer $token")
@@ -183,7 +183,7 @@ class JwtAuthenticationFilterTest : DescribeSpec({
                         role = UserRole.USER,
                         status = UserStatus.PENDING,
                         createdAt = Instant.now(),
-                        modifiedAt = Instant.now(),
+                        updatedAt = Instant.now(),
                     )
 
                 request.addHeader("Authorization", "Bearer $token")
@@ -224,7 +224,7 @@ class JwtAuthenticationFilterTest : DescribeSpec({
                         role = UserRole.USER,
                         status = UserStatus.DELETED,
                         createdAt = Instant.now(),
-                        modifiedAt = Instant.now(),
+                        updatedAt = Instant.now(),
                     )
 
                 request.addHeader("Authorization", "Bearer $token")

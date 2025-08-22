@@ -6,11 +6,15 @@ import me.helloc.techwikiplus.post.domain.model.post.PostBody
 import me.helloc.techwikiplus.post.domain.model.post.PostId
 import me.helloc.techwikiplus.post.domain.model.post.PostStatus
 import me.helloc.techwikiplus.post.domain.model.post.PostTitle
+import me.helloc.techwikiplus.post.domain.model.tag.PostTag
 import org.springframework.stereotype.Component
 
 @Component
 class PostEntityMapper {
-    fun toDomain(entity: PostEntity): Post {
+    fun toDomain(
+        entity: PostEntity,
+        tags: List<PostTag> = emptyList(),
+    ): Post {
         return Post(
             id = PostId(entity.id),
             title = PostTitle(entity.title),
@@ -18,6 +22,7 @@ class PostEntityMapper {
             status = PostStatus.valueOf(entity.status),
             createdAt = entity.createdAt,
             updatedAt = entity.updatedAt,
+            tags = tags,
         )
     }
 

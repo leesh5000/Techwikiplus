@@ -13,7 +13,6 @@ class Post(
     val status: PostStatus,
     val createdAt: Instant,
     val updatedAt: Instant,
-    val tags: List<PostTag> = emptyList(),
 ) {
     init {
         // PostId validation is already done in the PostId value object
@@ -22,7 +21,10 @@ class Post(
         }
     }
 
-    fun addTag(tagName: TagName, displayOrder: Int? = null): Post {
+    fun addTag(
+        tagName: TagName,
+        displayOrder: Int? = null,
+    ): Post {
         if (tags.size >= MAX_TAGS) {
             throw PostDomainException(
                 postErrorCode = PostErrorCode.TOO_MANY_TAGS,
@@ -45,10 +47,11 @@ class Post(
     }
 
     fun removeTag(tagName: TagName): Post {
-        val newTags = tags.filterNot { it.tagName == tagName }
-            .mapIndexed { index, postTag ->
-                postTag.copy(displayOrder = index)
-            }
+        val newTags =
+            tags.filterNot { it.tagName == tagName }
+                .mapIndexed { index, postTag ->
+                    postTag.copy(displayOrder = index)
+                }
         return copy(tags = newTags)
     }
 
@@ -67,9 +70,10 @@ class Post(
             )
         }
 
-        val newTags = uniqueTagNames.mapIndexed { index, tagName ->
-            PostTag(tagName, index)
-        }
+        val newTags =
+            uniqueTagNames.mapIndexed { index, tagName ->
+                PostTag(tagName, index)
+            }
         return copy(tags = newTags)
     }
 
@@ -81,9 +85,10 @@ class Post(
             throw IllegalArgumentException("Tag list mismatch: provided tags do not match current tags")
         }
 
-        val newTags = orderedTagNames.mapIndexed { index, tagName ->
-            PostTag(tagName, index)
-        }
+        val newTags =
+            orderedTagNames.mapIndexed { index, tagName ->
+                PostTag(tagName, index)
+            }
         return copy(tags = newTags)
     }
 
@@ -127,6 +132,23 @@ class Post(
 
     fun isReviewed(): Boolean {
         return status == PostStatus.REVIEWED
+    }
+
+    fun isDeleted(): Boolean {
+        return status == PostStatus.DELETED
+    }
+
+    fun delete(updatedAt: Instant): Post {
+        if (status == PostStatus.DELETED) {
+            throw PostDomainException(
+                postErrorCode = PostErrorCode.POST_DELETED,
+                params = arrayOf(id.value),
+            )
+        }
+        return copy(
+            status = PostStatus.DELETED,
+            updatedAt = updatedAt,
+        )
     }
 
     override fun toString(): String {
@@ -215,10 +237,11 @@ class Post(
             updatedAt: Instant = createdAt,
             tags: List<TagName> = emptyList(),
         ): Post {
-            val postTags = tags.mapIndexed { index, tagName ->
-                PostTag(tagName, index)
-            }
-            
+            val postTags =
+                tags.mapIndexed { index, tagName ->
+                    PostTag(tagName, index)
+                }
+
             return Post(
                 id = id,
                 title = title,

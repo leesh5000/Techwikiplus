@@ -77,7 +77,7 @@ class UserRegister(
                 encodedPassword = encodedPassword,
                 nickname = nickname,
                 createdAt = now,
-                modifiedAt = now,
+                updatedAt = now,
             )
 
         return repository.save(user)

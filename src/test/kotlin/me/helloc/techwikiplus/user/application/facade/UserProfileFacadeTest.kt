@@ -42,7 +42,7 @@ class UserProfileFacadeTest : DescribeSpec({
                         role = UserRole.USER,
                         status = UserStatus.ACTIVE,
                         createdAt = Instant.now(),
-                        modifiedAt = Instant.now(),
+                        updatedAt = Instant.now(),
                     )
                 userRepository.save(user)
 
@@ -72,7 +72,7 @@ class UserProfileFacadeTest : DescribeSpec({
                         role = UserRole.ADMIN,
                         status = UserStatus.ACTIVE,
                         createdAt = Instant.now(),
-                        modifiedAt = Instant.now(),
+                        updatedAt = Instant.now(),
                     )
 
                 userRepository.save(adminUser)

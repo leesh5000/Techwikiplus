@@ -21,7 +21,7 @@ class UserEntityMapper {
             status = UserStatus.valueOf(entity.status),
             role = UserRole.valueOf(entity.role),
             createdAt = entity.createdAt,
-            modifiedAt = entity.modifiedAt,
+            updatedAt = entity.updatedAt,
         )
     }
 
@@ -34,7 +34,7 @@ class UserEntityMapper {
             status = user.status.name,
             role = user.role.name,
             createdAt = user.createdAt,
-            modifiedAt = user.modifiedAt,
+            updatedAt = user.updatedAt,
         )
     }
 }

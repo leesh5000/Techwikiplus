@@ -12,7 +12,7 @@ class User(
     val status: UserStatus,
     val role: UserRole,
     val createdAt: Instant,
-    val modifiedAt: Instant,
+    val updatedAt: Instant,
 ) {
     init {
         // UserId validation is already done in the UserId value object
@@ -26,7 +26,7 @@ class User(
         status: UserStatus = this.status,
         role: UserRole = this.role,
         createdAt: Instant = this.createdAt,
-        modifiedAt: Instant = this.modifiedAt,
+        updatedAt: Instant = this.updatedAt,
     ): User {
         return User(
             id = id,
@@ -36,7 +36,7 @@ class User(
             status = status,
             role = role,
             createdAt = createdAt,
-            modifiedAt = modifiedAt,
+            updatedAt = updatedAt,
         )
     }
 
@@ -60,26 +60,26 @@ class User(
 
     override fun toString(): String {
         return "User(id='$id', email=${email.value}, nickname=${nickname.value}, " +
-            "status=$status, role=$role, createdAt=$createdAt, modifiedAt=$modifiedAt)"
+            "status=$status, role=$role, createdAt=$createdAt, updatedAt=$updatedAt)"
     }
 
-    fun activate(modifiedAt: Instant): User {
+    fun activate(updatedAt: Instant): User {
         if (status == UserStatus.ACTIVE) {
             return this // 이미 활성화된 상태면 그대로 반환
         }
         return copy(
             status = UserStatus.ACTIVE,
-            modifiedAt = modifiedAt,
+            updatedAt = updatedAt,
         )
     }
 
-    fun setPending(modifiedAt: Instant): User {
+    fun setPending(updatedAt: Instant): User {
         if (status == UserStatus.PENDING) {
             return this // 이미 대기 상태면 그대로 반환
         }
         return copy(
             status = UserStatus.PENDING,
-            modifiedAt = modifiedAt,
+            updatedAt = updatedAt,
         )
     }
 
@@ -104,7 +104,7 @@ class User(
             status: UserStatus = UserStatus.PENDING,
             role: UserRole = UserRole.USER,
             createdAt: Instant,
-            modifiedAt: Instant = createdAt,
+            updatedAt: Instant = createdAt,
         ): User {
             return User(
                 id = id,
@@ -114,7 +114,7 @@ class User(
                 status = status,
                 role = role,
                 createdAt = createdAt,
-                modifiedAt = modifiedAt,
+                updatedAt = updatedAt,
             )
         }
     }

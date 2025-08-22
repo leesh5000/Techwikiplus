@@ -3,8 +3,9 @@ package me.helloc.techwikiplus.common.infrastructure.lock
 import me.helloc.techwikiplus.user.domain.service.port.LockManager
 import me.helloc.techwikiplus.user.domain.service.port.LockManagerException
 import org.slf4j.LoggerFactory
-import org.springframework.data.redis.connection.ReturnType
 import org.springframework.data.redis.core.StringRedisTemplate
+import org.springframework.data.redis.core.script.DefaultRedisScript
+import org.springframework.data.redis.core.script.RedisScript
 import org.springframework.stereotype.Component
 import java.time.Duration
 import java.util.UUID
@@ -17,13 +18,20 @@ class RedisLockManager(
     companion object {
         private val logger = LoggerFactory.getLogger(RedisLockManager::class.java)
         private const val LOCK_PREFIX = "lock:"
-        private const val UNLOCK_SCRIPT = """
+        private const val UNLOCK_SCRIPT_SOURCE = """
             if redis.call("GET", KEYS[1]) == ARGV[1] then
                 return redis.call("DEL", KEYS[1])
             else
                 return 0
             end
         """
+
+        // RedisScript를 사용하여 타입 안전성 보장
+        private val UNLOCK_SCRIPT: RedisScript<Long> =
+            DefaultRedisScript<Long>().apply {
+                setScriptText(UNLOCK_SCRIPT_SOURCE)
+                resultType = Long::class.java
+            }
     }
 
     // 스레드 로컬로 각 스레드별 락 식별자 관리
@@ -87,17 +95,13 @@ class RedisLockManager(
 
         if (lockValue != null) {
             try {
-                // Lua 스크립트를 사용하여 원자적으로 락 해제
+                // RedisScript를 사용하여 타입 안전하게 Lua 스크립트 실행
                 val result =
-                    redisTemplate.execute<Long> { connection ->
-                        connection.eval(
-                            UNLOCK_SCRIPT.toByteArray(),
-                            ReturnType.INTEGER,
-                            1,
-                            lockKey.toByteArray(),
-                            lockValue.toByteArray(),
-                        ) as Long?
-                    }
+                    redisTemplate.execute(
+                        UNLOCK_SCRIPT,
+                        listOf(lockKey),
+                        lockValue,
+                    )
 
                 if (result == 1L) {
                     logger.debug("Successfully released lock: {}", lockKey)
@@ -147,6 +151,6 @@ class RedisLockManager(
      * 고유한 락 값 생성 (UUID + 스레드ID 조합)
      */
     private fun generateLockValue(): String {
-        return "${UUID.randomUUID()}-${Thread.currentThread().id}"
+        return "${UUID.randomUUID()}-${Thread.currentThread().threadId()}"
     }
 }

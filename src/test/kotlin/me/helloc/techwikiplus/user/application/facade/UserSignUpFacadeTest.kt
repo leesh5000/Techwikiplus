@@ -213,7 +213,7 @@ class UserSignUpFacadeTest : FunSpec({
                 status = UserStatus.ACTIVE,
                 role = UserRole.USER,
                 createdAt = Instant.parse("2024-12-01T00:00:00Z"),
-                modifiedAt = Instant.parse("2024-12-01T00:00:00Z"),
+                updatedAt = Instant.parse("2024-12-01T00:00:00Z"),
             )
         fakeUserRepository.save(existingUser)
 
@@ -250,7 +250,7 @@ class UserSignUpFacadeTest : FunSpec({
                 status = UserStatus.ACTIVE,
                 role = UserRole.USER,
                 createdAt = Instant.parse("2024-12-01T00:00:00Z"),
-                modifiedAt = Instant.parse("2024-12-01T00:00:00Z"),
+                updatedAt = Instant.parse("2024-12-01T00:00:00Z"),
             )
         fakeUserRepository.save(existingUser)
 
@@ -367,7 +367,7 @@ class UserSignUpFacadeTest : FunSpec({
         val savedUser = fakeUserRepository.findBy(email)
         savedUser shouldNotBe null
         savedUser!!.createdAt shouldBe fixedTime
-        savedUser.modifiedAt shouldBe fixedTime
+        savedUser.updatedAt shouldBe fixedTime
     }
 
     test("동시에 여러 회원가입이 발생해도 각각 고유한 ID를 가져야 한다") {

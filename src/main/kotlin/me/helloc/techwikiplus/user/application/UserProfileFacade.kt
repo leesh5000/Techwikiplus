@@ -20,7 +20,7 @@ class UserProfileFacade(
             role = user.role,
             status = user.status,
             createdAt = user.createdAt,
-            modifiedAt = user.modifiedAt,
+            updatedAt = user.updatedAt,
         )
     }
 }

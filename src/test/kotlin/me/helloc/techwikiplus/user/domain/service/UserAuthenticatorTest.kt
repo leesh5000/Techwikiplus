@@ -48,7 +48,7 @@ class UserAuthenticatorTest : FunSpec({
                         status = UserStatus.ACTIVE,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
 
                 // when & then
@@ -69,7 +69,7 @@ class UserAuthenticatorTest : FunSpec({
                         status = UserStatus.PENDING,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
 
                 // when & then
@@ -92,7 +92,7 @@ class UserAuthenticatorTest : FunSpec({
                         status = UserStatus.BANNED,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
 
                 // when & then
@@ -115,7 +115,7 @@ class UserAuthenticatorTest : FunSpec({
                         status = UserStatus.DELETED,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
 
                 // when & then
@@ -138,7 +138,7 @@ class UserAuthenticatorTest : FunSpec({
                         status = UserStatus.DORMANT,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
 
                 // when & then
@@ -163,7 +163,7 @@ class UserAuthenticatorTest : FunSpec({
                         status = UserStatus.ACTIVE,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
 
                 // when & then
@@ -185,7 +185,7 @@ class UserAuthenticatorTest : FunSpec({
                         status = UserStatus.ACTIVE,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
 
                 // when & then
@@ -209,7 +209,7 @@ class UserAuthenticatorTest : FunSpec({
                         status = UserStatus.ACTIVE,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
 
                 // when & then
@@ -244,7 +244,7 @@ class UserAuthenticatorTest : FunSpec({
                         status = UserStatus.ACTIVE,
                         role = UserRole.ADMIN,
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
 
                 // when & then
@@ -265,7 +265,7 @@ class UserAuthenticatorTest : FunSpec({
                         status = UserStatus.ACTIVE,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
 
                 // when & then
@@ -291,7 +291,7 @@ class UserAuthenticatorTest : FunSpec({
                         status = UserStatus.ACTIVE,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
                 tokenManager.addRefreshToken(refreshToken, userId)
 
@@ -315,7 +315,7 @@ class UserAuthenticatorTest : FunSpec({
                         status = UserStatus.PENDING,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
                 tokenManager.addRefreshToken(refreshToken, userId)
 
@@ -340,7 +340,7 @@ class UserAuthenticatorTest : FunSpec({
                         status = UserStatus.BANNED,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
                 tokenManager.addRefreshToken(refreshToken, userId)
 
@@ -365,7 +365,7 @@ class UserAuthenticatorTest : FunSpec({
                         status = UserStatus.DELETED,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
                 tokenManager.addRefreshToken(refreshToken, userId)
 
@@ -392,7 +392,7 @@ class UserAuthenticatorTest : FunSpec({
                         status = UserStatus.ACTIVE,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
                 tokenManager.addRefreshToken(refreshToken, userId)
 
@@ -416,7 +416,7 @@ class UserAuthenticatorTest : FunSpec({
                         status = UserStatus.ACTIVE,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
 
                 // when & then
@@ -442,7 +442,7 @@ class UserAuthenticatorTest : FunSpec({
                         status = UserStatus.ACTIVE,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
 
                 // user2의 토큰을 등록
@@ -469,7 +469,7 @@ class UserAuthenticatorTest : FunSpec({
                         status = UserStatus.ACTIVE,
                         role = UserRole.USER,
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
 
                 // when & then
@@ -495,7 +495,7 @@ class UserAuthenticatorTest : FunSpec({
                         status = UserStatus.ACTIVE,
                         role = UserRole.ADMIN,
                         createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                        modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                        updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                     )
                 tokenManager.addRefreshToken(refreshToken, adminId)
 
@@ -520,7 +520,7 @@ class UserAuthenticatorTest : FunSpec({
                     status = UserStatus.ACTIVE,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                 )
 
             val user2 =
@@ -532,7 +532,7 @@ class UserAuthenticatorTest : FunSpec({
                     status = UserStatus.ACTIVE,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                 )
 
             // when & then
@@ -565,7 +565,7 @@ class UserAuthenticatorTest : FunSpec({
                     status = UserStatus.ACTIVE,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                 )
             tokenManager.addRefreshToken(refreshToken, userId)
 

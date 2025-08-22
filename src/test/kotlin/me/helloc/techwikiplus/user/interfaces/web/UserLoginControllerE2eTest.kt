@@ -409,7 +409,7 @@ class UserLoginControllerE2eTest : BaseE2eTest() {
                 status = status,
                 role = UserRole.USER,
                 createdAt = Instant.now(),
-                modifiedAt = Instant.now(),
+                updatedAt = Instant.now(),
             )
 
         return userRepository.save(user)

@@ -42,7 +42,7 @@ class UserModifierTest : FunSpec({
                     status = UserStatus.PENDING,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                 )
             repository.save(pendingUser)
 
@@ -52,14 +52,14 @@ class UserModifierTest : FunSpec({
             // then
             result shouldNotBe null
             result.status shouldBe UserStatus.ACTIVE
-            result.modifiedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
+            result.updatedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
             result.createdAt shouldBe Instant.parse("2025-01-01T00:00:00Z")
 
             // 저장소에 업데이트되었는지 확인
             val savedUser = repository.findBy(UserId(1000001L))
             savedUser shouldNotBe null
             savedUser?.status shouldBe UserStatus.ACTIVE
-            savedUser?.modifiedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
+            savedUser?.updatedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
         }
 
         test("이미 ACTIVE 상태인 사용자는 변경하지 않고 그대로 반환한다") {
@@ -73,7 +73,7 @@ class UserModifierTest : FunSpec({
                     status = UserStatus.ACTIVE,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                 )
             repository.save(activeUser)
 
@@ -82,7 +82,7 @@ class UserModifierTest : FunSpec({
 
             // then
             result shouldBe activeUser
-            result.modifiedAt shouldBe Instant.parse("2025-01-01T00:00:00Z") // 시간이 변경되지 않음
+            result.updatedAt shouldBe Instant.parse("2025-01-01T00:00:00Z") // 시간이 변경되지 않음
 
             // 저장소에서도 동일한지 확인
             val savedUser = repository.findBy(UserId(1000001L))
@@ -100,7 +100,7 @@ class UserModifierTest : FunSpec({
                     status = UserStatus.DORMANT,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                 )
             repository.save(dormantUser)
 
@@ -109,7 +109,7 @@ class UserModifierTest : FunSpec({
 
             // then
             result.status shouldBe UserStatus.ACTIVE
-            result.modifiedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
+            result.updatedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
 
             // 저장소에 업데이트되었는지 확인
             val savedUser = repository.findBy(UserId(1000001L))
@@ -127,7 +127,7 @@ class UserModifierTest : FunSpec({
                     status = UserStatus.BANNED,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                 )
             repository.save(bannedUser)
 
@@ -136,7 +136,7 @@ class UserModifierTest : FunSpec({
 
             // then
             result.status shouldBe UserStatus.ACTIVE
-            result.modifiedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
+            result.updatedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
 
             // 저장소에 업데이트되었는지 확인
             val savedUser = repository.findBy(UserId(1000001L))
@@ -154,7 +154,7 @@ class UserModifierTest : FunSpec({
                     status = UserStatus.PENDING,
                     role = UserRole.ADMIN,
                     createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                 )
             repository.save(originalUser)
 
@@ -168,9 +168,9 @@ class UserModifierTest : FunSpec({
             result.nickname shouldBe originalUser.nickname
             result.role shouldBe originalUser.role
             result.createdAt shouldBe originalUser.createdAt
-            // status와 modifiedAt만 변경됨
+            // status와 updatedAt만 변경됨
             result.status shouldBe UserStatus.ACTIVE
-            result.modifiedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
+            result.updatedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
         }
     }
 
@@ -186,7 +186,7 @@ class UserModifierTest : FunSpec({
                     status = UserStatus.ACTIVE,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                 )
             repository.save(activeUser)
 
@@ -196,14 +196,14 @@ class UserModifierTest : FunSpec({
             // then
             result shouldNotBe null
             result.status shouldBe UserStatus.PENDING
-            result.modifiedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
+            result.updatedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
             result.createdAt shouldBe Instant.parse("2025-01-01T00:00:00Z")
 
             // 저장소에 업데이트되었는지 확인
             val savedUser = repository.findBy(UserId(1000001L))
             savedUser shouldNotBe null
             savedUser?.status shouldBe UserStatus.PENDING
-            savedUser?.modifiedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
+            savedUser?.updatedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
         }
 
         test("이미 PENDING 상태인 사용자는 변경하지 않고 그대로 반환한다") {
@@ -217,7 +217,7 @@ class UserModifierTest : FunSpec({
                     status = UserStatus.PENDING,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                 )
             repository.save(pendingUser)
 
@@ -226,7 +226,7 @@ class UserModifierTest : FunSpec({
 
             // then
             result shouldBe pendingUser
-            result.modifiedAt shouldBe Instant.parse("2025-01-01T00:00:00Z") // 시간이 변경되지 않음
+            result.updatedAt shouldBe Instant.parse("2025-01-01T00:00:00Z") // 시간이 변경되지 않음
 
             // 저장소에서도 동일한지 확인
             val savedUser = repository.findBy(UserId(1000001L))
@@ -244,7 +244,7 @@ class UserModifierTest : FunSpec({
                     status = UserStatus.DORMANT,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                 )
             repository.save(dormantUser)
 
@@ -253,7 +253,7 @@ class UserModifierTest : FunSpec({
 
             // then
             result.status shouldBe UserStatus.PENDING
-            result.modifiedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
+            result.updatedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
 
             // 저장소에 업데이트되었는지 확인
             val savedUser = repository.findBy(UserId(1000001L))
@@ -271,7 +271,7 @@ class UserModifierTest : FunSpec({
                     status = UserStatus.ACTIVE,
                     role = UserRole.ADMIN,
                     createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                 )
             repository.save(originalUser)
 
@@ -285,9 +285,9 @@ class UserModifierTest : FunSpec({
             result.nickname shouldBe originalUser.nickname
             result.role shouldBe originalUser.role
             result.createdAt shouldBe originalUser.createdAt
-            // status와 modifiedAt만 변경됨
+            // status와 updatedAt만 변경됨
             result.status shouldBe UserStatus.PENDING
-            result.modifiedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
+            result.updatedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
         }
     }
 
@@ -303,7 +303,7 @@ class UserModifierTest : FunSpec({
                     status = UserStatus.PENDING,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                 )
             repository.save(pendingUser)
 
@@ -314,7 +314,7 @@ class UserModifierTest : FunSpec({
             val result = userModifier.activate(pendingUser)
 
             // then
-            result.modifiedAt shouldBe Instant.parse("2025-01-07T11:00:00Z")
+            result.updatedAt shouldBe Instant.parse("2025-01-07T11:00:00Z")
         }
 
         test("여러 사용자를 순차적으로 처리할 수 있다") {
@@ -328,7 +328,7 @@ class UserModifierTest : FunSpec({
                     status = UserStatus.PENDING,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                 )
             val user2 =
                 User.create(
@@ -339,7 +339,7 @@ class UserModifierTest : FunSpec({
                     status = UserStatus.ACTIVE,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                 )
             repository.save(user1)
             repository.save(user2)
@@ -354,10 +354,10 @@ class UserModifierTest : FunSpec({
 
             // then
             activatedUser1.status shouldBe UserStatus.ACTIVE
-            activatedUser1.modifiedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
+            activatedUser1.updatedAt shouldBe Instant.parse("2025-01-07T10:00:00Z")
 
             pendingUser2.status shouldBe UserStatus.PENDING
-            pendingUser2.modifiedAt shouldBe Instant.parse("2025-01-07T10:01:00Z")
+            pendingUser2.updatedAt shouldBe Instant.parse("2025-01-07T10:01:00Z")
 
             // 저장소에서 확인
             repository.findBy(UserId(1000001L))?.status shouldBe UserStatus.ACTIVE
@@ -377,7 +377,7 @@ class UserModifierTest : FunSpec({
                     status = UserStatus.PENDING,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                 )
             val user2 =
                 User.create(
@@ -388,7 +388,7 @@ class UserModifierTest : FunSpec({
                     status = UserStatus.PENDING,
                     role = UserRole.USER,
                     createdAt = Instant.parse("2025-01-01T00:00:00Z"),
-                    modifiedAt = Instant.parse("2025-01-01T00:00:00Z"),
+                    updatedAt = Instant.parse("2025-01-01T00:00:00Z"),
                 )
             repository.save(user1)
             repository.save(user2)
@@ -402,7 +402,7 @@ class UserModifierTest : FunSpec({
 
             savedUser1?.status shouldBe UserStatus.ACTIVE
             savedUser2?.status shouldBe UserStatus.PENDING // 변경되지 않음
-            savedUser2?.modifiedAt shouldBe Instant.parse("2025-01-01T00:00:00Z") // 시간도 변경되지 않음
+            savedUser2?.updatedAt shouldBe Instant.parse("2025-01-01T00:00:00Z") // 시간도 변경되지 않음
         }
     }
 })

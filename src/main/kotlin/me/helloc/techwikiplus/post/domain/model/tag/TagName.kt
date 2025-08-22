@@ -16,13 +16,13 @@ class TagName(value: String) {
         if (this.value.length < MIN_LENGTH) {
             throw PostDomainException(
                 postErrorCode = PostErrorCode.TAG_TOO_SHORT,
-                params = arrayOf(this.value, MIN_LENGTH),
+                params = arrayOf<Any>(this.value, MIN_LENGTH),
             )
         }
         if (this.value.length > MAX_LENGTH) {
             throw PostDomainException(
                 postErrorCode = PostErrorCode.TAG_TOO_LONG,
-                params = arrayOf(this.value, MAX_LENGTH),
+                params = arrayOf<Any>(this.value, MAX_LENGTH),
             )
         }
         if (!this.value.matches(ALLOWED_PATTERN)) {

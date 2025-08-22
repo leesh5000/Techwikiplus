@@ -48,7 +48,7 @@ class MyProfileFacadeTest : DescribeSpec({
                         role = UserRole.USER,
                         status = UserStatus.ACTIVE,
                         createdAt = Instant.now(),
-                        modifiedAt = Instant.now(),
+                        updatedAt = Instant.now(),
                     )
                 userRepository.save(user)
                 authorizationPort.setCurrentUser(userId)

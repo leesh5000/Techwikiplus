@@ -15,6 +15,6 @@ interface MyProfileUseCase {
         val role: UserRole,
         val status: UserStatus,
         val createdAt: Instant,
-        val modifiedAt: Instant,
+        val updatedAt: Instant,
     )
 }

@@ -12,14 +12,14 @@ class UserModifier(
     private val repository: UserRepository,
 ) {
     fun activate(user: User): User {
-        val modifiedAt: Instant = clockHolder.now()
-        val activatedUser: User = user.activate(modifiedAt)
+        val updatedAt: Instant = clockHolder.now()
+        val activatedUser: User = user.activate(updatedAt)
         return repository.save(activatedUser)
     }
 
     fun setPending(user: User): User {
-        val modifiedAt: Instant = clockHolder.now()
-        val pendingUser: User = user.setPending(modifiedAt)
+        val updatedAt: Instant = clockHolder.now()
+        val pendingUser: User = user.setPending(updatedAt)
         return repository.save(pendingUser)
     }
 }

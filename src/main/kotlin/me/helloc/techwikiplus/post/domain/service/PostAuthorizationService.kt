@@ -12,7 +12,7 @@ class PostAuthorizationService(
 ) {
     fun requireAdminRole() {
         if (!authorizationPort.hasRole(UserRole.ADMIN)) {
-            throw PostDomainException(PostErrorCode.UNAUTHORIZED_ACCESS)
+            throw PostDomainException(PostErrorCode.FORBIDDEN_POST_ROLE)
         }
     }
 }

@@ -29,23 +29,26 @@ class TagIdTest : DescribeSpec({
 
         context("유효하지 않은 ID인 경우") {
             it("0이면 예외가 발생한다") {
-                val exception = shouldThrow<IllegalArgumentException> {
-                    TagId(0L)
-                }
+                val exception =
+                    shouldThrow<IllegalArgumentException> {
+                        TagId(0L)
+                    }
                 exception.message shouldBe "TagId must be positive"
             }
 
             it("음수이면 예외가 발생한다") {
-                val exception = shouldThrow<IllegalArgumentException> {
-                    TagId(-1L)
-                }
+                val exception =
+                    shouldThrow<IllegalArgumentException> {
+                        TagId(-1L)
+                    }
                 exception.message shouldBe "TagId must be positive"
             }
 
             it("Long 최소값이면 예외가 발생한다") {
-                val exception = shouldThrow<IllegalArgumentException> {
-                    TagId(Long.MIN_VALUE)
-                }
+                val exception =
+                    shouldThrow<IllegalArgumentException> {
+                        TagId(Long.MIN_VALUE)
+                    }
                 exception.message shouldBe "TagId must be positive"
             }
         }
@@ -55,7 +58,7 @@ class TagIdTest : DescribeSpec({
         it("같은 값을 가진 TagId는 동일하다") {
             val tagId1 = TagId(123L)
             val tagId2 = TagId(123L)
-            
+
             tagId1 shouldBe tagId2
             tagId1.hashCode() shouldBe tagId2.hashCode()
         }
@@ -63,27 +66,27 @@ class TagIdTest : DescribeSpec({
         it("다른 값을 가진 TagId는 동일하지 않다") {
             val tagId1 = TagId(123L)
             val tagId2 = TagId(456L)
-            
+
             tagId1 shouldNotBe tagId2
             tagId1.hashCode() shouldNotBe tagId2.hashCode()
         }
 
         it("자기 자신과는 항상 동일하다") {
             val tagId = TagId(123L)
-            
+
             tagId shouldBe tagId
         }
 
         it("null과는 동일하지 않다") {
             val tagId = TagId(123L)
-            
+
             (tagId.equals(null)) shouldBe false
         }
 
         it("다른 타입의 객체와는 동일하지 않다") {
             val tagId = TagId(123L)
             val other = "123"
-            
+
             (tagId.equals(other)) shouldBe false
         }
     }

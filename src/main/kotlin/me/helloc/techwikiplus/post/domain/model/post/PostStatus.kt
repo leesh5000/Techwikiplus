@@ -4,4 +4,5 @@ enum class PostStatus {
     DRAFT,
     IN_REVIEW,
     REVIEWED,
+    DELETED,
 }
