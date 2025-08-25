@@ -25,7 +25,8 @@ Techwikiplus is a Spring Boot application built with Kotlin that provides user a
 ### 테스트 코드 규칙
 - **Kotest 프레임워크** 사용
 - **FIRST 원칙** 준수 (Fast, Independent, Repeatable, Self-validating, Timely)
-- **테스트 격리성** 보장
+- **테스트 격리성** 보장하세요
+- 모든 테스트 코드에는 로직(논리문)이 들어가서는 안됩니다.
 - 단위 테스트는 **Fake 객체** 사용 (예: `FakeUserRepository`, `FakeClockHolder`)
 - 통합 테스트는 **TestContainers** 사용 (MySQL, Redis)
 - E2E 테스트는 `BaseE2eTest` 상속하여 Spring REST Docs 자동 생성

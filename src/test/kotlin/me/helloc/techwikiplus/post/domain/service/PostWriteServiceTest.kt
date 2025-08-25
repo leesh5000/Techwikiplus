@@ -12,18 +12,18 @@ import me.helloc.techwikiplus.post.domain.model.post.PostStatus
 import me.helloc.techwikiplus.post.domain.model.post.PostTitle
 import java.time.Instant
 
-class PostRegisterTest : DescribeSpec({
+class PostWriteServiceTest : DescribeSpec({
 
     /**
      * 테스트용 PostRegister 생성 헬퍼 메서드
      * FIRST 원칙의 Independent를 위해 매번 새로운 인스턴스 생성
      */
-    fun createPostRegister(
+    fun createPostWriteService(
         repository: FakePostRepository = FakePostRepository(),
         clockTime: Instant = Instant.parse("2025-01-07T10:00:00Z"),
         postIdGenerator: FakePostIdGenerator = FakePostIdGenerator(),
-    ): PostRegister {
-        return PostRegister(
+    ): PostWriteService {
+        return PostWriteService(
             clockHolder = FakeClockHolder(clockTime),
             postIdGenerator = postIdGenerator,
             repository = repository,
@@ -36,7 +36,7 @@ class PostRegisterTest : DescribeSpec({
             it("유효한 정보로 게시글을 성공적으로 등록한다") {
                 // Given: 유효한 게시글 정보와 PostRegister 준비
                 val repository = FakePostRepository()
-                val postRegister = createPostRegister(repository = repository)
+                val postRegister = createPostWriteService(repository = repository)
                 val title = PostTitle("테스트 게시글 제목")
                 val body = PostBody("이것은 테스트 게시글의 본문 내용입니다. 최소 30자 이상이어야 합니다.")
 
@@ -62,7 +62,7 @@ class PostRegisterTest : DescribeSpec({
                 val specificTime = Instant.parse("2025-12-25T15:30:45Z")
                 val repository = FakePostRepository()
                 val postRegister =
-                    createPostRegister(
+                    createPostWriteService(
                         repository = repository,
                         clockTime = specificTime,
                     )
@@ -80,7 +80,7 @@ class PostRegisterTest : DescribeSpec({
             it("생성된 게시글 상태가 DRAFT로 설정된다") {
                 // Given: PostRegister와 게시글 정보 준비
                 val repository = FakePostRepository()
-                val postRegister = createPostRegister(repository = repository)
+                val postRegister = createPostWriteService(repository = repository)
                 val title = PostTitle("초안 상태 테스트")
                 val body = PostBody("새로 생성되는 게시글은 항상 DRAFT 상태로 시작해야 합니다.")
 
@@ -102,7 +102,7 @@ class PostRegisterTest : DescribeSpec({
                 val clockHolder = FakeClockHolder(Instant.parse("2025-01-07T10:00:00Z"))
                 val postIdGenerator = FakePostIdGenerator()
                 val postRegister =
-                    createPostRegister(
+                    createPostWriteService(
                         repository = repository,
                         clockTime = clockHolder.now(),
                         postIdGenerator = postIdGenerator,
@@ -120,7 +120,7 @@ class PostRegisterTest : DescribeSpec({
                 // 시간 경과 시뮬레이션
                 clockHolder.advanceTimeBySeconds(60)
                 val postRegister2 =
-                    createPostRegister(
+                    createPostWriteService(
                         repository = repository,
                         clockTime = clockHolder.now(),
                         postIdGenerator = postIdGenerator,
@@ -141,7 +141,7 @@ class PostRegisterTest : DescribeSpec({
                 val repository = FakePostRepository()
                 val postIdGenerator = FakePostIdGenerator(startId = 5000000L)
                 val postRegister =
-                    createPostRegister(
+                    createPostWriteService(
                         repository = repository,
                         postIdGenerator = postIdGenerator,
                     )
@@ -169,7 +169,7 @@ class PostRegisterTest : DescribeSpec({
             it("동일한 제목으로 여러 게시글을 생성할 수 있다") {
                 // Given: 동일한 제목을 가진 여러 게시글 정보 준비
                 val repository = FakePostRepository()
-                val postRegister = createPostRegister(repository = repository)
+                val postRegister = createPostWriteService(repository = repository)
                 val sameTitle = PostTitle("중복 가능한 제목")
                 val body1 = PostBody("첫 번째 게시글의 내용입니다. 제목은 같지만 내용은 다릅니다.")
                 val body2 = PostBody("두 번째 게시글의 내용입니다. 제목은 같지만 내용이 완전히 다릅니다.")
@@ -194,7 +194,7 @@ class PostRegisterTest : DescribeSpec({
             it("게시글이 저장소에 올바르게 저장된다") {
                 // Given: PostRegister와 게시글 정보 준비
                 val repository = FakePostRepository()
-                val postRegister = createPostRegister(repository = repository)
+                val postRegister = createPostWriteService(repository = repository)
                 val title = PostTitle("저장소 테스트 게시글")
                 val body = PostBody("이 게시글은 저장소에 제대로 저장되는지 확인하기 위한 테스트입니다.")
 
@@ -211,7 +211,7 @@ class PostRegisterTest : DescribeSpec({
             it("여러 게시글이 저장소에 누적된다") {
                 // Given: PostRegister와 여러 게시글 정보 준비
                 val repository = FakePostRepository()
-                val postRegister = createPostRegister(repository = repository)
+                val postRegister = createPostWriteService(repository = repository)
 
                 // When: 5개의 게시글을 등록
                 val posts =

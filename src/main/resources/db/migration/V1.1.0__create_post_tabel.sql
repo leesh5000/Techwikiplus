@@ -7,6 +7,3 @@ CREATE TABLE posts (
                        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일',
                        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일'
 );
-
-CREATE INDEX idx_status ON posts (status);
-CREATE INDEX idx_created_at ON posts (created_at DESC);

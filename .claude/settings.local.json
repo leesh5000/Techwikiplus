@@ -14,15 +14,12 @@
       "Bash(echo \"$PS1\")",
       "Bash(git add:*)",
       "Bash(timeout:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "WebSearch",
+      "WebFetch(domain:github.com)"
     ],
     "deny": [],
     "ask": []
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "echo \"📁 $(basename \"$PWD\") | 🌿 $(git branch --show-current 2>/dev/null || echo 'no-git') | ⚡ techwikiplus\"",
-    "padding": 1
   },
   "outputStyle": "Explanatory"
 }

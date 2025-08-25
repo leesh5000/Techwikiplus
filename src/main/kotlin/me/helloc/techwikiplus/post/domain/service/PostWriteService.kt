@@ -10,7 +10,7 @@ import me.helloc.techwikiplus.post.domain.service.port.PostRepository
 import org.springframework.stereotype.Service
 
 @Service
-class PostRegister(
+class PostWriteService(
     private val clockHolder: ClockHolder,
     private val postIdGenerator: PostIdGenerator,
     private val repository: PostRepository,

@@ -9,6 +9,6 @@ interface CreatePostUseCase {
     fun handle(
         title: PostTitle,
         body: PostBody,
-        tags: List<TagName> = emptyList(),
+        tagNames: List<TagName> = emptyList(),
     ): PostId
 }

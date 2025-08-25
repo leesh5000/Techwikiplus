@@ -40,3 +40,4 @@ out/
 .kotlin
 
 .env.prod
+src/main/resources/static/api-docs

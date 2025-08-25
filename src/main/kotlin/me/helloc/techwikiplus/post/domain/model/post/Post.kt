@@ -13,6 +13,7 @@ class Post(
     val status: PostStatus,
     val createdAt: Instant,
     val updatedAt: Instant,
+    val tags: List<PostTag> = emptyList(),
 ) {
     init {
         // PostId validation is already done in the PostId value object
@@ -233,9 +234,9 @@ class Post(
             title: PostTitle,
             body: PostBody,
             status: PostStatus = PostStatus.DRAFT,
+            tags: List<TagName> = emptyList(),
             createdAt: Instant,
             updatedAt: Instant = createdAt,
-            tags: List<TagName> = emptyList(),
         ): Post {
             val postTags =
                 tags.mapIndexed { index, tagName ->

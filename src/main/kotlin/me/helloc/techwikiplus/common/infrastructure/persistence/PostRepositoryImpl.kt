@@ -8,7 +8,6 @@ import me.helloc.techwikiplus.common.infrastructure.persistence.jpa.entity.PostT
 import me.helloc.techwikiplus.common.infrastructure.persistence.jpa.mapper.PostEntityMapper
 import me.helloc.techwikiplus.post.domain.model.post.Post
 import me.helloc.techwikiplus.post.domain.model.post.PostId
-import me.helloc.techwikiplus.post.domain.model.post.PostStatus
 import me.helloc.techwikiplus.post.domain.model.tag.PostTag
 import me.helloc.techwikiplus.post.domain.model.tag.TagName
 import me.helloc.techwikiplus.post.domain.service.port.PostRepository
@@ -25,67 +24,14 @@ class PostRepositoryImpl(
     private val mapper: PostEntityMapper,
 ) : PostRepository {
     override fun findBy(id: PostId): Post? {
-        // 기본 동작: DELETED 상태 제외
-        return findBy(id, setOf(PostStatus.DELETED))
-    }
-
-    override fun findBy(
-        id: PostId,
-        excludedStatuses: Set<PostStatus>,
-    ): Post? {
-        val entity =
-            when {
-                excludedStatuses.isEmpty() -> {
-                    // 모든 상태 포함
-                    jpaRepository.findById(id.value).orElse(null)
-                }
-                excludedStatuses.size == 1 && excludedStatuses.first() == PostStatus.DELETED -> {
-                    // DELETED만 제외 (최적화된 쿼리 사용)
-                    jpaRepository.findByIdAndNotDeleted(id.value).orElse(null)
-                }
-                else -> {
-                    // 여러 상태 제외 또는 DELETED가 아닌 다른 상태 제외 - 조회 후 필터링
-                    jpaRepository.findById(id.value)
-                        .orElse(null)
-                        ?.takeIf { entity ->
-                            excludedStatuses.none { it.name == entity.status }
-                        }
-                }
-            }
-
-        return entity?.let {
-            val tags = loadTagsForPost(it.id)
-            mapper.toDomain(it, tags)
-        }
+        return jpaRepository.findById(id.value)
+            .map { mapper.toDomain(it, loadTagsForPost(it.id)) }
+            .orElse(null)
     }
 
     override fun existsBy(id: PostId): Boolean {
         // 기본 동작: DELETED 상태 제외
-        return existsBy(id, setOf(PostStatus.DELETED))
-    }
-
-    override fun existsBy(
-        id: PostId,
-        excludedStatuses: Set<PostStatus>,
-    ): Boolean {
-        return when {
-            excludedStatuses.isEmpty() -> {
-                // 모든 상태 포함
-                jpaRepository.existsById(id.value)
-            }
-            excludedStatuses.size == 1 && excludedStatuses.first() == PostStatus.DELETED -> {
-                // DELETED만 제외 (최적화된 쿼리 사용)
-                jpaRepository.existsByIdAndNotDeleted(id.value)
-            }
-            else -> {
-                // 여러 상태 제외 또는 DELETED가 아닌 다른 상태 제외 - 조회 후 필터링
-                jpaRepository.findById(id.value)
-                    .orElse(null)
-                    ?.let { entity ->
-                        excludedStatuses.none { it.name == entity.status }
-                    } ?: false
-            }
-        }
+        return jpaRepository.existsById(id.value)
     }
 
     @Transactional
@@ -105,16 +51,6 @@ class PostRepositoryImpl(
         // 저장된 태그 다시 조회하여 도메인 모델 반환
         val savedTags = loadTagsForPost(savedEntity.id)
         return mapper.toDomain(savedEntity, savedTags)
-    }
-
-    override fun findByTag(
-        tagName: TagName,
-        offset: Int,
-        limit: Int,
-    ): List<Post> {
-        // TODO: 태그별 게시글 조회 구현
-        // 현재는 빈 리스트 반환 (인프라 구현은 별도로 진행)
-        return emptyList()
     }
 
     private fun loadTagsForPost(postId: Long): List<PostTag> {

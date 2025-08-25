@@ -25,7 +25,7 @@ class CreatePostController(
             useCase.handle(
                 title = PostTitle(request.title),
                 body = PostBody(request.body),
-                tags = tagNames,
+                tagNames = tagNames,
             )
 
         val headers = HttpHeaders()
