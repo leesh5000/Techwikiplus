@@ -20,6 +20,8 @@ open class PostEntity(
     open val body: String,
     @Column(name = "status", nullable = false, length = 20)
     open val status: String = "DRAFT",
+    @Column(name = "version", nullable = false)
+    open val version: Long = 0L,
     @Column(name = "created_at", nullable = false)
     open val createdAt: Instant,
     @Column(name = "updated_at", nullable = false)
@@ -31,6 +33,7 @@ open class PostEntity(
         title = "",
         body = "",
         status = "DRAFT",
+        version = 0L,
         createdAt = Instant.now(),
         updatedAt = Instant.now(),
     )

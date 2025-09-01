@@ -29,7 +29,7 @@ class TagCountService(
      * 게시글이 생성되어 태그와 연결될 때 호출됩니다.
      * JPA Repository의 @Modifying 쿼리를 사용하여 벌크 업데이트를 수행합니다.
      */
-    fun incrementPostCount(tags: List<Tag>) {
+    fun incrementPostCount(tags: Set<Tag>) {
         if (tags.isEmpty()) return
 
         tags.forEach { tag ->
@@ -43,7 +43,7 @@ class TagCountService(
      * 게시글이 삭제되거나 태그가 제거될 때 호출됩니다.
      * 카운트가 0 이하로 내려가지 않도록 데이터베이스 레벨에서 보장합니다.
      */
-    fun decrementPostCount(tags: List<Tag>) {
+    fun decrementPostCount(tags: Set<Tag>) {
         if (tags.isEmpty()) return
 
         tags.forEach { tag ->

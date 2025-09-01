@@ -78,7 +78,7 @@ class TagCountServiceTest : DescribeSpec({
             it("아무 동작도 하지 않는다") {
                 // given
                 val (tagCountService, repository) = createTagCountService()
-                val emptyTags = emptyList<Tag>()
+                val emptyTags = emptySet<Tag>()
 
                 // when
                 tagCountService.incrementPostCount(emptyTags)
@@ -96,7 +96,7 @@ class TagCountServiceTest : DescribeSpec({
                 val tag = createTestTag(1L, "spring", 5)
 
                 // when
-                tagCountService.incrementPostCount(listOf(tag))
+                tagCountService.incrementPostCount(setOf(tag))
 
                 // then
                 repository.getPostCount(1L) shouldBe 6
@@ -112,7 +112,7 @@ class TagCountServiceTest : DescribeSpec({
                 setupTagInRepository(repository, 3L, "java", 3)
 
                 val tags =
-                    listOf(
+                    setOf(
                         createTestTag(1L, "spring", 10),
                         createTestTag(2L, "kotlin", 5),
                         createTestTag(3L, "java", 3),
@@ -137,7 +137,7 @@ class TagCountServiceTest : DescribeSpec({
 
                 // when
                 repeat(5) {
-                    tagCountService.incrementPostCount(listOf(tag))
+                    tagCountService.incrementPostCount(setOf(tag))
                 }
 
                 // then
@@ -162,7 +162,7 @@ class TagCountServiceTest : DescribeSpec({
                     executorService?.submit {
                         try {
                             repeat(incrementsPerThread) {
-                                tagCountService.incrementPostCount(listOf(tag))
+                                tagCountService.incrementPostCount(setOf(tag))
                             }
                         } finally {
                             latch.countDown()
@@ -183,7 +183,7 @@ class TagCountServiceTest : DescribeSpec({
             it("아무 동작도 하지 않는다") {
                 // given
                 val (tagCountService, repository) = createTagCountService()
-                val emptyTags = emptyList<Tag>()
+                val emptyTags = emptySet<Tag>()
 
                 // when
                 tagCountService.decrementPostCount(emptyTags)
@@ -201,7 +201,7 @@ class TagCountServiceTest : DescribeSpec({
                 val tag = createTestTag(1L, "spring", 5)
 
                 // when
-                tagCountService.decrementPostCount(listOf(tag))
+                tagCountService.decrementPostCount(setOf(tag))
 
                 // then
                 repository.getPostCount(1L) shouldBe 4
@@ -217,7 +217,7 @@ class TagCountServiceTest : DescribeSpec({
                 setupTagInRepository(repository, 3L, "java", 3)
 
                 val tags =
-                    listOf(
+                    setOf(
                         createTestTag(1L, "spring", 10),
                         createTestTag(2L, "kotlin", 5),
                         createTestTag(3L, "java", 3),
@@ -241,7 +241,7 @@ class TagCountServiceTest : DescribeSpec({
                 val tag = createTestTag(1L, "spring", 0)
 
                 // when
-                tagCountService.decrementPostCount(listOf(tag))
+                tagCountService.decrementPostCount(setOf(tag))
 
                 // then
                 repository.getPostCount(1L) shouldBe 0
@@ -257,7 +257,7 @@ class TagCountServiceTest : DescribeSpec({
 
                 // when
                 repeat(5) {
-                    tagCountService.decrementPostCount(listOf(tag))
+                    tagCountService.decrementPostCount(setOf(tag))
                 }
 
                 // then
@@ -283,7 +283,7 @@ class TagCountServiceTest : DescribeSpec({
                     executorService?.submit {
                         try {
                             repeat(decrementsPerThread) {
-                                tagCountService.decrementPostCount(listOf(tag))
+                                tagCountService.decrementPostCount(setOf(tag))
                             }
                         } finally {
                             latch.countDown()
@@ -319,9 +319,9 @@ class TagCountServiceTest : DescribeSpec({
                         try {
                             repeat(operationsPerThread) {
                                 if (threadIndex < threadCount / 2) {
-                                    tagCountService.incrementPostCount(listOf(tag))
+                                    tagCountService.incrementPostCount(setOf(tag))
                                 } else {
-                                    tagCountService.decrementPostCount(listOf(tag))
+                                    tagCountService.decrementPostCount(setOf(tag))
                                 }
                             }
                         } finally {
@@ -356,10 +356,10 @@ class TagCountServiceTest : DescribeSpec({
 
                 // when
                 repeat(3) {
-                    tagCountService.incrementPostCount(tags)
+                    tagCountService.incrementPostCount(tags.toSet())
                 }
                 repeat(3) {
-                    tagCountService.decrementPostCount(tags)
+                    tagCountService.decrementPostCount(tags.toSet())
                 }
 
                 // then
@@ -388,14 +388,175 @@ class TagCountServiceTest : DescribeSpec({
                     )
 
                 // when
-                tagCountService.incrementPostCount(group1) // spring: 1, kotlin: 1
-                tagCountService.incrementPostCount(group2) // kotlin: 2, java: 1
-                tagCountService.decrementPostCount(group1) // spring: 0, kotlin: 1
+                tagCountService.incrementPostCount(group1.toSet()) // spring: 1, kotlin: 1
+                tagCountService.incrementPostCount(group2.toSet()) // kotlin: 2, java: 1
+                tagCountService.decrementPostCount(group1.toSet()) // spring: 0, kotlin: 1
 
                 // then
                 repository.getPostCount(1L) shouldBe 0 // spring
                 repository.getPostCount(2L) shouldBe 1 // kotlin
                 repository.getPostCount(3L) shouldBe 1 // java
+            }
+        }
+    }
+
+    describe("incrementPostCount와 decrementPostCount 조합 사용") {
+        context("빈 Set이 주어졌을 때") {
+            it("아무 동작도 하지 않는다") {
+                // given
+                val (tagCountService, repository) = createTagCountService()
+                setupTagInRepository(repository, 1L, "spring", 5)
+
+                // when
+                tagCountService.incrementPostCount(emptySet())
+                tagCountService.decrementPostCount(emptySet())
+
+                // then
+                repository.getPostCount(1L) shouldBe 5
+            }
+        }
+
+        context("추가할 태그만 있을 때") {
+            it("추가할 태그들의 카운트만 증가시킨다") {
+                // given
+                val (tagCountService, repository) = createTagCountService()
+                setupTagInRepository(repository, 1L, "spring", 5)
+                setupTagInRepository(repository, 2L, "kotlin", 3)
+                setupTagInRepository(repository, 3L, "java", 7)
+
+                val tagsToAdd =
+                    setOf(
+                        createTestTag(1L, "spring", 5),
+                        createTestTag(2L, "kotlin", 3),
+                    )
+
+                // when
+                tagCountService.incrementPostCount(tagsToAdd)
+
+                // then
+                repository.getPostCount(1L) shouldBe 6
+                repository.getPostCount(2L) shouldBe 4
+                repository.getPostCount(3L) shouldBe 7 // 변경 없음
+            }
+        }
+
+        context("제거할 태그만 있을 때") {
+            it("제거할 태그들의 카운트만 감소시킨다") {
+                // given
+                val (tagCountService, repository) = createTagCountService()
+                setupTagInRepository(repository, 1L, "spring", 5)
+                setupTagInRepository(repository, 2L, "kotlin", 3)
+                setupTagInRepository(repository, 3L, "java", 7)
+
+                val tagsToRemove =
+                    setOf(
+                        createTestTag(2L, "kotlin", 3),
+                        createTestTag(3L, "java", 7),
+                    )
+
+                // when
+                tagCountService.decrementPostCount(tagsToRemove)
+
+                // then
+                repository.getPostCount(1L) shouldBe 5 // 변경 없음
+                repository.getPostCount(2L) shouldBe 2
+                repository.getPostCount(3L) shouldBe 6
+            }
+        }
+
+        context("추가할 태그와 제거할 태그가 모두 있을 때") {
+            it("각각의 태그 카운트를 적절히 조정한다") {
+                // given
+                val (tagCountService, repository) = createTagCountService()
+                setupTagInRepository(repository, 1L, "spring", 5)
+                setupTagInRepository(repository, 2L, "kotlin", 3)
+                setupTagInRepository(repository, 3L, "java", 7)
+                setupTagInRepository(repository, 4L, "docker", 2)
+
+                val tagsToAdd =
+                    setOf(
+                        createTestTag(1L, "spring", 5),
+                        createTestTag(4L, "docker", 2),
+                    )
+                val tagsToRemove =
+                    setOf(
+                        createTestTag(2L, "kotlin", 3),
+                        createTestTag(3L, "java", 7),
+                    )
+
+                // when
+                tagCountService.incrementPostCount(tagsToAdd)
+                tagCountService.decrementPostCount(tagsToRemove)
+
+                // then
+                repository.getPostCount(1L) shouldBe 6 // 증가
+                repository.getPostCount(2L) shouldBe 2 // 감소
+                repository.getPostCount(3L) shouldBe 6 // 감소
+                repository.getPostCount(4L) shouldBe 3 // 증가
+            }
+        }
+
+        context("동일한 태그가 추가와 제거 리스트에 모두 있을 때") {
+            it("증가와 감소가 모두 적용되어 결과적으로 변화가 없다") {
+                // given
+                val (tagCountService, repository) = createTagCountService()
+                setupTagInRepository(repository, 1L, "spring", 5)
+
+                val tag = createTestTag(1L, "spring", 5)
+
+                // when
+                tagCountService.incrementPostCount(setOf(tag))
+                tagCountService.decrementPostCount(setOf(tag))
+
+                // then
+                repository.getPostCount(1L) shouldBe 5 // 5 + 1 - 1 = 5
+            }
+        }
+
+        context("여러 번 호출될 때") {
+            it("카운트가 누적되어 조정된다") {
+                // given
+                val (tagCountService, repository) = createTagCountService()
+                setupTagInRepository(repository, 1L, "spring", 10)
+                setupTagInRepository(repository, 2L, "kotlin", 10)
+
+                val springTag = createTestTag(1L, "spring", 10)
+                val kotlinTag = createTestTag(2L, "kotlin", 10)
+
+                // when
+                // 첫 번째 조정: spring 증가, kotlin 감소
+                tagCountService.incrementPostCount(setOf(springTag))
+                tagCountService.decrementPostCount(setOf(kotlinTag))
+
+                // 두 번째 조정: kotlin 증가, spring 감소
+                tagCountService.incrementPostCount(setOf(kotlinTag))
+                tagCountService.decrementPostCount(setOf(springTag))
+
+                // 세 번째 조정: 둘 다 증가
+                tagCountService.incrementPostCount(setOf(springTag, kotlinTag))
+
+                // then
+                repository.getPostCount(1L) shouldBe 11 // 10 + 1 - 1 + 1 = 11
+                repository.getPostCount(2L) shouldBe 11 // 10 - 1 + 1 + 1 = 11
+            }
+        }
+
+        context("카운트가 0인 태그를 감소시키려 할 때") {
+            it("카운트가 0에서 유지된다") {
+                // given
+                val (tagCountService, repository) = createTagCountService()
+                setupTagInRepository(repository, 1L, "spring", 0)
+                setupTagInRepository(repository, 2L, "kotlin", 1)
+
+                val springTag = createTestTag(1L, "spring", 0)
+                val kotlinTag = createTestTag(2L, "kotlin", 1)
+
+                // when
+                tagCountService.decrementPostCount(setOf(springTag, kotlinTag))
+
+                // then
+                repository.getPostCount(1L) shouldBe 0
+                repository.getPostCount(2L) shouldBe 0
             }
         }
     }

@@ -4,6 +4,7 @@ import me.helloc.techwikiplus.common.infrastructure.persistence.jpa.entity.PostE
 import me.helloc.techwikiplus.post.domain.model.post.Post
 import me.helloc.techwikiplus.post.domain.model.post.PostBody
 import me.helloc.techwikiplus.post.domain.model.post.PostId
+import me.helloc.techwikiplus.post.domain.model.post.PostRevisionVersion
 import me.helloc.techwikiplus.post.domain.model.post.PostStatus
 import me.helloc.techwikiplus.post.domain.model.post.PostTitle
 import me.helloc.techwikiplus.post.domain.model.tag.PostTag
@@ -20,9 +21,10 @@ class PostEntityMapper {
             title = PostTitle(entity.title),
             body = PostBody(entity.body),
             status = PostStatus.valueOf(entity.status),
+            version = PostRevisionVersion(entity.version),
             createdAt = entity.createdAt,
             updatedAt = entity.updatedAt,
-            tags = tags,
+            tags = tags.toSet(),
         )
     }
 
@@ -32,6 +34,7 @@ class PostEntityMapper {
             title = post.title.value,
             body = post.body.value,
             status = post.status.name,
+            version = post.version.value,
             createdAt = post.createdAt,
             updatedAt = post.updatedAt,
         )

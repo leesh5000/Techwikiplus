@@ -73,7 +73,7 @@ class PostRepositoryImpl(
 
     private fun savePostTags(
         postId: Long,
-        tags: List<PostTag>,
+        tags: Set<PostTag>,
     ) {
         val now = Instant.now()
 

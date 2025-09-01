@@ -10,6 +10,7 @@ import me.helloc.techwikiplus.common.infrastructure.persistence.jpa.entity.TagEn
 import me.helloc.techwikiplus.common.infrastructure.security.jwt.JwtTokenManager
 import me.helloc.techwikiplus.post.domain.model.post.Post
 import me.helloc.techwikiplus.post.domain.model.post.PostBody
+import me.helloc.techwikiplus.post.domain.model.post.PostRevisionVersion
 import me.helloc.techwikiplus.post.domain.model.post.PostStatus
 import me.helloc.techwikiplus.post.domain.model.post.PostTitle
 import me.helloc.techwikiplus.post.domain.model.tag.PostTag
@@ -189,7 +190,7 @@ class ReadPostControllerE2eTest : BaseE2eTest() {
 
         // 태그가 포함된 게시글 생성
         val tags =
-            listOf(
+            setOf(
                 PostTag(TagName("kotlin"), 1),
                 PostTag(TagName("spring"), 2),
                 PostTag(TagName("jpa"), 3),
@@ -638,18 +639,19 @@ class ReadPostControllerE2eTest : BaseE2eTest() {
         title: String = "테스트 게시글",
         body: String = "테스트 게시글 본문입니다. 충분한 길이의 컨텐츠를 포함하고 있습니다.",
         status: PostStatus = PostStatus.REVIEWED,
-        tags: List<PostTag> = emptyList(),
+        tags: Set<PostTag> = emptySet(),
     ): Post {
         val now = Instant.now()
         val postId = postIdGenerator.next()
 
         val post =
-            Post(
+            Post.create(
                 id = postId,
                 title = PostTitle(title),
                 body = PostBody(body),
                 status = status,
-                tags = tags,
+                version = PostRevisionVersion(),
+                postTags = tags,
                 createdAt = now,
                 updatedAt = now,
             )

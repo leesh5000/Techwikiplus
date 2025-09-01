@@ -43,6 +43,9 @@ enum class PostErrorCode {
     TOO_MANY_TAGS,
     DUPLICATE_TAG,
 
+    // Version Validation
+    INVALID_POST_VERSION_FORMAT,
+
     // Generic
     VALIDATION_ERROR,
     DOMAIN_ERROR,

@@ -37,8 +37,8 @@ class TagService(
      * - 순차 처리로 데드락 방지 (동시에 여러 락을 잡지 않음)
      * - DB의 UNIQUE 제약조건과 함께 이중 안전장치 구성
      */
-    fun findOrCreateTags(tagNames: List<TagName>): List<Tag> {
-        if (tagNames.isEmpty()) return emptyList()
+    fun findOrCreateTags(tagNames: List<TagName>): Set<Tag> {
+        if (tagNames.isEmpty()) return emptySet()
 
         // 1. 중복 제거 (입력 순서 유지)
         val uniqueNames = tagNames.distinct()
@@ -55,7 +55,7 @@ class TagService(
                 existingTagMap[tagName] ?: findOrCreateTag(tagName)
             }
 
-        return result
+        return result.toSet()
     }
 
     /**
@@ -104,10 +104,10 @@ class TagService(
      *
      * 존재하지 않는 태그는 결과에 포함되지 않습니다.
      */
-    fun findByNames(tagNames: List<TagName>): List<Tag> {
-        if (tagNames.isEmpty()) return emptyList()
-
-        return tagRepository.findAllBy(tagNames)
+    fun findByNames(tagNames: List<TagName>): Set<Tag> {
+        if (tagNames.isEmpty()) return emptySet()
+        val uniqueTagNames: List<TagName> = tagNames.distinct()
+        return tagRepository.findAllBy(uniqueTagNames).toSet()
     }
 
     /**

@@ -54,6 +54,10 @@ class PostErrorCodeMapper {
             PostErrorCode.PUBLISH_POST_FAILED,
             -> HttpStatus.INTERNAL_SERVER_ERROR
 
+            // Post Version
+            PostErrorCode.INVALID_POST_VERSION_FORMAT,
+            -> HttpStatus.BAD_REQUEST
+
             // Generic
             PostErrorCode.VALIDATION_ERROR -> HttpStatus.BAD_REQUEST
             PostErrorCode.DOMAIN_ERROR,
@@ -194,6 +198,7 @@ class PostErrorCodeMapper {
                     }
                 PostErrorCode.DOMAIN_ERROR -> "도메인 처리 중 오류가 발생했습니다"
                 PostErrorCode.INTERNAL_ERROR -> "시스템 오류가 발생했습니다"
+                PostErrorCode.INVALID_POST_VERSION_FORMAT -> "유효하지 않은 게시글 버전 형식입니다"
             }
 
         return baseMessage

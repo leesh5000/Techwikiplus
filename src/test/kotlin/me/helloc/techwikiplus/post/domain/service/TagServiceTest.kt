@@ -153,7 +153,7 @@ class TagServiceTest : DescribeSpec({
 
                 // Then: 존재하는 태그만 반환
                 result shouldHaveSize 1
-                result[0].name shouldBe TagName("spring")
+                result.toList()[0].name shouldBe TagName("spring")
             }
 
             it("빈 리스트로 조회하면 빈 리스트를 반환한다") {
@@ -204,12 +204,12 @@ class TagServiceTest : DescribeSpec({
 
                 // Then: 모든 태그가 생성됨
                 result shouldHaveSize 3
-                result[0].id shouldBe TagId(100L)
-                result[0].name shouldBe TagName("spring")
-                result[1].id shouldBe TagId(101L)
-                result[1].name shouldBe TagName("kotlin")
-                result[2].id shouldBe TagId(102L)
-                result[2].name shouldBe TagName("java")
+                result.toList()[0].id shouldBe TagId(100L)
+                result.toList()[0].name shouldBe TagName("spring")
+                result.toList()[1].id shouldBe TagId(101L)
+                result.toList()[1].name shouldBe TagName("kotlin")
+                result.toList()[2].id shouldBe TagId(102L)
+                result.toList()[2].name shouldBe TagName("java")
 
                 // 저장소에 저장되었는지 확인
                 repository.count() shouldBe 3
@@ -234,9 +234,9 @@ class TagServiceTest : DescribeSpec({
 
                 // Then: 기존 태그들이 반환됨
                 result shouldHaveSize 3
-                result[0].id shouldBe TagId(1L)
-                result[1].id shouldBe TagId(2L)
-                result[2].id shouldBe TagId(3L)
+                result.toList()[0].id shouldBe TagId(1L)
+                result.toList()[1].id shouldBe TagId(2L)
+                result.toList()[2].id shouldBe TagId(3L)
 
                 // 추가 생성 없음
                 repository.count() shouldBe 3
@@ -274,15 +274,15 @@ class TagServiceTest : DescribeSpec({
 
                 // Then: 입력 순서대로 반환, ID는 처리 순서에 따라 할당
                 result shouldHaveSize 3
-                result[0].name shouldBe TagName("postgresql")
+                result.toList()[0].name shouldBe TagName("postgresql")
                 // 새로 생성
-                result[0].id shouldBe TagId(300L)
-                result[1].name shouldBe TagName("elasticsearch")
+                result.toList()[0].id shouldBe TagId(300L)
+                result.toList()[1].name shouldBe TagName("elasticsearch")
                 // 기존 태그
-                result[1].id shouldBe TagId(200L)
-                result[2].name shouldBe TagName("mongodb")
+                result.toList()[1].id shouldBe TagId(200L)
+                result.toList()[2].name shouldBe TagName("mongodb")
                 // 새로 생성
-                result[2].id shouldBe TagId(301L)
+                result.toList()[2].id shouldBe TagId(301L)
 
                 repository.count() shouldBe 3
             }
@@ -325,12 +325,12 @@ class TagServiceTest : DescribeSpec({
 
                 // Then: 중복 제거되어 3개만 생성
                 result shouldHaveSize 3
-                result[0].name shouldBe TagName("spring")
-                result[0].id shouldBe TagId(400L)
-                result[1].name shouldBe TagName("kotlin")
-                result[1].id shouldBe TagId(401L)
-                result[2].name shouldBe TagName("java")
-                result[2].id shouldBe TagId(402L)
+                result.toList()[0].name shouldBe TagName("spring")
+                result.toList()[0].id shouldBe TagId(400L)
+                result.toList()[1].name shouldBe TagName("kotlin")
+                result.toList()[1].id shouldBe TagId(401L)
+                result.toList()[2].name shouldBe TagName("java")
+                result.toList()[2].id shouldBe TagId(402L)
 
                 repository.count() shouldBe 3
             }
@@ -357,14 +357,14 @@ class TagServiceTest : DescribeSpec({
 
                 // Then: 입력 순서대로 처리 및 반환
                 result shouldHaveSize 4
-                result[0].name shouldBe TagName("zebra")
-                result[0].id shouldBe TagId(500L)
-                result[1].name shouldBe TagName("apple")
-                result[1].id shouldBe TagId(501L)
-                result[2].name shouldBe TagName("mango")
-                result[2].id shouldBe TagId(502L)
-                result[3].name shouldBe TagName("banana")
-                result[3].id shouldBe TagId(503L)
+                result.toList()[0].name shouldBe TagName("zebra")
+                result.toList()[0].id shouldBe TagId(500L)
+                result.toList()[1].name shouldBe TagName("apple")
+                result.toList()[1].id shouldBe TagId(501L)
+                result.toList()[2].name shouldBe TagName("mango")
+                result.toList()[2].id shouldBe TagId(502L)
+                result.toList()[3].name shouldBe TagName("banana")
+                result.toList()[3].id shouldBe TagId(503L)
             }
         }
 
@@ -486,9 +486,9 @@ class TagServiceTest : DescribeSpec({
 
                 // Then: 입력 순서대로 처리됨
                 result shouldHaveSize 3
-                result[0].name shouldBe TagName("zebra")
-                result[1].name shouldBe TagName("apple")
-                result[2].name shouldBe TagName("mango")
+                result.toList()[0].name shouldBe TagName("zebra")
+                result.toList()[1].name shouldBe TagName("apple")
+                result.toList()[2].name shouldBe TagName("mango")
 
                 // 각 태그에 대해 락이 한 번씩만 획득됨
                 lockManager.getLockCount("tag:create:zebra") shouldBe 1
@@ -577,8 +577,8 @@ class TagServiceTest : DescribeSpec({
 
                 // Then: 기존 태그가 반환됨
                 result shouldHaveSize 1
-                result[0].id shouldBe TagId(4000L)
-                result[0].name shouldBe TagName("duplicate")
+                result.toList()[0].id shouldBe TagId(4000L)
+                result.toList()[0].name shouldBe TagName("duplicate")
                 repository.count() shouldBe 1
             }
         }
@@ -687,7 +687,7 @@ class TagServiceTest : DescribeSpec({
                 val result = tagService.findOrCreateTags(listOf(TagName("newtag")))
 
                 // Then: postCount가 0으로 초기화
-                result[0].postCount shouldBe 0
+                result.toList()[0].postCount shouldBe 0
             }
         }
     }

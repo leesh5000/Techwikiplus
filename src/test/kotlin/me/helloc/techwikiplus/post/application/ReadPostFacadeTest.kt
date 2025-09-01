@@ -12,6 +12,7 @@ import me.helloc.techwikiplus.post.domain.exception.PostErrorCode
 import me.helloc.techwikiplus.post.domain.model.post.Post
 import me.helloc.techwikiplus.post.domain.model.post.PostBody
 import me.helloc.techwikiplus.post.domain.model.post.PostId
+import me.helloc.techwikiplus.post.domain.model.post.PostRevisionVersion
 import me.helloc.techwikiplus.post.domain.model.post.PostStatus
 import me.helloc.techwikiplus.post.domain.model.post.PostTitle
 import me.helloc.techwikiplus.post.domain.model.tag.PostTag
@@ -42,15 +43,16 @@ class ReadPostFacadeTest : DescribeSpec({
         title: String = "테스트 게시글",
         body: String = "테스트 게시글 본문입니다. 충분한 길이의 컨텐츠를 포함하고 있습니다.",
         status: PostStatus = PostStatus.REVIEWED,
-        tags: List<PostTag> = emptyList(),
+        tags: Set<PostTag> = emptySet(),
     ): Post {
         val post =
-            Post(
+            Post.create(
                 id = env.postIdGenerator.next(),
                 title = PostTitle(title),
                 body = PostBody(body),
                 status = status,
-                tags = tags,
+                version = PostRevisionVersion(),
+                postTags = tags,
                 createdAt = env.clockHolder.now(),
                 updatedAt = env.clockHolder.now(),
             )
@@ -83,7 +85,7 @@ class ReadPostFacadeTest : DescribeSpec({
                     // given
                     val env = createTestEnvironment()
                     val tags =
-                        listOf(
+                        setOf(
                             PostTag(TagName("kotlin"), 1),
                             PostTag(TagName("spring"), 2),
                         )
@@ -101,8 +103,8 @@ class ReadPostFacadeTest : DescribeSpec({
                     // then
                     result shouldNotBe null
                     result.tags.size shouldBe 2
-                    result.tags[0].tagName.value shouldBe "kotlin"
-                    result.tags[1].tagName.value shouldBe "spring"
+                    val tagNames = result.tags.map { it.tagName.value }.toSet()
+                    tagNames shouldBe setOf("kotlin", "spring")
                 }
             }
 
