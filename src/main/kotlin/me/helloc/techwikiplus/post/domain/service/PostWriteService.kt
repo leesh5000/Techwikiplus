@@ -60,4 +60,10 @@ class PostWriteService(
             )
         return repository.save(updatedPost)
     }
+
+    fun deleteSoft(post: Post): Post {
+        val now = clockHolder.now()
+        val deletedPost = post.delete(now)
+        return repository.save(deletedPost).let { deletedPost }
+    }
 }

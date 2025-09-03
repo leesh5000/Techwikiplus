@@ -140,6 +140,19 @@ class Post(
         )
     }
 
+    fun delete(updatedAt: Instant): Post {
+        if (status == PostStatus.DELETED) {
+            throw PostDomainException(
+                postErrorCode = PostErrorCode.POST_DELETED,
+                params = arrayOf(id),
+            )
+        }
+        return copy(
+            status = PostStatus.DELETED,
+            updatedAt = updatedAt,
+        )
+    }
+
     companion object {
         const val MAX_TAGS = 10
 
