@@ -2,7 +2,8 @@ package me.helloc.techwikiplus.user.interfaces.web
 
 import me.helloc.techwikiplus.user.domain.model.Email
 import me.helloc.techwikiplus.user.domain.model.RegistrationCode
-import me.helloc.techwikiplus.user.interfaces.web.port.UserVerifyUseCase
+import me.helloc.techwikiplus.user.domain.service.UserVerifyService
+import me.helloc.techwikiplus.user.dto.request.UserVerifyRequest
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -12,15 +13,15 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class UserVerifyController(
-    private val useCase: UserVerifyUseCase,
+    private val service: UserVerifyService,
 ) {
     @PostMapping("/api/v1/users/verify")
     fun verify(
-        @RequestBody request: Request,
+        @RequestBody request: UserVerifyRequest,
     ): ResponseEntity<Void> {
-        useCase.handle(
+        service.verifyEmail(
             email = Email(request.email),
-            code = RegistrationCode(request.registrationCode),
+            registrationCode = RegistrationCode(request.registrationCode),
         )
 
         val headers = HttpHeaders()
@@ -31,9 +32,4 @@ class UserVerifyController(
             .headers(headers)
             .build()
     }
-
-    data class Request(
-        val email: String,
-        val registrationCode: String,
-    )
 }

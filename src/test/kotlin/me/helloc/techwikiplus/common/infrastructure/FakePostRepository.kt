@@ -2,6 +2,7 @@ package me.helloc.techwikiplus.common.infrastructure
 
 import me.helloc.techwikiplus.post.domain.model.post.Post
 import me.helloc.techwikiplus.post.domain.model.post.PostId
+import me.helloc.techwikiplus.post.domain.model.post.PostStatus
 import me.helloc.techwikiplus.post.domain.service.port.PostRepository
 
 class FakePostRepository : PostRepository {
@@ -20,11 +21,31 @@ class FakePostRepository : PostRepository {
         return post
     }
 
-    fun getAll(): List<Post> {
-        return storage.values.toList()
+    override fun findAll(
+        cursor: PostId?,
+        limit: Int,
+        excludeDeleted: Boolean,
+    ): List<Post> {
+        var posts = storage.values.toList()
+
+        // DELETED 상태 제외
+        if (excludeDeleted) {
+            posts = posts.filter { it.status != PostStatus.DELETED }
+        }
+
+        // ID 내림차순 정렬 (Snowflake ID는 큰 값이 최신)
+        posts = posts.sortedByDescending { it.id.value }
+
+        // cursor 처리
+        if (cursor != null) {
+            posts = posts.filter { it.id.value < cursor.value }
+        }
+
+        // limit 적용
+        return posts.take(limit)
     }
 
-    fun findAll(): List<Post> {
+    fun getAll(): List<Post> {
         return storage.values.toList()
     }
 

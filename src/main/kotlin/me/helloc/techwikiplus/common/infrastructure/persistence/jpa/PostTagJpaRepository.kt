@@ -9,5 +9,7 @@ import org.springframework.stereotype.Repository
 interface PostTagJpaRepository : JpaRepository<PostTagEntity, PostTagEntityId> {
     fun findByPostIdOrderByDisplayOrder(postId: Long): List<PostTagEntity>
 
+    fun findByPostIdInOrderByPostIdAscDisplayOrderAsc(postIds: List<Long>): List<PostTagEntity>
+
     fun deleteByPostId(postId: Long)
 }

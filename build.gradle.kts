@@ -28,6 +28,12 @@ repositories {
 }
 
 dependencies {
+    // Kotlin reflection - Spring Boot와 Kotlin data class 사용 시 필수
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+    // Jackson Kotlin 모듈 - JSON 직렬화/역직렬화
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
     // Spring Boot Web - REST API 개발
     implementation("org.springframework.boot:spring-boot-starter-web")
 
@@ -73,8 +79,6 @@ dependencies {
 
     // MySQL 컨테이너 - JPA Repository 통합 테스트용
     testImplementation("org.testcontainers:mysql")
-    // Kotlin 데이터 클래스 직렬화 지원
-    testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     // Spring REST Docs
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
@@ -111,6 +115,11 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+// Spring Boot 메인 클래스 지정
+springBoot {
+    mainClass.set("me.helloc.techwikiplus.TechwikiplusApplicationKt")
 }
 
 ktlint {

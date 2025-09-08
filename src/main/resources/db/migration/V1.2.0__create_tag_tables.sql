@@ -19,7 +19,7 @@ CREATE TABLE tags (
 CREATE TABLE post_tags (
     post_id BIGINT NOT NULL COMMENT '게시글 ID (논리적 FK -> posts.id)',
     tag_id BIGINT NOT NULL COMMENT '태그 ID (논리적 FK -> tags.id)',
-    display_order TINYINT NOT NULL DEFAULT 0 COMMENT '태그 표시 순서 (0-9, 게시글당 최대 10개)',
+    display_order INTEGER NOT NULL DEFAULT 0 COMMENT '태그 표시 순서 (0-9, 게시글당 최대 10개)',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '태그 연결 시점',
     PRIMARY KEY (post_id, tag_id)
 ) COMMENT '게시글-태그 연결 테이블 (게시글당 최대 10개 태그)';

@@ -15,6 +15,7 @@ import me.helloc.techwikiplus.user.domain.model.UserRole
 import me.helloc.techwikiplus.user.domain.model.UserStatus
 import me.helloc.techwikiplus.user.domain.service.port.PasswordEncryptor
 import me.helloc.techwikiplus.user.domain.service.port.UserRepository
+import me.helloc.techwikiplus.user.dto.response.UserProfileResponse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -181,8 +182,7 @@ class UserProfileControllerE2eTest : BaseE2eTest() {
                         )
                         .responseSchema(
                             Schema.schema(
-                                "${UserProfileController::class.simpleName}." +
-                                    "${UserProfileController.Response::class.simpleName}",
+                                "${UserProfileResponse::class.simpleName}",
                             ),
                         )
                         .build(),
@@ -240,8 +240,7 @@ class UserProfileControllerE2eTest : BaseE2eTest() {
                         )
                         .responseSchema(
                             Schema.schema(
-                                "${UserProfileController::class.simpleName}." +
-                                    "${UserProfileController.Response::class.simpleName}",
+                                "${UserProfileResponse::class.simpleName}",
                             ),
                         )
                         .build(),
@@ -285,8 +284,7 @@ class UserProfileControllerE2eTest : BaseE2eTest() {
                         )
                         .responseSchema(
                             Schema.schema(
-                                "${UserProfileController::class.simpleName}." +
-                                    "${UserProfileController.Response::class.simpleName}",
+                                "${UserProfileResponse::class.simpleName}",
                             ),
                         )
                         .build(),

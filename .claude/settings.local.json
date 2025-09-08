@@ -18,7 +18,20 @@
       "WebSearch",
       "WebFetch(domain:github.com)",
       "Bash(mv:*)",
-      "Bash(docker ps:*)"
+      "Bash(docker ps:*)",
+      "Read(/C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\kotlin\\me\\helloc\\techwikiplus\\post\\domain\\model\\post/**)",
+      "Read(/C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\kotlin\\me\\helloc\\techwikiplus\\post\\domain\\service\\port/**)",
+      "Read(/C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\kotlin\\me\\helloc\\techwikiplus\\common\\infrastructure\\persistence\\jpa\\entity/**)",
+      "Read(/C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\kotlin\\me\\helloc\\techwikiplus\\common\\infrastructure\\persistence\\jpa/**)",
+      "Read(/C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\kotlin\\me\\helloc\\techwikiplus\\common\\infrastructure\\persistence/**)",
+      "Read(/C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\resources\\db\\migration/**)",
+      "Read(/C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\resources\\db\\migration/**)",
+      "Read(/C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\resources\\db\\migration/**)",
+      "Read(/C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\resources\\db\\migration/**)",
+      "Read(/C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\kotlin\\me\\helloc\\techwikiplus\\post\\interfaces\\web/**)",
+      "Read(/C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\kotlin\\me\\helloc\\techwikiplus\\post\\domain\\exception/**)",
+      "Read(/C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\test\\kotlin\\me\\helloc\\techwikiplus\\common\\infrastructure/**)",
+      "Read(/C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\kotlin\\me\\helloc\\techwikiplus\\common\\infrastructure\\persistence\\jpa\\entity/**)"
     ],
     "deny": [],
     "ask": []

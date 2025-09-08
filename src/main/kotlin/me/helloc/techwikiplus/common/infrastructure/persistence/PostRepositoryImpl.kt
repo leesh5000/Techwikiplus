@@ -8,9 +8,11 @@ import me.helloc.techwikiplus.common.infrastructure.persistence.jpa.entity.PostT
 import me.helloc.techwikiplus.common.infrastructure.persistence.jpa.mapper.PostEntityMapper
 import me.helloc.techwikiplus.post.domain.model.post.Post
 import me.helloc.techwikiplus.post.domain.model.post.PostId
+import me.helloc.techwikiplus.post.domain.model.post.PostStatus
 import me.helloc.techwikiplus.post.domain.model.tag.PostTag
 import me.helloc.techwikiplus.post.domain.model.tag.TagName
 import me.helloc.techwikiplus.post.domain.service.port.PostRepository
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
@@ -98,5 +100,57 @@ class PostRepositoryImpl(
         if (postTagEntities.isNotEmpty()) {
             postTagJpaRepository.saveAll(postTagEntities)
         }
+    }
+
+    override fun findAll(
+        cursor: PostId?,
+        limit: Int,
+        excludeDeleted: Boolean,
+    ): List<Post> {
+        val pageable = PageRequest.of(0, limit)
+        val excludedStatus = if (excludeDeleted) PostStatus.DELETED.name else ""
+
+        val entities =
+            if (cursor == null) {
+                jpaRepository.findByStatusNotOrderByIdDesc(excludedStatus, pageable)
+            } else {
+                jpaRepository.findByIdLessThanAndStatusNotOrderByIdDesc(
+                    cursor.value,
+                    excludedStatus,
+                    pageable,
+                )
+            }
+
+        if (entities.isEmpty()) {
+            return emptyList()
+        }
+
+        val postIds = entities.map { it.id }
+        val tagsMap = loadTagsForPosts(postIds)
+
+        return entities.map { entity ->
+            mapper.toDomain(entity, tagsMap[entity.id] ?: emptyList())
+        }
+    }
+
+    private fun loadTagsForPosts(postIds: List<Long>): Map<Long, List<PostTag>> {
+        val postTagEntities = postTagJpaRepository.findByPostIdInOrderByPostIdAscDisplayOrderAsc(postIds)
+        if (postTagEntities.isEmpty()) return emptyMap()
+
+        val tagIds = postTagEntities.map { it.tagId }.distinct()
+        val tagEntities = tagJpaRepository.findAllById(tagIds)
+        val tagMap = tagEntities.associateBy { it.id }
+
+        return postTagEntities
+            .mapNotNull { postTagEntity ->
+                tagMap[postTagEntity.tagId]?.let { tagEntity ->
+                    postTagEntity.postId to
+                        PostTag(
+                            tagName = TagName(tagEntity.name),
+                            displayOrder = postTagEntity.displayOrder,
+                        )
+                }
+            }
+            .groupBy({ it.first }, { it.second })
     }
 }

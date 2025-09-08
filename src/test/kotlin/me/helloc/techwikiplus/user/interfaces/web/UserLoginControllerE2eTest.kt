@@ -13,6 +13,8 @@ import me.helloc.techwikiplus.user.domain.model.User
 import me.helloc.techwikiplus.user.domain.model.UserRole
 import me.helloc.techwikiplus.user.domain.model.UserStatus
 import me.helloc.techwikiplus.user.domain.service.port.UserRepository
+import me.helloc.techwikiplus.user.dto.request.UserLoginRequest
+import me.helloc.techwikiplus.user.dto.response.UserLoginResponse
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -58,7 +60,7 @@ class UserLoginControllerE2eTest : BaseE2eTest() {
         val user = createActiveUser("logintest@example.com", "로그인테스터")
 
         val request =
-            UserLoginController.Request(
+            UserLoginRequest(
                 email = "logintest@example.com",
                 password = "Password123!",
             )
@@ -83,7 +85,7 @@ class UserLoginControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "사용자 로그인 성공",
                     ResourceSnippetParameters.Companion.builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 로그인")
                         .description(
                             """
@@ -122,14 +124,12 @@ class UserLoginControllerE2eTest : BaseE2eTest() {
                         )
                         .requestSchema(
                             schema(
-                                "${UserLoginController::class.simpleName}" +
-                                    ".${UserLoginController.Request::class.simpleName}",
+                                "${UserLoginRequest::class.simpleName}",
                             ),
                         )
                         .responseSchema(
                             schema(
-                                "${UserLoginController::class.simpleName}" +
-                                    ".${UserLoginController.Response::class.simpleName}",
+                                "${UserLoginResponse::class.simpleName}",
                             ),
                         )
                         .build(),
@@ -144,7 +144,7 @@ class UserLoginControllerE2eTest : BaseE2eTest() {
         createActiveUser("wrongpass@example.com", "잘못된비밀번호")
 
         val request =
-            UserLoginController.Request(
+            UserLoginRequest(
                 email = "wrongpass@example.com",
                 password = "WrongPassword!",
             )
@@ -163,13 +163,12 @@ class UserLoginControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "잘못된 비밀번호로 로그인",
                     ResourceSnippetParameters.Companion.builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 로그인 - 잘못된 비밀번호")
                         .description("비밀번호가 일치하지 않는 경우 401 Unauthorized를 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${UserLoginController::class.simpleName}" +
-                                    ".${UserLoginController.Request::class.simpleName}",
+                                "${UserLoginRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -182,7 +181,7 @@ class UserLoginControllerE2eTest : BaseE2eTest() {
     fun `POST login - 존재하지 않는 사용자로 401 Unauthorized를 반환해야 한다`() {
         // Given
         val request =
-            UserLoginController.Request(
+            UserLoginRequest(
                 email = "nonexistent@example.com",
                 password = "Password123!",
             )
@@ -201,13 +200,12 @@ class UserLoginControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "존재하지 않는 사용자 로그인",
                     ResourceSnippetParameters.Companion.builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 로그인 - 존재하지 않는 사용자")
                         .description("등록되지 않은 이메일로 로그인 시도하는 경우 404 Not Found를 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${UserLoginController::class.simpleName}" +
-                                    ".${UserLoginController.Request::class.simpleName}",
+                                "${UserLoginRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -223,7 +221,7 @@ class UserLoginControllerE2eTest : BaseE2eTest() {
         createUserWithStatus("banned@example.com", "차단된사용자", UserStatus.BANNED)
 
         val request =
-            UserLoginController.Request(
+            UserLoginRequest(
                 email = "banned@example.com",
                 password = "Password123!",
             )
@@ -244,13 +242,12 @@ class UserLoginControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "차단된 사용자 로그인",
                     ResourceSnippetParameters.Companion.builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 로그인 - 차단된 사용자")
                         .description("BANNED 상태의 사용자가 로그인 시도하는 경우 403 Forbidden을 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${UserLoginController::class.simpleName}" +
-                                    ".${UserLoginController.Request::class.simpleName}",
+                                "${UserLoginRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -266,7 +263,7 @@ class UserLoginControllerE2eTest : BaseE2eTest() {
         createUserWithStatus("deleted@example.com", "삭제된사용자", UserStatus.DELETED)
 
         val request =
-            UserLoginController.Request(
+            UserLoginRequest(
                 email = "deleted@example.com",
                 password = "Password123!",
             )
@@ -285,13 +282,12 @@ class UserLoginControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "삭제된 사용자 로그인",
                     ResourceSnippetParameters.Companion.builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 로그인 - 삭제된 사용자")
                         .description("DELETED 상태의 사용자가 로그인 시도하는 경우 410 Gone을 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${UserLoginController::class.simpleName}" +
-                                    ".${UserLoginController.Request::class.simpleName}",
+                                "${UserLoginRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -307,7 +303,7 @@ class UserLoginControllerE2eTest : BaseE2eTest() {
         createUserWithStatus("dormant@example.com", "휴면사용자", UserStatus.DORMANT)
 
         val request =
-            UserLoginController.Request(
+            UserLoginRequest(
                 email = "dormant@example.com",
                 password = "Password123!",
             )
@@ -328,13 +324,12 @@ class UserLoginControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "휴면 사용자 로그인",
                     ResourceSnippetParameters.Companion.builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 로그인 - 휴면 사용자")
                         .description("DORMANT 상태의 사용자가 로그인 시도하는 경우 403 Forbidden을 반혆합니다.")
                         .requestSchema(
                             schema(
-                                "${UserLoginController::class.simpleName}" +
-                                    ".${UserLoginController.Request::class.simpleName}",
+                                "${UserLoginRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -350,7 +345,7 @@ class UserLoginControllerE2eTest : BaseE2eTest() {
         createUserWithStatus("pending@example.com", "미인증사용자", UserStatus.PENDING)
 
         val request =
-            UserLoginController.Request(
+            UserLoginRequest(
                 email = "pending@example.com",
                 password = "Password123!",
             )
@@ -373,13 +368,12 @@ class UserLoginControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "인증 대기중 사용자 로그인",
                     ResourceSnippetParameters.Companion.builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 로그인 - 미인증 사용자")
                         .description("PENDING 상태의 사용자가 로그인 시도하는 경우 403 Forbidden을 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${UserLoginController::class.simpleName}" +
-                                    ".${UserLoginController.Request::class.simpleName}",
+                                "${UserLoginRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()

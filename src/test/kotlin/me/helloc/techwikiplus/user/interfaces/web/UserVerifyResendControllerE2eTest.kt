@@ -12,11 +12,13 @@ import me.helloc.techwikiplus.user.domain.model.Email
 import me.helloc.techwikiplus.user.domain.model.Nickname
 import me.helloc.techwikiplus.user.domain.model.RawPassword
 import me.helloc.techwikiplus.user.domain.model.User
+import me.helloc.techwikiplus.user.domain.model.UserCacheKey
 import me.helloc.techwikiplus.user.domain.model.UserRole
 import me.helloc.techwikiplus.user.domain.model.UserStatus
 import me.helloc.techwikiplus.user.domain.service.port.PasswordEncryptor
 import me.helloc.techwikiplus.user.domain.service.port.UserIdGenerator
 import me.helloc.techwikiplus.user.domain.service.port.UserRepository
+import me.helloc.techwikiplus.user.dto.request.UserVerifyRequest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -81,7 +83,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "인증 코드 재발송 성공",
                     ResourceSnippetParameters.builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("이메일 인증 코드 재발송")
                         .description(
                             """
@@ -99,8 +101,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
                         )
                         .requestSchema(
                             Schema.schema(
-                                "${UserVerifyResendController::class.simpleName}" +
-                                    ".${UserVerifyResendController.Request::class.simpleName}",
+                                "${UserVerifyResendController.Request::class.simpleName}",
                             ),
                         )
                         .build(),
@@ -123,7 +124,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
         val user = createPendingUser(email)
         userRepository.save(user)
 
-        val cacheKey = "user:registration_code:$email"
+        val cacheKey = UserCacheKey.REGISTRATION_CODE_KEY_PREFIX.keyFormat.format(email)
         val oldCode = "123456"
         cacheStore.put(cacheKey, oldCode, Duration.ofMinutes(10))
 
@@ -167,7 +168,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "존재하지 않는 사용자 재발송",
                     ResourceSnippetParameters.builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("이메일 인증 코드 재발송 - 사용자 없음")
                         .description("등록되지 않은 이메일로 재발송을 요청하는 경우 404 Not Found를 반혆합니다.")
                         .requestSchema(
@@ -211,7 +212,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "이미 인증된 사용자 재발송",
                     ResourceSnippetParameters.builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("이메일 인증 코드 재발송 - 이미 인증됨")
                         .description("이미 인증된 사용자가 재발송을 요청하는 경우 404 Not Found를 반환합니다.")
                         .requestSchema(
@@ -293,7 +294,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "잘못된 이메일로 재발송",
                     ResourceSnippetParameters.builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("이메일 인증 코드 재발송 - 잘못된 이메일 형식")
                         .description("이메일 형식이 올바르지 않은 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
@@ -367,7 +368,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "필수 필드 누락으로 재발송 실패",
                     ResourceSnippetParameters.builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("이메일 인증 코드 재발송 - 필수 필드 누락")
                         .description("필수 필드(email)가 누락된 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
@@ -390,7 +391,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
         userRepository.save(user)
 
         val request = UserVerifyResendController.Request(email = email)
-        val cacheKey = "user:registration_code:$email"
+        val cacheKey = UserCacheKey.REGISTRATION_CODE_KEY_PREFIX.keyFormat.format(email)
 
         // When - 첫 번째 재발송
         mockMvc.perform(
@@ -456,8 +457,10 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
 
         // 코드가 정상적으로 저장되었는지 검증
         // Email 클래스가 이메일을 소문자로 정규화하므로 캐시 키도 소문자
-        val cacheKey = "user:registration_code:test@example.com"
-        val code = cacheStore.get(cacheKey)
+        val code =
+            cacheStore.get(
+                UserCacheKey.REGISTRATION_CODE_KEY_PREFIX.keyFormat.format("test@example.com"),
+            )
         code shouldNotBe null
         code?.length shouldBe 6
     }
@@ -481,12 +484,12 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
             .andExpect(MockMvcResultMatchers.status().isOk)
 
         // 재발송된 코드 확인
-        val cacheKey = "user:registration_code:$email"
+        val cacheKey = UserCacheKey.REGISTRATION_CODE_KEY_PREFIX.keyFormat.format(email)
         val newCode = cacheStore.get(cacheKey)
 
         // When - 새 코드로 인증 시도
         val verifyRequest =
-            UserVerifyController.Request(
+            UserVerifyRequest(
                 email = email,
                 registrationCode = newCode!!,
             )

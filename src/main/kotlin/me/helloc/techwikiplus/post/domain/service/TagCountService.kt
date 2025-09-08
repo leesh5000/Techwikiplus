@@ -1,7 +1,7 @@
 package me.helloc.techwikiplus.post.domain.service
 
-import me.helloc.techwikiplus.common.infrastructure.persistence.jpa.TagJpaRepository
 import me.helloc.techwikiplus.post.domain.model.tag.Tag
+import me.helloc.techwikiplus.post.domain.service.port.TagRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class TagCountService(
-    private val tagJpaRepository: TagJpaRepository,
+    private val repository: TagRepository,
 ) {
     /**
      * 태그들의 게시글 카운트를 증가시킵니다.
@@ -33,7 +33,7 @@ class TagCountService(
         if (tags.isEmpty()) return
 
         tags.forEach { tag ->
-            tagJpaRepository.incrementPostCount(tag.id.value)
+            repository.incrementPostCount(tag.id.value)
         }
     }
 
@@ -47,7 +47,7 @@ class TagCountService(
         if (tags.isEmpty()) return
 
         tags.forEach { tag ->
-            tagJpaRepository.decrementPostCount(tag.id.value)
+            repository.decrementPostCount(tag.id.value)
         }
     }
 }

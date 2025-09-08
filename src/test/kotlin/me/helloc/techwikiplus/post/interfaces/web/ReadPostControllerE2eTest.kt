@@ -104,7 +104,7 @@ class ReadPostControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "게시글 조회 성공",
                     builder()
-                        .tag("Post Management")
+                        .tag("Post")
                         .summary("게시글 조회")
                         .description(
                             """
@@ -222,7 +222,7 @@ class ReadPostControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "태그가 포함된 게시글 조회",
                     builder()
-                        .tag("Post Management")
+                        .tag("Post")
                         .summary("게시글 조회 - 태그 포함")
                         .description(
                             """
@@ -300,7 +300,7 @@ class ReadPostControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "삭제된 게시글 조회",
                     builder()
-                        .tag("Post Management")
+                        .tag("Post")
                         .summary("게시글 조회 - DELETED 상태")
                         .description(
                             """
@@ -405,7 +405,7 @@ class ReadPostControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "존재하지 않는 게시글 조회",
                     builder()
-                        .tag("Post Management")
+                        .tag("Post")
                         .summary("게시글 조회 - 존재하지 않는 게시글")
                         .description(
                             """
@@ -439,7 +439,7 @@ class ReadPostControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "잘못된 형식의 ID로 게시글 조회",
                     builder()
-                        .tag("Post Management")
+                        .tag("Post")
                         .summary("게시글 조회 - 잘못된 ID 형식")
                         .description(
                             """
@@ -474,7 +474,7 @@ class ReadPostControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "음수 ID로 게시글 조회",
                     builder()
-                        .tag("Post Management")
+                        .tag("Post")
                         .summary("게시글 조회 - 음수 ID")
                         .description(
                             """
@@ -516,7 +516,7 @@ class ReadPostControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "인증 없이 게시글 조회",
                     builder()
-                        .tag("Post Management")
+                        .tag("Post")
                         .summary("게시글 조회 - 인증 불필요")
                         .description(
                             """
@@ -584,7 +584,7 @@ class ReadPostControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "인증된 사용자의 게시글 조회",
                     builder()
-                        .tag("Post Management")
+                        .tag("Post")
                         .summary("게시글 조회 - 인증된 사용자")
                         .description(
                             """

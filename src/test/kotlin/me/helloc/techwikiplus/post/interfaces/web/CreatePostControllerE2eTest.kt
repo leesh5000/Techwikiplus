@@ -10,6 +10,7 @@ import me.helloc.techwikiplus.common.infrastructure.security.jwt.JwtTokenManager
 import me.helloc.techwikiplus.post.domain.model.post.PostId
 import me.helloc.techwikiplus.post.domain.model.post.PostStatus
 import me.helloc.techwikiplus.post.domain.service.port.PostRepository
+import me.helloc.techwikiplus.post.dto.PostRequest
 import me.helloc.techwikiplus.user.domain.model.Email
 import me.helloc.techwikiplus.user.domain.model.EncodedPassword
 import me.helloc.techwikiplus.user.domain.model.Nickname
@@ -67,7 +68,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
         val adminToken = jwtTokenManager.generateAccessToken(adminUser.id).token
 
         val request =
-            CreatePostController.Request(
+            PostRequest(
                 title = "테스트 게시글 제목",
                 body = "이것은 테스트 게시글의 본문 내용입니다. 최소 30자 이상의 내용을 포함하고 있습니다.",
                 tags = listOf("springboot", "react"),
@@ -92,7 +93,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "게시글 생성 성공",
                     builder()
-                        .tag("Post Management")
+                        .tag("Post")
                         .summary("게시글 생성")
                         .description(
                             """
@@ -120,8 +121,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
                         )
                         .requestSchema(
                             schema(
-                                "${CreatePostController::class.simpleName}" +
-                                    ".${CreatePostController.Request::class.simpleName}",
+                                "${PostRequest::class.simpleName}",
                             ),
                         )
                         .build(),
@@ -146,7 +146,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
         val adminToken = jwtTokenManager.generateAccessToken(adminUser.id).token
 
         val request =
-            CreatePostController.Request(
+            PostRequest(
                 title = "",
                 body = "이것은 테스트 게시글의 본문 내용입니다. 최소 30자 이상의 내용을 포함하고 있습니다.",
             )
@@ -165,13 +165,12 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "빈 제목으로 게시글 생성",
                     builder()
-                        .tag("Post Management")
+                        .tag("Post")
                         .summary("게시글 생성 - 빈 제목")
                         .description("제목이 비어있는 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${CreatePostController::class.simpleName}" +
-                                    ".${CreatePostController.Request::class.simpleName}",
+                                "${PostRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -188,7 +187,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
 
         val longTitle = "가".repeat(151)
         val request =
-            CreatePostController.Request(
+            PostRequest(
                 title = longTitle,
                 body = "이것은 테스트 게시글의 본문 내용입니다. 최소 30자 이상의 내용을 포함하고 있습니다.",
             )
@@ -207,13 +206,12 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "너무 긴 제목으로 게시글 생성",
                     builder()
-                        .tag("Post Management")
+                        .tag("Post")
                         .summary("게시글 생성 - 제목 길이 초과")
                         .description("제목이 150자를 초과하는 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${CreatePostController::class.simpleName}" +
-                                    ".${CreatePostController.Request::class.simpleName}",
+                                "${PostRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -229,7 +227,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
         val adminToken = jwtTokenManager.generateAccessToken(adminUser.id).token
 
         val request =
-            CreatePostController.Request(
+            PostRequest(
                 title = "테스트 게시글 제목",
                 body = "",
             )
@@ -248,13 +246,12 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "빈 본문으로 게시글 생성",
                     builder()
-                        .tag("Post Management")
+                        .tag("Post")
                         .summary("게시글 생성 - 빈 본문")
                         .description("본문이 비어있는 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${CreatePostController::class.simpleName}" +
-                                    ".${CreatePostController.Request::class.simpleName}",
+                                "${PostRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -270,7 +267,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
         val adminToken = jwtTokenManager.generateAccessToken(adminUser.id).token
 
         val request =
-            CreatePostController.Request(
+            PostRequest(
                 title = "테스트 게시글 제목",
                 body = "짧은 내용",
             )
@@ -289,13 +286,12 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "너무 짧은 본문으로 게시글 생성",
                     builder()
-                        .tag("Post Management")
+                        .tag("Post")
                         .summary("게시글 생성 - 본문 길이 부족")
                         .description("본문이 30자 미만인 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${CreatePostController::class.simpleName}" +
-                                    ".${CreatePostController.Request::class.simpleName}",
+                                "${PostRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -312,7 +308,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
 
         val longBody = "가".repeat(50001)
         val request =
-            CreatePostController.Request(
+            PostRequest(
                 title = "테스트 게시글 제목",
                 body = longBody,
             )
@@ -331,13 +327,12 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "너무 긴 본문으로 게시글 생성",
                     builder()
-                        .tag("Post Management")
+                        .tag("Post")
                         .summary("게시글 생성 - 본문 길이 초과")
                         .description("본문이 50000자를 초과하는 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${CreatePostController::class.simpleName}" +
-                                    ".${CreatePostController.Request::class.simpleName}",
+                                "${PostRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -353,7 +348,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
         val adminToken = jwtTokenManager.generateAccessToken(adminUser.id).token
 
         val request =
-            CreatePostController.Request(
+            PostRequest(
                 title = "Spring Boot 3.0 & Kotlin 1.9 - 새로운 기능들!",
                 body = "Spring Boot 3.0과 Kotlin 1.9의 새로운 기능들을 소개합니다. 이 버전에서는 많은 개선사항이 있습니다.",
             )
@@ -378,12 +373,12 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
 
         val sameTitle = "중복 가능한 제목"
         val request1 =
-            CreatePostController.Request(
+            PostRequest(
                 title = sameTitle,
                 body = "첫 번째 게시글의 내용입니다. 제목은 같지만 내용은 다릅니다.",
             )
         val request2 =
-            CreatePostController.Request(
+            PostRequest(
                 title = sameTitle,
                 body = "두 번째 게시글의 내용입니다. 제목은 같지만 내용이 완전히 다릅니다.",
             )
@@ -441,7 +436,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
 
         val requests =
             (1..5).map { i ->
-                CreatePostController.Request(
+                PostRequest(
                     title = "연속 생성 테스트 게시글 $i",
                     body = "이것은 연속 생성 테스트를 위한 게시글 번호 $i 의 본문 내용입니다.",
                 )
@@ -491,7 +486,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
         val adminToken = jwtTokenManager.generateAccessToken(adminUser.id).token
 
         val request =
-            CreatePostController.Request(
+            PostRequest(
                 title = "ADMIN이 작성한 게시글",
                 body = "ADMIN 권한을 가진 사용자가 작성한 게시글입니다. 정상적으로 생성되어야 합니다.",
                 tags = listOf("springboot", "react"),
@@ -516,7 +511,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "ADMIN 권한으로 게시글 생성 성공",
                     builder()
-                        .tag("Post Management")
+                        .tag("Post")
                         .summary("게시글 생성 - ADMIN 권한")
                         .description(
                             """
@@ -548,8 +543,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
                         )
                         .requestSchema(
                             schema(
-                                "${CreatePostController::class.simpleName}" +
-                                    ".${CreatePostController.Request::class.simpleName}",
+                                "${PostRequest::class.simpleName}",
                             ),
                         )
                         .build(),
@@ -572,7 +566,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
         val userToken = jwtTokenManager.generateAccessToken(normalUser.id).token
 
         val request =
-            CreatePostController.Request(
+            PostRequest(
                 title = "일반 사용자가 시도한 게시글",
                 body = "일반 사용자가 작성을 시도한 게시글입니다. 권한이 없어 실패해야 합니다.",
             )
@@ -591,7 +585,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "USER 권한으로 게시글 생성 실패",
                     builder()
-                        .tag("Post Management")
+                        .tag("Post")
                         .summary("게시글 생성 - 권한 부족")
                         .description(
                             """
@@ -607,8 +601,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
                         )
                         .requestSchema(
                             schema(
-                                "${CreatePostController::class.simpleName}" +
-                                    ".${CreatePostController.Request::class.simpleName}",
+                                "${PostRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -621,7 +614,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
     fun `POST posts - 인증되지 않은 사용자는 게시글을 생성할 수 없다`() {
         // Given - 인증 헤더 없이 요청
         val request =
-            CreatePostController.Request(
+            PostRequest(
                 title = "인증되지 않은 사용자의 게시글",
                 body = "인증 없이 게시글을 작성하려는 시도입니다. 401 응답을 받아야 합니다.",
             )
@@ -638,7 +631,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "인증 없이 게시글 생성 시도",
                     builder()
-                        .tag("Post Management")
+                        .tag("Post")
                         .summary("게시글 생성 - 인증 필요")
                         .description(
                             """
@@ -649,8 +642,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
                         )
                         .requestSchema(
                             schema(
-                                "${CreatePostController::class.simpleName}" +
-                                    ".${CreatePostController.Request::class.simpleName}",
+                                "${PostRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -666,7 +658,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
         val adminToken = jwtTokenManager.generateAccessToken(adminUser.id).token
 
         val request =
-            CreatePostController.Request(
+            PostRequest(
                 title = "중복 태그 테스트 게시글",
                 body = "중복된 태그를 포함한 게시글입니다. 중복된 태그는 자동으로 제거되어야 합니다.",
                 tags = listOf("kotlin", "spring", "kotlin", "java", "spring", "kotlin", "java"),
@@ -691,7 +683,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "중복 태그 제거하여 게시글 생성",
                     builder()
-                        .tag("Post Management")
+                        .tag("Post")
                         .summary("게시글 생성 - 중복 태그 제거")
                         .description(
                             """
@@ -722,8 +714,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
                         )
                         .requestSchema(
                             schema(
-                                "${CreatePostController::class.simpleName}" +
-                                    ".${CreatePostController.Request::class.simpleName}",
+                                "${PostRequest::class.simpleName}",
                             ),
                         )
                         .build(),
@@ -752,7 +743,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
         val adminToken = jwtTokenManager.generateAccessToken(adminUser.id).token
 
         val request =
-            CreatePostController.Request(
+            PostRequest(
                 title = "  앞뒤 공백이 있는 제목  ",
                 body = "   앞뒤 공백이 있는 본문 내용입니다. 이 공백들은 자동으로 제거되어야 합니다.   ",
             )

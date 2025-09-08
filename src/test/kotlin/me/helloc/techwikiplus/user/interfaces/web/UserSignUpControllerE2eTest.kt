@@ -5,6 +5,7 @@ import com.epages.restdocs.apispec.Schema.Companion.schema
 import me.helloc.techwikiplus.common.config.BaseE2eTest
 import me.helloc.techwikiplus.common.config.annotations.E2eTest
 import me.helloc.techwikiplus.common.config.documentation.withStandardErrorResponse
+import me.helloc.techwikiplus.user.dto.request.UserSignUpRequest
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 import org.springframework.restdocs.payload.JsonFieldType
@@ -35,7 +36,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 유효한 회원가입 데이터로 200 OK를 반환해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 nickname = "테스터",
                 password = "Test1234!",
@@ -56,7 +57,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "회원가입 성공",
                     builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 회원가입")
                         .description(
                             """
@@ -82,8 +83,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                         )
                         .requestSchema(
                             schema(
-                                "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpController.Request::class.simpleName}",
+                                "${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .build(),
@@ -95,7 +95,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 이메일 형식이 잘못된 경우 400 Bad Request를 반환해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "invalid-email",
                 nickname = "테스터",
                 password = "Test1234!",
@@ -115,13 +115,13 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "잘못된 이메일 형식으로 회원가입",
                     builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 회원가입 - 잘못된 이메일 형식")
                         .description("이메일 형식이 올바르지 않은 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
                                 "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpController.Request::class.simpleName}",
+                                    ".${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -134,7 +134,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 비밀번호가 일치하지 않는 경우 400 Bad Request를 반환해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 nickname = "테스터",
                 password = "Test1234!",
@@ -154,13 +154,13 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "비밀번호 불일치로 회원가입 실패",
                     builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 회원가입 - 비밀번호 불일치")
                         .description("비밀번호와 비밀번호 확인이 일치하지 않는 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
                                 "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpController.Request::class.simpleName}",
+                                    ".${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -173,7 +173,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 닉네임이 너무 짧은 경우 400 Bad Request를 반환해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 nickname = "a",
                 password = "Test1234!",
@@ -193,13 +193,13 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "짧은 닉네임으로 회원가입",
                     builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 회원가입 - 짧은 닉네임")
                         .description("닉네임이 2자 미만인 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
                                 "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpController.Request::class.simpleName}",
+                                    ".${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -212,7 +212,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 비밀번호가 너무 짧은 경우 400 Bad Request를 반환해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 nickname = "테스터",
                 // 6자 - 최소 8자 필요
@@ -233,13 +233,13 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "짧은 비밀번호로 회원가입",
                     builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 회원가입 - 짧은 비밀번호")
                         .description("비밀번호가 8자 미만인 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
                                 "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpController.Request::class.simpleName}",
+                                    ".${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -252,7 +252,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 비밀번호에 대문자가 없는 경우 400 Bad Request를 반환해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 nickname = "테스터",
                 // 대문자 없음
@@ -273,13 +273,13 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "대문자 없는 비밀번호로 회원가입",
                     builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 회원가입 - 대문자 없는 비밀번호")
                         .description("비밀번호에 대문자가 포함되지 않은 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
                                 "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpController.Request::class.simpleName}",
+                                    ".${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -292,7 +292,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 비밀번호에 소문자가 없는 경우 400 Bad Request를 반환해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 nickname = "테스터",
                 // 소문자 없음
@@ -316,13 +316,13 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "소문자 없는 비밀번호로 회원가입",
                     builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 회원가입 - 소문자 없는 비밀번호")
                         .description("비밀번호에 소문자가 포함되지 않은 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
                                 "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpController.Request::class.simpleName}",
+                                    ".${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -335,7 +335,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 비밀번호에 특수문자가 없는 경우 400 Bad Request를 반환해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 nickname = "테스터",
                 // 특수문자 없음
@@ -359,13 +359,13 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "특수문자 없는 비밀번호로 회원가입",
                     builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 회원가입 - 특수문자 없는 비밀번호")
                         .description("비밀번호에 특수문자가 포함되지 않은 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
                                 "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpController.Request::class.simpleName}",
+                                    ".${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -378,7 +378,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 비밀번호가 너무 긴 경우 400 Bad Request를 반환해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 nickname = "테스터",
                 // 34자 - 최대 30자
@@ -402,13 +402,13 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "긴 비밀번호로 회원가입",
                     builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 회원가입 - 긴 비밀번호")
                         .description("비밀번호가 30자를 초과하는 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
                                 "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpController.Request::class.simpleName}",
+                                    ".${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -422,7 +422,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
         // Given
         val existingEmail = "existing@example.com"
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = existingEmail,
                 nickname = "테스터",
                 password = "Test1234!",
@@ -454,13 +454,13 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "중복 이메일로 회원가입",
                     builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 회원가입 - 중복 이메일")
                         .description("이미 등록된 이메일로 회원가입을 시도하는 경우 409 Conflict를 반환합니다.")
                         .requestSchema(
                             schema(
                                 "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpController.Request::class.simpleName}",
+                                    ".${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -474,7 +474,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
         // Given
         val existingNickname = "existingUser123"
         val firstRequest =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "first@example.com",
                 nickname = existingNickname,
                 password = "Test1234!",
@@ -491,7 +491,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
             .andExpect(MockMvcResultMatchers.status().isOk)
 
         val secondRequest =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "second@example.com",
                 nickname = existingNickname,
                 password = "Test1234!",
@@ -514,13 +514,13 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "중복 닉네임으로 회원가입",
                     builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 회원가입 - 중복 닉네임")
                         .description("이미 사용 중인 닉네임으로 회원가입을 시도하는 경우 409 Conflict를 반환합니다.")
                         .requestSchema(
                             schema(
                                 "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpController.Request::class.simpleName}",
+                                    ".${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -557,7 +557,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "필수 필드 누락으로 회원가입 실패",
                     builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 회원가입 - 필수 필드 누락")
                         .description(
                             "필수 필드(email, nickname, password, confirmPassword)가 누락된 경우 400 Bad Request를 반환합니다.",
@@ -565,7 +565,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                         .requestSchema(
                             schema(
                                 "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpController.Request::class.simpleName}",
+                                    ".${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -578,7 +578,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 닉네임에 특수문자가 포함된 경우 400 Bad Request를 반환해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 nickname = "테스터@#$",
                 password = "Test1234!",
@@ -601,13 +601,13 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "잘못된 닉네임 형식으로 회원가입",
                     builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 회원가입 - 잘못된 닉네임 형식")
                         .description("닉네임에 허용되지 않는 특수문자가 포함된 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
                                 "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpController.Request::class.simpleName}",
+                                    ".${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -620,7 +620,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 닉네임이 너무 긴 경우 400 Bad Request를 반환해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 // 21자 - 최대 20자
                 nickname = "가".repeat(21),
@@ -644,13 +644,13 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "긴 닉네임으로 회원가입",
                     builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 회원가입 - 긴 닉네임")
                         .description("닉네임이 20자를 초과하는 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
                                 "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpController.Request::class.simpleName}",
+                                    ".${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -663,7 +663,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 닉네임에 공백이 포함된 경우 400 Bad Request를 반환해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 nickname = "테스터 공백",
                 password = "Test1234!",
@@ -686,13 +686,13 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "공백 포함 닉네임으로 회원가입",
                     builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 회원가입 - 공백 포함 닉네임")
                         .description("닉네임에 공백이 포함된 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
                                 "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpController.Request::class.simpleName}",
+                                    ".${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -705,7 +705,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 빈 닉네임인 경우 400 Bad Request를 반환해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 // 공백만
                 nickname = "   ",
@@ -729,13 +729,13 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "빈 닉네임으로 회원가입",
                     builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 회원가입 - 빈 닉네임")
                         .description("닉네임이 공백만으로 이루어진 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
                                 "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpController.Request::class.simpleName}",
+                                    ".${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -748,7 +748,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 빈 이메일인 경우 400 Bad Request를 반환해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 // 공백만
                 email = "   ",
                 nickname = "테스터",
@@ -772,13 +772,13 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "빈 이메일로 회원가입",
                     builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("사용자 회원가입 - 빈 이메일")
                         .description("이메일이 공백만으로 이루어진 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
                                 "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpController.Request::class.simpleName}",
+                                    ".${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -791,7 +791,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 닉네임이 정확히 2자인 경우 성공해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 // 정확히 2자 (최소값)
                 nickname = "ab",
@@ -814,7 +814,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 닉네임이 정확히 20자인 경우 성공해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 // 정확히 20자 (최대값)
                 nickname = "a".repeat(20),
@@ -840,7 +840,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 비밀번호가 정확히 8자인 경우 성공해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 nickname = "테스터",
                 // 정확히 8자 (최소값)
@@ -867,7 +867,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
         // Given
         val longPassword = "Test1!" + "a".repeat(24) // 정확히 30자 (최대값)
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 nickname = "테스터",
                 password = longPassword,
@@ -892,7 +892,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 한글 닉네임인 경우 성공해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 nickname = "한글닉네임",
                 password = "Test1234!",
@@ -917,7 +917,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 영문 닉네임인 경우 성공해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 nickname = "EnglishNick",
                 password = "Test1234!",
@@ -942,7 +942,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 숫자가 포함된 닉네임인 경우 성공해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 nickname = "user123",
                 password = "Test1234!",
@@ -967,7 +967,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 언더스코어가 포함된 닉네임인 경우 성공해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 nickname = "user_name",
                 password = "Test1234!",
@@ -992,7 +992,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 하이픈이 포함된 닉네임인 경우 성공해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 nickname = "user-name",
                 password = "Test1234!",
@@ -1017,7 +1017,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - Content-Type이 없는 경우 415 Unsupported Media Type을 반환해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 nickname = "테스터",
                 password = "Test1234!",
@@ -1037,7 +1037,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
     fun `POST signup - 잘못된 Content-Type인 경우 415 Unsupported Media Type을 반환해야 한다`() {
         // Given
         val request =
-            UserSignUpController.Request(
+            UserSignUpRequest(
                 email = "test@example.com",
                 nickname = "테스터",
                 password = "Test1234!",

@@ -15,6 +15,7 @@ import me.helloc.techwikiplus.user.domain.model.UserRole
 import me.helloc.techwikiplus.user.domain.model.UserStatus
 import me.helloc.techwikiplus.user.domain.service.port.PasswordEncryptor
 import me.helloc.techwikiplus.user.domain.service.port.UserRepository
+import me.helloc.techwikiplus.user.dto.response.UserProfileResponse
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -241,8 +242,7 @@ class MyProfileControllerE2eTest : BaseE2eTest() {
                         )
                         .responseSchema(
                             schema(
-                                "${MyProfileController::class.simpleName}." +
-                                    "${MyProfileController.Response::class.simpleName}",
+                                "${UserProfileResponse::class.simpleName}",
                             ),
                         )
                         .build(),
@@ -283,8 +283,7 @@ class MyProfileControllerE2eTest : BaseE2eTest() {
                         )
                         .responseSchema(
                             schema(
-                                "${MyProfileController::class.simpleName}." +
-                                    "${MyProfileController.Response::class.simpleName}",
+                                "${UserProfileResponse::class.simpleName}",
                             ),
                         )
                         .build(),

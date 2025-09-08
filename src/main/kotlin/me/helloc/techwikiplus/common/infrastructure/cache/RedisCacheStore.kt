@@ -10,7 +10,7 @@ class RedisCacheStore(
     private val template: StringRedisTemplate,
 ) : CacheStore {
     companion object {
-        private const val KEY_PREFIX_FORMAT = "service:user:%s"
+        private const val KEY_PREFIX_FORMAT = "cache:%s"
     }
 
     override fun get(key: String): String? {

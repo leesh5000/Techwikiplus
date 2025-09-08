@@ -3,7 +3,8 @@ package me.helloc.techwikiplus.user.interfaces.web
 import me.helloc.techwikiplus.user.domain.model.Email
 import me.helloc.techwikiplus.user.domain.model.Nickname
 import me.helloc.techwikiplus.user.domain.model.RawPassword
-import me.helloc.techwikiplus.user.interfaces.web.port.UserSignUpUseCase
+import me.helloc.techwikiplus.user.domain.service.UserSignUpService
+import me.helloc.techwikiplus.user.dto.request.UserSignUpRequest
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -13,17 +14,17 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class UserSignUpController(
-    private val useCase: UserSignUpUseCase,
+    private val service: UserSignUpService,
 ) {
     @PostMapping("/api/v1/users/signup", consumes = ["application/json"])
     fun signup(
-        @RequestBody request: Request,
+        @RequestBody request: UserSignUpRequest,
     ): ResponseEntity<Void> {
-        useCase.handle(
+        service.signUp(
             email = Email(request.email),
             nickname = Nickname(request.nickname),
             password = RawPassword(request.password),
-            confirmPassword = RawPassword(request.confirmPassword),
+            passwordConfirm = RawPassword(request.confirmPassword),
         )
 
         val headers = HttpHeaders()
@@ -34,11 +35,4 @@ class UserSignUpController(
             .headers(headers)
             .build()
     }
-
-    data class Request(
-        val email: String,
-        val nickname: String,
-        val password: String,
-        val confirmPassword: String,
-    )
 }

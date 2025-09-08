@@ -16,6 +16,7 @@ import me.helloc.techwikiplus.user.domain.model.UserStatus
 import me.helloc.techwikiplus.user.domain.service.port.PasswordEncryptor
 import me.helloc.techwikiplus.user.domain.service.port.UserIdGenerator
 import me.helloc.techwikiplus.user.domain.service.port.UserRepository
+import me.helloc.techwikiplus.user.dto.request.UserVerifyRequest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -72,7 +73,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
         cacheStore.put(cacheKey, verificationCode, Duration.ofMinutes(10))
 
         val request =
-            UserVerifyController.Request(
+            UserVerifyRequest(
                 email = email,
                 registrationCode = verificationCode,
             )
@@ -94,7 +95,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "이메일 인증 성공",
                     ResourceSnippetParameters.Companion.builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("이메일 인증")
                         .description(
                             """
@@ -114,8 +115,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
                         )
                         .requestSchema(
                             Schema.Companion.schema(
-                                "${UserVerifyController::class.simpleName}" +
-                                    ".${UserVerifyController.Request::class.simpleName}",
+                                "${UserVerifyRequest::class.simpleName}",
                             ),
                         )
                         .build(),
@@ -146,7 +146,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
         cacheStore.put(cacheKey, correctCode, Duration.ofMinutes(10))
 
         val request =
-            UserVerifyController.Request(
+            UserVerifyRequest(
                 email = email,
                 // 잘못된 코드
                 registrationCode = wrongCode,
@@ -168,13 +168,13 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "잘못된 인증 코드로 인증",
                     ResourceSnippetParameters.Companion.builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("이메일 인증 - 잘못된 인증 코드")
                         .description("인증 코드가 일치하지 않는 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             Schema.Companion.schema(
                                 "${UserVerifyController::class.simpleName}" +
-                                    ".${UserVerifyController.Request::class.simpleName}",
+                                    ".${UserVerifyRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -200,7 +200,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
         // 인증 코드를 캐시에 저장하지 않음 (만료된 상태 시뮬레이션)
 
         val request =
-            UserVerifyController.Request(
+            UserVerifyRequest(
                 email = email,
                 registrationCode = expiredCode,
             )
@@ -221,13 +221,13 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "만료된 인증 코드로 인증",
                     ResourceSnippetParameters.Companion.builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("이메일 인증 - 만료된 인증 코드")
                         .description("인증 코드가 만료된 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             Schema.Companion.schema(
                                 "${UserVerifyController::class.simpleName}" +
-                                    ".${UserVerifyController.Request::class.simpleName}",
+                                    ".${UserVerifyRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -243,7 +243,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
         val code = "123456"
 
         val request =
-            UserVerifyController.Request(
+            UserVerifyRequest(
                 email = nonExistentEmail,
                 registrationCode = code,
             )
@@ -264,13 +264,13 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "존재하지 않는 사용자 인증",
                     ResourceSnippetParameters.Companion.builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("이메일 인증 - 사용자 없음")
                         .description("등록되지 않은 이메일로 인증을 시도하는 경우 404 Not Found를 반환합니다.")
                         .requestSchema(
                             Schema.Companion.schema(
                                 "${UserVerifyController::class.simpleName}" +
-                                    ".${UserVerifyController.Request::class.simpleName}",
+                                    ".${UserVerifyRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -290,7 +290,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
         userRepository.save(activeUser)
 
         val request =
-            UserVerifyController.Request(
+            UserVerifyRequest(
                 email = email,
                 registrationCode = code,
             )
@@ -311,13 +311,13 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "이미 인증된 사용자 재인증",
                     ResourceSnippetParameters.Companion.builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("이메일 인증 - 이미 인증됨")
                         .description("이미 인증된 사용자가 재인증을 시도하는 경우 404 Not Found 반환합니다.")
                         .requestSchema(
                             Schema.Companion.schema(
                                 "${UserVerifyController::class.simpleName}" +
-                                    ".${UserVerifyController.Request::class.simpleName}",
+                                    ".${UserVerifyRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -330,7 +330,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
     fun `POST verify - 잘못된 이메일 형식으로 400 Bad Request를 반환해야 한다`() {
         // Given
         val request =
-            UserVerifyController.Request(
+            UserVerifyRequest(
                 // 잘못된 이메일 형식
                 email = "invalid-email",
                 registrationCode = "123456",
@@ -352,13 +352,13 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "잘못된 이메일로 인증",
                     ResourceSnippetParameters.Companion.builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("이메일 인증 - 잘못된 이메일 형식")
                         .description("이메일 형식이 올바르지 않은 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             Schema.Companion.schema(
                                 "${UserVerifyController::class.simpleName}" +
-                                    ".${UserVerifyController.Request::class.simpleName}",
+                                    ".${UserVerifyRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -377,7 +377,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
         userRepository.save(user)
 
         val request =
-            UserVerifyController.Request(
+            UserVerifyRequest(
                 email = email,
                 // 5자리 코드
                 registrationCode = "12345",
@@ -399,13 +399,13 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "잘못된 길이의 인증 코드",
                     ResourceSnippetParameters.Companion.builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("이메일 인증 - 잘못된 코드 길이")
                         .description("인증 코드가 6자리가 아닌 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             Schema.Companion.schema(
                                 "${UserVerifyController::class.simpleName}" +
-                                    ".${UserVerifyController.Request::class.simpleName}",
+                                    ".${UserVerifyRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -424,7 +424,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
         userRepository.save(user)
 
         val request =
-            UserVerifyController.Request(
+            UserVerifyRequest(
                 email = email,
                 // 7자리 코드
                 registrationCode = "1234567",
@@ -454,7 +454,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
         userRepository.save(user)
 
         val request =
-            UserVerifyController.Request(
+            UserVerifyRequest(
                 email = email,
                 // 문자 포함
                 registrationCode = "12345A",
@@ -478,7 +478,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
     fun `POST verify - 빈 이메일로 400 Bad Request를 반환해야 한다`() {
         // Given
         val request =
-            UserVerifyController.Request(
+            UserVerifyRequest(
                 // 빈 이메일
                 email = "",
                 registrationCode = "123456",
@@ -508,7 +508,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
         userRepository.save(user)
 
         val request =
-            UserVerifyController.Request(
+            UserVerifyRequest(
                 email = email,
                 // 빈 코드
                 registrationCode = "",
@@ -554,7 +554,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "필수 필드 누락으로 인증 실패",
                     ResourceSnippetParameters.Companion.builder()
-                        .tag("User Management")
+                        .tag("User")
                         .summary("이메일 인증 - 필수 필드 누락")
                         .description(
                             "필수 필드(email, registrationCode)가 누락된 경우" +
@@ -563,7 +563,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
                         .requestSchema(
                             Schema.Companion.schema(
                                 "${UserVerifyController::class.simpleName}" +
-                                    ".${UserVerifyController.Request::class.simpleName}",
+                                    ".${UserVerifyRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -587,7 +587,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
         cacheStore.put(cacheKey, code, Duration.ofMinutes(10))
 
         val request =
-            UserVerifyController.Request(
+            UserVerifyRequest(
                 email = email,
                 registrationCode = code,
             )
@@ -619,7 +619,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
     fun `POST verify - Content-Type이 없는 경우 415 Unsupported Media Type을 반환해야 한다`() {
         // Given
         val request =
-            UserVerifyController.Request(
+            UserVerifyRequest(
                 email = "test@example.com",
                 registrationCode = "123456",
             )
@@ -648,7 +648,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
         cacheStore.put(cacheKey, code, Duration.ofMinutes(10))
 
         val request =
-            UserVerifyController.Request(
+            UserVerifyRequest(
                 email = email,
                 registrationCode = code,
             )
@@ -682,7 +682,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
         cacheStore.put(cacheKey, code, Duration.ofMinutes(10))
 
         val request =
-            UserVerifyController.Request(
+            UserVerifyRequest(
                 email = email,
                 registrationCode = code,
             )

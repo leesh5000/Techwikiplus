@@ -41,4 +41,12 @@ class TagRepositoryImpl(
         val savedEntity = jpaRepository.save(entity)
         return mapper.toDomain(savedEntity)
     }
+
+    override fun incrementPostCount(value: Long) {
+        jpaRepository.incrementPostCount(value)
+    }
+
+    override fun decrementPostCount(value: Long) {
+        jpaRepository.decrementPostCount(value)
+    }
 }

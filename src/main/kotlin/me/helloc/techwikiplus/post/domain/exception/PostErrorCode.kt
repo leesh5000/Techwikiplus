@@ -46,6 +46,9 @@ enum class PostErrorCode {
     // Version Validation
     INVALID_POST_VERSION_FORMAT,
 
+    // Pagination Validation
+    INVALID_PAGINATION_LIMIT,
+
     // Generic
     VALIDATION_ERROR,
     DOMAIN_ERROR,

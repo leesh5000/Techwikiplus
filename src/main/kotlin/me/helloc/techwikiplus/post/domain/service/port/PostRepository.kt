@@ -9,4 +9,10 @@ interface PostRepository {
     fun existsBy(id: PostId): Boolean
 
     fun save(post: Post): Post
+
+    fun findAll(
+        cursor: PostId? = null,
+        limit: Int = 20,
+        excludeDeleted: Boolean = true,
+    ): List<Post>
 }

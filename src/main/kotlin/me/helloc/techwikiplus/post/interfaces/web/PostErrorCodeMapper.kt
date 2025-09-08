@@ -15,7 +15,7 @@ class PostErrorCodeMapper {
             PostErrorCode.POST_IN_REVIEW,
             -> HttpStatus.FORBIDDEN
 
-            // Post Management
+            // Post
             PostErrorCode.DUPLICATE_TITLE -> HttpStatus.CONFLICT
             PostErrorCode.INVALID_POST_STATE -> HttpStatus.CONFLICT
             PostErrorCode.FORBIDDEN_POST_ROLE -> HttpStatus.FORBIDDEN
@@ -59,7 +59,9 @@ class PostErrorCodeMapper {
             -> HttpStatus.BAD_REQUEST
 
             // Generic
-            PostErrorCode.VALIDATION_ERROR -> HttpStatus.BAD_REQUEST
+            PostErrorCode.VALIDATION_ERROR,
+            PostErrorCode.INVALID_PAGINATION_LIMIT,
+            -> HttpStatus.BAD_REQUEST
             PostErrorCode.DOMAIN_ERROR,
             PostErrorCode.INTERNAL_ERROR,
             -> HttpStatus.INTERNAL_SERVER_ERROR
@@ -199,6 +201,12 @@ class PostErrorCodeMapper {
                 PostErrorCode.DOMAIN_ERROR -> "도메인 처리 중 오류가 발생했습니다"
                 PostErrorCode.INTERNAL_ERROR -> "시스템 오류가 발생했습니다"
                 PostErrorCode.INVALID_POST_VERSION_FORMAT -> "유효하지 않은 게시글 버전 형식입니다"
+                PostErrorCode.INVALID_PAGINATION_LIMIT ->
+                    if (params.isNotEmpty()) {
+                        "스크롤/페이지 크기는 최대 ${params[0]}~${params[1]}까지 가능합니다"
+                    } else {
+                        "스크롤/페이지 크기가 유효하지 않습니다"
+                    }
             }
 
         return baseMessage

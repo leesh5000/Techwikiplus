@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 class UserReader(
     private val repository: UserRepository,
 ) {
-    fun get(userId: UserId): User {
+    fun getActiveUser(userId: UserId): User {
         val user: User =
             repository.findBy(userId)
                 ?: throw UserDomainException(UserErrorCode.USER_NOT_FOUND, arrayOf(userId.value))
@@ -28,14 +28,6 @@ class UserReader(
         if (user.status != UserStatus.PENDING) {
             throw UserDomainException(UserErrorCode.NOT_FOUND_PENDING_USER, arrayOf(email.value))
         }
-        return user
-    }
-
-    fun get(email: Email): User {
-        val user: User =
-            repository.findBy(email)
-                ?: throw UserDomainException(UserErrorCode.USER_NOT_FOUND, arrayOf(email.value))
-        user.validateUserStatus()
         return user
     }
 }

@@ -12,4 +12,6 @@ interface TagRepository {
     fun findAllBy(names: List<TagName>): List<Tag>
 
     fun save(tag: Tag): Tag
+    fun incrementPostCount(value: Long)
+    fun decrementPostCount(value: Long)
 }

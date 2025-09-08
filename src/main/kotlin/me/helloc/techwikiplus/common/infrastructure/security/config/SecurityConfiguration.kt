@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.cors.CorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
@@ -17,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 class SecurityConfiguration(
     private val jwtAuthenticationFilter: JwtAuthenticationFilter,
     private val jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint,
+    private val corsConfigurationSource: CorsConfigurationSource,
 ) {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -25,7 +27,8 @@ class SecurityConfiguration(
                 csrf.disable()
             }
             .cors { cors ->
-                cors.disable() // API Gateway에서 CORS 처리
+                // CorsConfig에서 정의한 설정 사용
+                cors.configurationSource(corsConfigurationSource)
             }
             .sessionManagement { session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

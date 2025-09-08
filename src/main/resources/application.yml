@@ -12,9 +12,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${SPRING_MYSQL_HOST}:${SPRING_MYSQL_PORT}/${SPRING_MYSQL_DATABASE}?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&cachePrepStmts=true&useServerPrepStmts=true
-    username: ${SPRING_MYSQL_USER}
-    password: ${SPRING_MYSQL_PASSWORD}
+    url: jdbc:mysql://${SPRING_MYSQL_HOST:localhost}:${SPRING_MYSQL_PORT:13306}/${SPRING_MYSQL_DATABASE:techwikiplus}?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&cachePrepStmts=true&useServerPrepStmts=true
+    username: ${SPRING_MYSQL_USER:techwikiplus}
+    password: ${SPRING_MYSQL_PASSWORD:techwikiplus}
     hikari:
       maximum-pool-size: 30 # 최대 커넥션 풀 크기
       minimum-idle: 10 # 최소 유휴 커넥션 수
@@ -53,22 +53,22 @@ spring:
 
   data:
     redis:
-      host: ${SPRING_REDIS_HOST}
-      port: ${SPRING_REDIS_PORT}
-      password: ${SPRING_REDIS_PASSWORD}
+      host: ${SPRING_REDIS_HOST:localhost}
+      port: ${SPRING_REDIS_PORT:16379}
+      password: ${SPRING_REDIS_PASSWORD:techwikiplus}
 
   # Mail configuration
   mail:
-    host: ${SPRING_MAIL_HOST}
-    port: ${SPRING_MAIL_PORT}
-    username: ${SPRING_MAIL_USERNAME}
-    password: ${SPRING_MAIL_PASSWORD}
+    host: ${SPRING_MAIL_HOST:localhost}
+    port: ${SPRING_MAIL_PORT:11025}
+    username: ${SPRING_MAIL_USERNAME:noreply@techwikiplus.com}
+    password: ${SPRING_MAIL_PASSWORD:techwikiplus}
     properties:
       mail:
         smtp:
-          auth: ${SPRING_MAIL_SMTP_AUTH}
+          auth: ${SPRING_MAIL_SMTP_AUTH:false}
           starttls:
-            enable: ${SPRING_MAIL_SMTP_STARTTLS}
+            enable: ${SPRING_MAIL_SMTP_STARTTLS:false}
           connection-timeout: 5000
           timeout: 5000
           write-timeout: 5000
@@ -87,7 +87,7 @@ springdoc:
 
 # JWT Configuration
 jwt:
-  secret: ${SPRING_JWT_SECRET}
+  secret: ${SPRING_JWT_SECRET:your-256-bit-secret-key-for-development-environment-only}
   access-token-validity-in-seconds: 3600  # 1 hour
   refresh-token-validity-in-seconds: 2592000  # 30 days
 
@@ -135,6 +135,15 @@ logging:
     me.helloc.techwikiplus: DEBUG
   pattern:
     console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr([%-5level]){spring} %clr([%logger{36}]){cyan} - %clr(%msg){faint}%n"
+
+# CORS 설정
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:*}  # 허용할 출처 (기본값: 모두 허용)
+  allowed-methods: ${CORS_ALLOWED_METHODS:GET,POST,PUT,DELETE,PATCH,OPTIONS}  # 허용할 HTTP 메서드
+  allowed-headers: ${CORS_ALLOWED_HEADERS:*}  # 허용할 헤더
+  exposed-headers: ${CORS_EXPOSED_HEADERS:Content-Type,Authorization,X-Total-Count}  # 노출할 헤더
+  allow-credentials: ${CORS_ALLOW_CREDENTIALS:false}  # 인증 정보 포함 여부
+  max-age: ${CORS_MAX_AGE:3600}  # preflight 요청 캐시 시간 (초)
 
 # 애플리케이션 정보
 info:
