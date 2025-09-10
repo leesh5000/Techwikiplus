@@ -41,6 +41,10 @@ class PostBody(value: String) {
         return "PostBody(value=${value.take(50)}${if (value.length > 50) "..." else ""})"
     }
 
+    fun summarize(): String {
+        return value.take(150) + "..."
+    }
+
     companion object {
         private const val MIN_LENGTH = 30
         private const val MAX_LENGTH = 50000

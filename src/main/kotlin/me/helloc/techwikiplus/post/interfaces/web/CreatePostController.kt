@@ -1,10 +1,10 @@
 package me.helloc.techwikiplus.post.interfaces.web
 
-import me.helloc.techwikiplus.post.domain.service.CreatePostService
 import me.helloc.techwikiplus.post.domain.model.post.PostBody
 import me.helloc.techwikiplus.post.domain.model.post.PostTitle
 import me.helloc.techwikiplus.post.domain.model.tag.TagName
-import me.helloc.techwikiplus.post.dto.PostRequest
+import me.helloc.techwikiplus.post.domain.service.CreatePostService
+import me.helloc.techwikiplus.post.dto.request.PostRequest
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

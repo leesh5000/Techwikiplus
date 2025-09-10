@@ -10,7 +10,7 @@ import me.helloc.techwikiplus.common.infrastructure.security.jwt.JwtTokenManager
 import me.helloc.techwikiplus.post.domain.model.post.PostId
 import me.helloc.techwikiplus.post.domain.model.post.PostStatus
 import me.helloc.techwikiplus.post.domain.service.port.PostRepository
-import me.helloc.techwikiplus.post.dto.PostRequest
+import me.helloc.techwikiplus.post.dto.request.PostRequest
 import me.helloc.techwikiplus.user.domain.model.Email
 import me.helloc.techwikiplus.user.domain.model.EncodedPassword
 import me.helloc.techwikiplus.user.domain.model.Nickname

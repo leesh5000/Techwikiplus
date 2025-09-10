@@ -77,7 +77,7 @@ class PostErrorCodeMapper {
                 // Post Status
                 PostErrorCode.POST_NOT_FOUND ->
                     if (params.isNotEmpty()) {
-                        "게시글(${params[0]})을 찾을 수 없습니다"
+                        "게시글(ID: ${params[0]})을 찾을 수 없습니다"
                     } else {
                         "게시글을 찾을 수 없습니다"
                     }

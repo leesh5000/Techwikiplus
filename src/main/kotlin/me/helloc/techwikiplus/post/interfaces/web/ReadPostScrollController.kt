@@ -2,7 +2,7 @@ package me.helloc.techwikiplus.post.interfaces.web
 
 import me.helloc.techwikiplus.post.domain.model.post.PostId
 import me.helloc.techwikiplus.post.domain.service.PostReadService
-import me.helloc.techwikiplus.post.dto.PostScrollResponse
+import me.helloc.techwikiplus.post.dto.response.PostScrollResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam

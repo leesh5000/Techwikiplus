@@ -1,4 +1,4 @@
-package me.helloc.techwikiplus.post.dto
+package me.helloc.techwikiplus.post.dto.request
 
 data class PostRequest(
     val title: String,

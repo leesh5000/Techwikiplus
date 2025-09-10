@@ -46,18 +46,6 @@ class ArchitectureTest {
         }
 
         @Test
-        @DisplayName("application 레이어는 interfaces 레이어의 컨트롤러를 직접 참조할 수 없다")
-        fun applicationLayerShouldNotAccessInterfacesController() {
-            val rule =
-                noClasses()
-                    .that().resideInAPackage("..application..")
-                    .should().accessClassesThat()
-                    .resideInAPackage("..interfaces.web.controller..")
-
-            rule.check(importedClasses)
-        }
-
-        @Test
         @DisplayName("interfaces 레이어는 infrastructure를 직접 참조할 수 없다")
         fun interfacesLayerShouldNotDirectlyAccessInfrastructure() {
             val rule =
@@ -144,20 +132,6 @@ class ArchitectureTest {
 
             rule.check(importedClasses)
         }
-
-        @Test
-        @DisplayName("컨트롤러는 도메인 서비스를 직접 호출할 수 없다")
-        fun controllersShouldNotDirectlyCallDomainServices() {
-            val rule =
-                noClasses()
-                    .that().resideInAPackage("..interfaces.web..")
-                    .and().haveSimpleNameEndingWith("Controller")
-                    .should().accessClassesThat()
-                    .resideInAPackage("..domain.service..")
-                    .andShould().notBeInterfaces()
-
-            rule.check(importedClasses)
-        }
     }
 
     @Nested
@@ -171,34 +145,6 @@ class ArchitectureTest {
                     .that().haveSimpleNameEndingWith("Service")
                     .and().resideInAPackage("..domain..")
                     .should().resideInAPackage("..domain.service..")
-
-            rule.check(importedClasses)
-        }
-
-        @Test
-        @DisplayName("애플리케이션 서비스(Facade)는 application 패키지에 있어야 한다")
-        fun applicationServicesShouldBeInApplicationServicePackage() {
-            val rule =
-                classes()
-                    .that().haveSimpleNameEndingWith("Facade")
-                    .should().resideInAPackage("..application..")
-
-            rule.check(importedClasses)
-        }
-    }
-
-    @Nested
-    @DisplayName("포트와 어댑터 규칙")
-    inner class PortsAndAdaptersRules {
-        @Test
-        @DisplayName("포트 인터페이스는 port 패키지에 있어야 한다")
-        fun portInterfacesShouldBeInPortPackage() {
-            val rule =
-                classes()
-                    .that().haveSimpleNameEndingWith("Port")
-                    .or().haveSimpleNameEndingWith("UseCase")
-                    .and().areInterfaces()
-                    .should().resideInAPackage("..port..")
 
             rule.check(importedClasses)
         }

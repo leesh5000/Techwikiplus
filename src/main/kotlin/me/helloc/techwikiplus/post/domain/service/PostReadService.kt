@@ -5,9 +5,9 @@ import me.helloc.techwikiplus.post.domain.exception.PostErrorCode
 import me.helloc.techwikiplus.post.domain.model.post.Post
 import me.helloc.techwikiplus.post.domain.model.post.PostId
 import me.helloc.techwikiplus.post.domain.service.port.PostRepository
-import me.helloc.techwikiplus.post.dto.PostScrollResponse
-import me.helloc.techwikiplus.post.dto.PostScrollResponse.PostSummaryResponse
-import me.helloc.techwikiplus.post.dto.PostScrollResponse.PostSummaryResponse.TagResponse
+import me.helloc.techwikiplus.post.dto.response.PostResponse
+import me.helloc.techwikiplus.post.dto.response.PostScrollResponse
+import me.helloc.techwikiplus.post.dto.response.PostScrollResponse.PostSummaryResponse
 import org.springframework.stereotype.Service
 
 @Service
@@ -17,6 +17,11 @@ class PostReadService(
     fun getBy(postId: PostId): Post {
         return repository.findBy(postId)
             ?: throw PostDomainException(PostErrorCode.POST_NOT_FOUND, arrayOf(postId))
+    }
+
+    fun getPostResponse(postId: PostId): PostResponse {
+        val post = getBy(postId)
+        return PostResponse.from(post)
     }
 
     fun getBy(
@@ -40,21 +45,7 @@ class PostReadService(
         return PostScrollResponse(
             posts =
                 resultPosts.map { post ->
-                    PostSummaryResponse(
-                        id = post.id.value.toString(),
-                        title = post.title.value,
-                        summary = extractSummary(post.body.value),
-                        status = post.status.name,
-                        tags =
-                            post.tags.map { tag ->
-                                TagResponse(
-                                    name = tag.tagName.value,
-                                    displayOrder = tag.displayOrder,
-                                )
-                            },
-                        createdAt = post.createdAt.toString(),
-                        updatedAt = post.updatedAt.toString(),
-                    )
+                    PostSummaryResponse.from(post)
                 },
             hasNext = hasNext,
             nextCursor = nextCursor?.value?.toString(),
@@ -67,15 +58,6 @@ class PostReadService(
                 postErrorCode = PostErrorCode.INVALID_PAGINATION_LIMIT,
                 params = arrayOf(SCROLL_MIN_LIMIT, SCROLL_MAX_LIMIT),
             )
-        }
-    }
-
-    fun extractSummary(body: String): String {
-        val trimmedBody = body.trim()
-        return if (trimmedBody.length <= SUMMARY_LENGTH) {
-            trimmedBody
-        } else {
-            trimmedBody.take(SUMMARY_LENGTH) + "..."
         }
     }
 

@@ -18,6 +18,7 @@ import me.helloc.techwikiplus.post.domain.model.tag.TagName
 import me.helloc.techwikiplus.post.domain.service.port.PostIdGenerator
 import me.helloc.techwikiplus.post.domain.service.port.PostRepository
 import me.helloc.techwikiplus.post.domain.service.port.TagIdGenerator
+import me.helloc.techwikiplus.post.dto.response.PostResponse
 import me.helloc.techwikiplus.user.domain.model.Email
 import me.helloc.techwikiplus.user.domain.model.EncodedPassword
 import me.helloc.techwikiplus.user.domain.model.Nickname
@@ -35,7 +36,6 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders
 import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import java.time.Instant
@@ -132,6 +132,9 @@ class ReadPostControllerE2eTest : BaseE2eTest() {
                             fieldWithPath("status")
                                 .type(JsonFieldType.STRING)
                                 .description("게시글 상태 (DRAFT, IN_REVIEW, REVIEWED, DELETED)"),
+                            fieldWithPath("viewCount")
+                                .type(JsonFieldType.NUMBER)
+                                .description("게시글 조회수"),
                             fieldWithPath("tags")
                                 .type(JsonFieldType.ARRAY)
                                 .description("게시글 태그 목록"),
@@ -144,8 +147,7 @@ class ReadPostControllerE2eTest : BaseE2eTest() {
                         )
                         .responseSchema(
                             schema(
-                                "${ReadPostController::class.simpleName}" +
-                                    ".${ReadPostController.Response::class.simpleName}",
+                                "${PostResponse::class.simpleName}",
                             ),
                         )
                         .build(),
@@ -249,6 +251,9 @@ class ReadPostControllerE2eTest : BaseE2eTest() {
                             fieldWithPath("status")
                                 .type(JsonFieldType.STRING)
                                 .description("게시글 상태"),
+                            fieldWithPath("viewCount")
+                                .type(JsonFieldType.NUMBER)
+                                .description("게시글 조회수"),
                             fieldWithPath("tags")
                                 .type(JsonFieldType.ARRAY)
                                 .description("게시글 태그 목록"),
@@ -267,8 +272,7 @@ class ReadPostControllerE2eTest : BaseE2eTest() {
                         )
                         .responseSchema(
                             schema(
-                                "${ReadPostController::class.simpleName}" +
-                                    ".${ReadPostController.Response::class.simpleName}",
+                                "${PostResponse::class.simpleName}",
                             ),
                         )
                         .build(),
@@ -328,6 +332,9 @@ class ReadPostControllerE2eTest : BaseE2eTest() {
                             fieldWithPath("status")
                                 .type(JsonFieldType.STRING)
                                 .description("게시글 상태 (DELETED)"),
+                            fieldWithPath("viewCount")
+                                .type(JsonFieldType.NUMBER)
+                                .description("게시글 조회수"),
                             fieldWithPath("tags")
                                 .type(JsonFieldType.ARRAY)
                                 .description("게시글 태그 목록"),
@@ -340,8 +347,7 @@ class ReadPostControllerE2eTest : BaseE2eTest() {
                         )
                         .responseSchema(
                             schema(
-                                "${ReadPostController::class.simpleName}" +
-                                    ".${ReadPostController.Response::class.simpleName}",
+                                "${PostResponse::class.simpleName}",
                             ),
                         )
                         .build(),
@@ -543,6 +549,9 @@ class ReadPostControllerE2eTest : BaseE2eTest() {
                             fieldWithPath("status")
                                 .type(JsonFieldType.STRING)
                                 .description("게시글 상태"),
+                            fieldWithPath("viewCount")
+                                .type(JsonFieldType.NUMBER)
+                                .description("게시글 조회수"),
                             fieldWithPath("tags")
                                 .type(JsonFieldType.ARRAY)
                                 .description("게시글 태그 목록"),
@@ -617,6 +626,9 @@ class ReadPostControllerE2eTest : BaseE2eTest() {
                             fieldWithPath("status")
                                 .type(JsonFieldType.STRING)
                                 .description("게시글 상태"),
+                            fieldWithPath("viewCount")
+                                .type(JsonFieldType.NUMBER)
+                                .description("게시글 조회수"),
                             fieldWithPath("tags")
                                 .type(JsonFieldType.ARRAY)
                                 .description("게시글 태그 목록"),

@@ -1,10 +1,10 @@
 package me.helloc.techwikiplus.post.interfaces.web
 
-import me.helloc.techwikiplus.post.domain.service.UpdatePostService
 import me.helloc.techwikiplus.post.domain.model.post.PostBody
 import me.helloc.techwikiplus.post.domain.model.post.PostId
 import me.helloc.techwikiplus.post.domain.model.post.PostTitle
 import me.helloc.techwikiplus.post.domain.model.tag.TagName
+import me.helloc.techwikiplus.post.domain.service.UpdatePostService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
