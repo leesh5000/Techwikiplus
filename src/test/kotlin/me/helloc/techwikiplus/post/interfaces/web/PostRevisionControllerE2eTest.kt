@@ -153,6 +153,11 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
                             headerWithName(HttpHeaders.LOCATION)
                                 .description("생성된 개정안의 URI"),
                         )
+                        .requestSchema(
+                            schema(
+                                "${PostRequest::class.simpleName}",
+                            ),
+                        )
                         .responseSchema(
                             schema(
                                 "${PostRevisionResponse::class.simpleName}",
@@ -233,6 +238,11 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
                             fieldWithPath("tags")
                                 .type(JsonFieldType.ARRAY)
                                 .description("태그 목록 (선택사항)").optional(),
+                        )
+                        .requestSchema(
+                            schema(
+                                "${PostRequest::class.simpleName}",
+                            ),
                         )
                         .responseHeaders(
                             headerWithName(HttpHeaders.LOCATION)
@@ -318,16 +328,10 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
                             parameterWithName("reviewId")
                                 .description("개정안을 제출할 검수 ID"),
                         )
-                        .requestFields(
-                            fieldWithPath("title")
-                                .type(JsonFieldType.STRING)
-                                .description("개정안 제목"),
-                            fieldWithPath("body")
-                                .type(JsonFieldType.STRING)
-                                .description("개정안 본문"),
-                            fieldWithPath("tags")
-                                .type(JsonFieldType.ARRAY)
-                                .description("태그 목록 (선택사항)").optional(),
+                        .requestSchema(
+                            schema(
+                                "${PostRequest::class.simpleName}",
+                            ),
                         )
                         .build(),
                 ),
@@ -385,16 +389,10 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
                             parameterWithName("reviewId")
                                 .description("개정안을 제출할 검수 ID"),
                         )
-                        .requestFields(
-                            fieldWithPath("title")
-                                .type(JsonFieldType.STRING)
-                                .description("개정안 제목 (필수, 최대 150자)"),
-                            fieldWithPath("body")
-                                .type(JsonFieldType.STRING)
-                                .description("개정안 본문"),
-                            fieldWithPath("tags")
-                                .type(JsonFieldType.ARRAY)
-                                .description("태그 목록 (선택사항)").optional(),
+                        .requestSchema(
+                            schema(
+                                "${PostRequest::class.simpleName}",
+                            ),
                         )
                         .withStandardErrorResponse()
                         .build(),
@@ -442,16 +440,10 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
                             parameterWithName("reviewId")
                                 .description("개정안을 제출할 검수 ID"),
                         )
-                        .requestFields(
-                            fieldWithPath("title")
-                                .type(JsonFieldType.STRING)
-                                .description("개정안 제목"),
-                            fieldWithPath("body")
-                                .type(JsonFieldType.STRING)
-                                .description("개정안 본문 (30-50000자)"),
-                            fieldWithPath("tags")
-                                .type(JsonFieldType.ARRAY)
-                                .description("태그 목록 (선택사항)").optional(),
+                        .requestSchema(
+                            schema(
+                                "${PostRequest::class.simpleName}",
+                            ),
                         )
                         .withStandardErrorResponse()
                         .build(),
@@ -493,16 +485,10 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
                             parameterWithName("reviewId")
                                 .description("개정안을 제출할 검수 ID"),
                         )
-                        .requestFields(
-                            fieldWithPath("title")
-                                .type(JsonFieldType.STRING)
-                                .description("개정안 제목"),
-                            fieldWithPath("body")
-                                .type(JsonFieldType.STRING)
-                                .description("개정안 본문"),
-                            fieldWithPath("tags")
-                                .type(JsonFieldType.ARRAY)
-                                .description("태그 목록 (선택사항)").optional(),
+                        .requestSchema(
+                            schema(
+                                "${PostRequest::class.simpleName}",
+                            ),
                         )
                         .withStandardErrorResponse()
                         .build(),
@@ -552,16 +538,10 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
                             parameterWithName("reviewId")
                                 .description("개정안을 제출할 검수 ID"),
                         )
-                        .requestFields(
-                            fieldWithPath("title")
-                                .type(JsonFieldType.STRING)
-                                .description("개정안 제목"),
-                            fieldWithPath("body")
-                                .type(JsonFieldType.STRING)
-                                .description("개정안 본문"),
-                            fieldWithPath("tags")
-                                .type(JsonFieldType.ARRAY)
-                                .description("태그 목록 (선택사항)").optional(),
+                        .requestSchema(
+                            schema(
+                                "${PostRequest::class.simpleName}",
+                            ),
                         )
                         .responseHeaders(
                             headerWithName(HttpHeaders.LOCATION)

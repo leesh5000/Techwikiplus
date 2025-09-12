@@ -5,6 +5,7 @@ import java.time.Instant
 class RevisionVote(
     val id: Long,
     val revisionId: PostRevisionId,
-    val voterId: Long?, // nullable for anonymous users
+    // nullable for anonymous users
+    val voterId: Long?,
     val votedAt: Instant,
 )

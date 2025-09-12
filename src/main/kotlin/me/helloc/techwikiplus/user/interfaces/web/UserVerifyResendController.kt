@@ -2,6 +2,7 @@ package me.helloc.techwikiplus.user.interfaces.web
 
 import me.helloc.techwikiplus.user.domain.model.Email
 import me.helloc.techwikiplus.user.domain.service.UserVerifyResendService
+import me.helloc.techwikiplus.user.dto.request.UserVerifyResendRequest
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -15,7 +16,7 @@ class UserVerifyResendController(
 ) {
     @PostMapping("/api/v1/users/verify/resend")
     fun resend(
-        @RequestBody request: Request,
+        @RequestBody request: UserVerifyResendRequest,
     ): ResponseEntity<Void> {
         service.verifyResend(
             email = Email(request.email),
@@ -29,6 +30,4 @@ class UserVerifyResendController(
             .headers(headers)
             .build()
     }
-
-    data class Request(val email: String)
 }

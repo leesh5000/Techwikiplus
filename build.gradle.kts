@@ -209,10 +209,12 @@ tasks.register<Copy>("copyOpenApiToResources") {
 tasks.test {
     useJUnitPlatform()
 
-    // 테스트 실행 전 기존 스니펫 정리 - 중복 문서화 방지
+    // 테스트 실행 전 기존 스니펫만 정리
+    // OpenAPI 문서는 삭제하지 않고 누적되도록 함
     doFirst {
         delete("build/api-spec")
         delete("build/generated-snippets")
+        // 최종 문서는 삭제하지 않음 - openapi3 태스크가 병합 처리
     }
 
     // Java 21+ 경고 메시지 제거
@@ -230,5 +232,6 @@ tasks.test {
     }
 
     // 테스트 실행 후 자동으로 OpenAPI 문서 생성 및 복사
-    finalizedBy("copyOpenApiToResources")
+    // openapi3 태스크를 명시적으로 실행하도록 수정
+    finalizedBy("openapi3", "copyOpenApiToResources")
 }

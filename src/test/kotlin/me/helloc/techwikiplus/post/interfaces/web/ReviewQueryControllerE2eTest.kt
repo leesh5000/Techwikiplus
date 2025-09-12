@@ -112,7 +112,7 @@ class ReviewQueryControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "리뷰 조회 성공",
                     builder()
-                        .tag("Review Query")
+                        .tag("Review")
                         .summary("리뷰 조회")
                         .description(
                             """
@@ -183,7 +183,7 @@ class ReviewQueryControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "완료된 리뷰 조회",
                     builder()
-                        .tag("Review Query")
+                        .tag("Review")
                         .summary("리뷰 조회 - 완료된 리뷰")
                         .description(
                             """
@@ -245,7 +245,7 @@ class ReviewQueryControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "취소된 리뷰 조회",
                     builder()
-                        .tag("Review Query")
+                        .tag("Review")
                         .summary("리뷰 조회 - 취소된 리뷰")
                         .description(
                             """
@@ -300,7 +300,7 @@ class ReviewQueryControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "존재하지 않는 리뷰 조회",
                     builder()
-                        .tag("Review Query")
+                        .tag("Review")
                         .summary("리뷰 조회 - 존재하지 않는 리뷰")
                         .description(
                             """
@@ -334,7 +334,7 @@ class ReviewQueryControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "잘못된 형식의 ID로 리뷰 조회",
                     builder()
-                        .tag("Review Query")
+                        .tag("Review")
                         .summary("리뷰 조회 - 잘못된 ID 형식")
                         .description(
                             """
@@ -369,7 +369,7 @@ class ReviewQueryControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "음수 ID로 리뷰 조회",
                     builder()
-                        .tag("Review Query")
+                        .tag("Review")
                         .summary("리뷰 조회 - 음수 ID")
                         .description(
                             """
@@ -406,7 +406,7 @@ class ReviewQueryControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "인증 없이 리뷰 조회",
                     builder()
-                        .tag("Review Query")
+                        .tag("Review")
                         .summary("리뷰 조회 - 인증 불필요")
                         .description(
                             """
@@ -467,7 +467,7 @@ class ReviewQueryControllerE2eTest : BaseE2eTest() {
                 documentWithResource(
                     "인증된 사용자의 리뷰 조회",
                     builder()
-                        .tag("Review Query")
+                        .tag("Review")
                         .summary("리뷰 조회 - 인증된 사용자")
                         .description(
                             """

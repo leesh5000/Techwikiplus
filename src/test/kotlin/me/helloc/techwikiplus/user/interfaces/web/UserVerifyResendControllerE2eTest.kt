@@ -19,6 +19,7 @@ import me.helloc.techwikiplus.user.domain.service.port.PasswordEncryptor
 import me.helloc.techwikiplus.user.domain.service.port.UserIdGenerator
 import me.helloc.techwikiplus.user.domain.service.port.UserRepository
 import me.helloc.techwikiplus.user.dto.request.UserVerifyRequest
+import me.helloc.techwikiplus.user.dto.request.UserVerifyResendRequest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -67,7 +68,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
         val user = createPendingUser(email)
         userRepository.save(user)
 
-        val request = UserVerifyResendController.Request(email = email)
+        val request = UserVerifyResendRequest(email = email)
 
         // When & Then
         mockMvc.perform(
@@ -101,7 +102,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
                         )
                         .requestSchema(
                             Schema.schema(
-                                "${UserVerifyResendController.Request::class.simpleName}",
+                                "${UserVerifyResendRequest::class.simpleName}",
                             ),
                         )
                         .build(),
@@ -128,7 +129,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
         val oldCode = "123456"
         cacheStore.put(cacheKey, oldCode, Duration.ofMinutes(10))
 
-        val request = UserVerifyResendController.Request(email = email)
+        val request = UserVerifyResendRequest(email = email)
 
         // When
         mockMvc.perform(
@@ -150,7 +151,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
     fun `POST verify-resend - 존재하지 않는 사용자로 404 Not Found를 반환해야 한다`() {
         // Given
         val nonExistentEmail = "nonexistent@example.com"
-        val request = UserVerifyResendController.Request(email = nonExistentEmail)
+        val request = UserVerifyResendRequest(email = nonExistentEmail)
 
         // When & Then
         mockMvc.perform(
@@ -173,8 +174,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
                         .description("등록되지 않은 이메일로 재발송을 요청하는 경우 404 Not Found를 반혆합니다.")
                         .requestSchema(
                             Schema.schema(
-                                "${UserVerifyResendController::class.simpleName}" +
-                                    ".${UserVerifyResendController.Request::class.simpleName}",
+                                "${UserVerifyResendRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -194,7 +194,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
         val activeUser = createActiveUser(email)
         userRepository.save(activeUser)
 
-        val request = UserVerifyResendController.Request(email = email)
+        val request = UserVerifyResendRequest(email = email)
 
         // When & Then
         mockMvc.perform(
@@ -217,8 +217,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
                         .description("이미 인증된 사용자가 재발송을 요청하는 경우 404 Not Found를 반환합니다.")
                         .requestSchema(
                             Schema.schema(
-                                "${UserVerifyResendController::class.simpleName}" +
-                                    ".${UserVerifyResendController.Request::class.simpleName}",
+                                "${UserVerifyResendRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -234,7 +233,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
         val bannedUser = createBannedUser(email)
         userRepository.save(bannedUser)
 
-        val request = UserVerifyResendController.Request(email = email)
+        val request = UserVerifyResendRequest(email = email)
 
         // When & Then
         mockMvc.perform(
@@ -257,7 +256,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
         val deletedUser = createDeletedUser(email)
         userRepository.save(deletedUser)
 
-        val request = UserVerifyResendController.Request(email = email)
+        val request = UserVerifyResendRequest(email = email)
 
         // When & Then
         mockMvc.perform(
@@ -276,7 +275,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
     @Test
     fun `POST verify-resend - 잘못된 이메일 형식으로 400 Bad Request를 반환해야 한다`() {
         // Given
-        val request = UserVerifyResendController.Request(email = "invalid-email")
+        val request = UserVerifyResendRequest(email = "invalid-email")
 
         // When & Then
         mockMvc.perform(
@@ -299,8 +298,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
                         .description("이메일 형식이 올바르지 않은 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             Schema.schema(
-                                "${UserVerifyResendController::class.simpleName}" +
-                                    ".${UserVerifyResendController.Request::class.simpleName}",
+                                "${UserVerifyResendRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -312,7 +310,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
     @Test
     fun `POST verify-resend - 빈 이메일로 400 Bad Request를 반환해야 한다`() {
         // Given
-        val request = UserVerifyResendController.Request(email = "")
+        val request = UserVerifyResendRequest(email = "")
 
         // When & Then
         mockMvc.perform(
@@ -331,7 +329,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
     @Test
     fun `POST verify-resend - 공백만 있는 이메일로 400 Bad Request를 반환해야 한다`() {
         // Given
-        val request = UserVerifyResendController.Request(email = "   ")
+        val request = UserVerifyResendRequest(email = "   ")
 
         // When & Then
         mockMvc.perform(
@@ -373,8 +371,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
                         .description("필수 필드(email)가 누락된 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             Schema.schema(
-                                "${UserVerifyResendController::class.simpleName}" +
-                                    ".${UserVerifyResendController.Request::class.simpleName}",
+                                "${UserVerifyResendRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -390,7 +387,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
         val user = createPendingUser(email)
         userRepository.save(user)
 
-        val request = UserVerifyResendController.Request(email = email)
+        val request = UserVerifyResendRequest(email = email)
         val cacheKey = UserCacheKey.REGISTRATION_CODE_KEY_PREFIX.keyFormat.format(email)
 
         // When - 첫 번째 재발송
@@ -424,7 +421,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
     @Test
     fun `POST verify-resend - Content-Type이 없는 경우 415 Unsupported Media Type을 반환해야 한다`() {
         // Given
-        val request = UserVerifyResendController.Request(email = "test@example.com")
+        val request = UserVerifyResendRequest(email = "test@example.com")
 
         // When & Then
         mockMvc.perform(
@@ -443,7 +440,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
         userRepository.save(user)
 
         // 대문자로 요청
-        val request = UserVerifyResendController.Request(email = "TEST@EXAMPLE.COM")
+        val request = UserVerifyResendRequest(email = "TEST@EXAMPLE.COM")
 
         // When & Then
         mockMvc.perform(
@@ -472,7 +469,7 @@ class UserVerifyResendControllerE2eTest : BaseE2eTest() {
         val user = createPendingUser(email)
         userRepository.save(user)
 
-        val resendRequest = UserVerifyResendController.Request(email = email)
+        val resendRequest = UserVerifyResendRequest(email = email)
 
         // 재발송 요청
         mockMvc.perform(

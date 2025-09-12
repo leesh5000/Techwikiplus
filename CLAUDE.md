@@ -2,171 +2,161 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview
+## Build and Development Commands
 
-Techwikiplus is a Spring Boot application built with Kotlin that provides user authentication and management services with JWT-based security, email verification, and Redis caching.
-
-## Base Guidelines
-
-- 모든 응답은 한글로 하세요.
-
-## 커밋 규칙
-
-- 모든 커밋은 작업 단위별로 잘게 나누어 커밋하세요.
-- 하나의 커밋에 두 개 이상의 작업 단위가 섞이지 않도록 하시오.
-
-## 코딩 규칙
-
-### Kotlin 코딩 스타일
-- `Enum.values()` 대신 `Enum.entries` 사용 (Kotlin 1.9+)
-- Wildcard import 금지
-- ktlint 규칙 준수 필수
-
-### 테스트 코드 규칙
-- **Kotest 프레임워크** 사용
-- **FIRST 원칙** 준수 (Fast, Independent, Repeatable, Self-validating, Timely)
-- **테스트 격리성** 보장하세요
-- 모든 테스트 코드에는 로직(논리문)이 들어가서는 안됩니다.
-- 단위 테스트는 **Fake 객체** 사용 (예: `FakeUserRepository`, `FakeClockHolder`)
-- 통합 테스트는 **TestContainers** 사용 (MySQL, Redis)
-- E2E 테스트는 `BaseE2eTest` 상속하여 Spring REST Docs 자동 생성
-
-## Build and Run Commands
-
-### Build
+### Core Commands
 ```bash
-./gradlew build                # Build the project
-./gradlew clean build          # Clean and rebuild
-./gradlew bootJar              # Build executable JAR
+# Build the project
+./gradlew build
+
+# Run tests
+./gradlew test
+
+# Run specific test class
+./gradlew test --tests "me.helloc.techwikiplus.user.domain.model.UserTest"
+
+# Run tests with pattern matching
+./gradlew test --tests "*UserTest"
+
+# Code formatting and linting
+./gradlew ktlintCheck    # Check code style violations
+./gradlew ktlintFormat   # Auto-format code
+
+# Run the application
+./gradlew bootRun
+
+# Run with specific profile
+./gradlew bootRun --args="--spring.profiles.active=bulk-loader"
+
+# Clean build
+./gradlew clean build
 ```
 
-### Testing
+### Docker Infrastructure
 ```bash
-./gradlew test                                                     # Run all tests
-./gradlew test --tests "ClassName"                               # Run specific test class
-./gradlew test --tests "ClassName.methodName"                    # Run specific test method
-./gradlew test --tests "*E2eTest"                               # Run all E2E tests
-./gradlew test -Pe2e                                            # Run tests tagged as E2E
+# Start local infrastructure (MySQL, Redis, MailHog)
+docker-compose -f docker-compose.infra.yml up -d
+
+# Stop infrastructure
+docker-compose -f docker-compose.infra.yml down
+
+# View logs
+docker-compose -f docker-compose.infra.yml logs -f [service-name]
 ```
 
-### Code Quality
+### Database Management
 ```bash
-./gradlew ktlintCheck          # Check Kotlin code style
-./gradlew ktlintFormat         # Auto-format Kotlin code
-./gradlew addKtlintCheckGitPreCommitHook  # Add pre-commit hook for ktlint
+# Flyway migrations are automatically applied on startup
+# Migration files: src/main/resources/db/migration/V*.sql
+# Naming: V{major}.{minor}.{patch}__{description}.sql
 ```
 
-### Running the Application
+### API Documentation
 ```bash
-./gradlew bootRun              # Run Spring Boot application
-docker-compose -f docker-compose.infra.yml up -d    # Start infrastructure services
-docker-compose -f docker-compose.prod.yml up        # Run full production stack
+# Generate OpenAPI documentation (runs after tests)
+./gradlew test
+
+# Documentation will be copied to: src/main/resources/static/api-docs/openapi3.yml
+# Swagger UI: http://localhost:9000/swagger-ui/index.html
 ```
 
 ## Architecture Overview
 
-### Domain-Driven Design Structure
+### Hexagonal Architecture (Ports and Adapters)
 
-The codebase follows DDD principles with clear separation between layers:
+The codebase follows a strict hexagonal architecture pattern with clear separation of concerns:
 
 ```
 src/main/kotlin/me/helloc/techwikiplus/
-├── common/               # Shared infrastructure components
-│   ├── infrastructure/   # Technical implementations
-│   │   ├── cache/       # Redis cache implementation
-│   │   ├── clock/       # Time abstraction
-│   │   ├── id/          # Snowflake ID generation
-│   │   ├── lock/        # Distributed locking
-│   │   ├── mail/        # Email sending
-│   │   ├── persistence/ # Database access
-│   │   ├── security/    # JWT, authentication, authorization
-│   │   └── web/         # Web configuration
-│   └── interfaces/      # Common API interfaces
-└── user/                # User bounded context
-    ├── application/     # Use case implementations (Facades)
-    ├── domain/          # Core business logic
-    │   ├── exception/   # Domain exceptions
-    │   ├── model/       # Domain entities and value objects
-    │   └── service/     # Domain services and ports
-    └── interfaces/      # API controllers and DTOs
+├── common/                     # Shared components across bounded contexts
+│   ├── domain/                 # Core domain concepts
+│   │   └── service/
+│   │       └── port/          # Port interfaces (AuthorizationPort, ClockHolder)
+│   ├── infrastructure/         # Technical implementations
+│   │   ├── cache/             # Redis cache implementation
+│   │   ├── clock/             # System clock implementation
+│   │   ├── id/                # Snowflake ID generation
+│   │   ├── lock/              # Redis distributed locks
+│   │   ├── mail/              # Email service
+│   │   ├── persistence/       # JPA entities and repositories
+│   │   ├── security/          # JWT authentication, Spring Security
+│   │   └── web/               # Web configuration, filters
+│   └── interfaces/            # API layer
+│       └── web/               # Common web components
+│
+├── post/                      # Post bounded context
+│   ├── domain/
+│   │   ├── model/            # Domain models (Post, PostHistory, Review, Tag)
+│   │   ├── service/          # Domain services
+│   │   └── service/port/     # Port interfaces for post context
+│   └── interfaces/
+│       ├── scheduler/        # Scheduled tasks
+│       └── web/              # REST controllers and DTOs
+│
+└── user/                      # User bounded context
+    ├── domain/
+    │   ├── model/            # User domain model
+    │   ├── service/          # User domain services
+    │   └── service/port/     # Port interfaces for user context
+    └── interfaces/
+        └── web/              # User REST controllers
 ```
 
-### Key Architectural Patterns
+### Key Architectural Principles
 
-1. **Hexagonal Architecture**: Domain logic is isolated from infrastructure through ports and adapters
-   - Ports: Interfaces defined in `domain/service/port/`
-   - Adapters: Implementations in `common/infrastructure/`
+1. **Domain Layer Independence**: Domain models and services have no dependencies on infrastructure or framework code
+2. **Port-Adapter Pattern**: All external dependencies are accessed through port interfaces
+3. **Bounded Contexts**: Clear separation between User and Post contexts
+4. **ID Generation**: Uses Snowflake algorithm for distributed ID generation
+5. **Event Sourcing**: PostHistory tracks all changes to posts
+6. **Repository Pattern**: JPA entities are separate from domain models with explicit mapping
 
-2. **Facade Pattern**: Application layer uses facades to orchestrate domain services
-   - Each use case has a dedicated facade (e.g., `UserSignUpFacade`, `UserLoginFacade`)
+## Testing Strategy
 
-3. **Repository Pattern**: Data access is abstracted through repository interfaces
-   - Port: `UserRepository` interface
-   - Implementation: `UserRepositoryImpl` with JPA
-
-4. **Value Objects**: Domain modeling uses immutable value objects
-   - `Email`, `Nickname`, `UserId`, `EncodedPassword`, etc.
-
-### Security Architecture
-
-- **JWT Authentication**: Stateless authentication using JWT tokens
-  - Access tokens (1 hour validity)
-  - Refresh tokens (30 days validity)
-  - Secret key must be at least 256 bits (32 bytes)
-  
-- **Spring Security Integration**:
-  - `JwtAuthenticationFilter`: Validates JWT tokens on each request
-  - `CustomUserDetailsService`: Loads user details for authentication
-  - `SecurityConfiguration`: Configures security rules and filters
-
-### Testing Strategy
-
-1. **Unit Tests**: Test domain logic in isolation using fake implementations
-   - Located in `test/kotlin/.../domain/`
-   - Use `Fake*` implementations for ports
-
-2. **E2E Tests**: Full integration tests with real databases
-   - Extend `BaseE2eTest` for proper setup
-   - Use TestContainers for MySQL, Redis, and MailHog
-   - Tagged with `@E2eTest` annotation
-
-3. **Architecture Tests**: Enforce architectural rules
-   - `ArchitectureTest.kt` uses ArchUnit
-
-### Infrastructure Services
-
-The application requires these services (provided via Docker):
-
-- **MySQL**: Main database (port 3306 in container, 13306 on host)
-- **Redis**: Caching and distributed locks (port 6379 in container, 16379 on host)
-- **MailHog**: Email testing in development (SMTP: 1025/11025, Web: 8025/18025)
-- **Prometheus & Grafana**: Monitoring (optional)
+### Test Types
+- **Unit Tests**: Domain model and service logic testing
+- **Integration Tests**: Repository and infrastructure component testing with TestContainers
+- **E2E Tests**: Full API testing with `@E2eTest` annotation
+- **Architecture Tests**: ArchUnit enforces architectural rules
 
 ### Test Configuration
+- TestContainers automatically provisions MySQL and Redis for integration tests
+- Kotest is available alongside JUnit5 for BDD-style testing
+- MockK is used for Kotlin-specific mocking
 
-E2E tests use TestContainers with automatic configuration through `TestContainersInitializer`:
-- Automatically starts MySQL, Redis, and MailHog containers
-- Configures JWT secret for tests (minimum 32 bytes)
-- Provides transaction rollback for test isolation
-- Redis cache is cleared before each test
+## Security Configuration
 
-### Environment Variables
+- JWT-based authentication with access and refresh tokens
+- Spring Security with custom JWT filter chain
+- Authorization through `AuthorizationPort` interface
+- Password encoding using BCrypt
 
-Key environment variables required:
-- `SPRING_JWT_SECRET`: JWT signing key (minimum 32 bytes)
-- `SPRING_MYSQL_*`: Database connection settings
-- `SPRING_REDIS_*`: Redis connection settings
-- `SPRING_MAIL_*`: Email server settings
+## Database Schema
 
-### API Documentation
+- Managed by Flyway migrations
+- Soft deletes implemented for posts
+- Version control for posts with optimistic locking
+- Indexes optimized for pagination queries
 
-The project uses Spring REST Docs with OpenAPI integration:
-- API documentation is generated during E2E tests
-- OpenAPI spec available at: `/api-docs/openapi3.yml`
-- Swagger UI available at: `/swagger-ui/index.html`
+## Performance Considerations
 
-### Database Migration
+- Redis caching for frequently accessed data
+- Distributed locks using Redis for concurrency control
+- Batch processing configured for JPA (batch size: 5000)
+- Connection pooling with HikariCP (max 30 connections)
 
-Flyway manages database schema:
-- Migrations in: `src/main/resources/db/migration/`
-- Naming convention: `V{version}__{description}.sql`
+## Environment Variables
+
+Key environment variables (with defaults for local development):
+- `SPRING_MYSQL_HOST` (localhost)
+- `SPRING_MYSQL_PORT` (13306)
+- `SPRING_REDIS_HOST` (localhost)
+- `SPRING_REDIS_PORT` (16379)
+- `SPRING_JWT_SECRET` (development default provided)
+
+## Code Style
+
+- Kotlin code style enforced by ktlint
+- Git pre-commit hook available: `./gradlew addKtlintCheckGitPreCommitHook`
+- No unnecessary comments in production code
+- Comprehensive test coverage expected for new features

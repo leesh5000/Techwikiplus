@@ -18,6 +18,7 @@ import me.helloc.techwikiplus.post.domain.model.tag.TagName
 import me.helloc.techwikiplus.post.domain.service.port.PostIdGenerator
 import me.helloc.techwikiplus.post.domain.service.port.PostRepository
 import me.helloc.techwikiplus.post.domain.service.port.TagIdGenerator
+import me.helloc.techwikiplus.post.dto.request.PostRequest
 import me.helloc.techwikiplus.user.domain.model.Email
 import me.helloc.techwikiplus.user.domain.model.EncodedPassword
 import me.helloc.techwikiplus.user.domain.model.Nickname
@@ -34,7 +35,6 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders
 import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import java.time.Instant
@@ -589,7 +589,8 @@ class UpdatePostControllerE2eTest : BaseE2eTest() {
             """
             {
                 "title": "정상적인 제목",
-                "body": "너무 짧은 본문"
+                "body": "너무 짧은 본문",
+                "tags": ["springboot", "react"]
             }
             """.trimIndent()
 
@@ -622,10 +623,18 @@ class UpdatePostControllerE2eTest : BaseE2eTest() {
                         .requestFields(
                             fieldWithPath("title")
                                 .type(JsonFieldType.STRING)
-                                .description("수정할 게시글 제목"),
+                                .description("게시글 제목 (최대 150자, 빈 값 불가)"),
                             fieldWithPath("body")
                                 .type(JsonFieldType.STRING)
-                                .description("30자 미만의 본문 (유효하지 않음)"),
+                                .description("게시글 본문 (최소 30자, 최대 50000자)"),
+                            fieldWithPath("tags")
+                                .type(JsonFieldType.ARRAY)
+                                .description("게시글 태그 (선택 사항, 최대 10개, 각 태그는 최대 30자)"),
+                        )
+                        .requestSchema(
+                            schema(
+                                "${PostRequest::class.simpleName}",
+                            ),
                         )
                         .withStandardErrorResponse()
                         .build(),
@@ -651,7 +660,8 @@ class UpdatePostControllerE2eTest : BaseE2eTest() {
             """
             {
                 "title": "수정 시도",
-                "body": "삭제된 게시글을 수정하려고 시도합니다. 이것은 실패해야 합니다. 충분한 길이의 컨텐츠를 포함하고 있습니다."
+                "body": "삭제된 게시글을 수정하려고 시도합니다. 이것은 실패해야 합니다. 충분한 길이의 컨텐츠를 포함하고 있습니다.",
+                "tags": ["springboot", "react"]
             }
             """.trimIndent()
 
@@ -683,10 +693,18 @@ class UpdatePostControllerE2eTest : BaseE2eTest() {
                         .requestFields(
                             fieldWithPath("title")
                                 .type(JsonFieldType.STRING)
-                                .description("수정할 게시글 제목"),
+                                .description("게시글 제목 (최대 150자, 빈 값 불가)"),
                             fieldWithPath("body")
                                 .type(JsonFieldType.STRING)
-                                .description("수정할 게시글 본문"),
+                                .description("게시글 본문 (최소 30자, 최대 50000자)"),
+                            fieldWithPath("tags")
+                                .type(JsonFieldType.ARRAY)
+                                .description("게시글 태그 (선택 사항, 최대 10개, 각 태그는 최대 30자)"),
+                        )
+                        .requestSchema(
+                            schema(
+                                "${PostRequest::class.simpleName}",
+                            ),
                         )
                         .build(),
                 ),
@@ -745,13 +763,18 @@ class UpdatePostControllerE2eTest : BaseE2eTest() {
                         .requestFields(
                             fieldWithPath("title")
                                 .type(JsonFieldType.STRING)
-                                .description("수정할 게시글 제목"),
+                                .description("게시글 제목 (최대 150자, 빈 값 불가)"),
                             fieldWithPath("body")
                                 .type(JsonFieldType.STRING)
-                                .description("수정할 게시글 본문"),
+                                .description("게시글 본문 (최소 30자, 최대 50000자)"),
                             fieldWithPath("tags")
                                 .type(JsonFieldType.ARRAY)
-                                .description("잘못된 형식의 태그 목록"),
+                                .description("게시글 태그 (선택 사항, 최대 10개, 각 태그는 최대 30자)"),
+                        )
+                        .requestSchema(
+                            schema(
+                                "${PostRequest::class.simpleName}",
+                            ),
                         )
                         .withStandardErrorResponse()
                         .build(),
@@ -777,7 +800,8 @@ class UpdatePostControllerE2eTest : BaseE2eTest() {
             """
             {
                 "title": "변경되지 않을 제목",
-                "body": "변경되지 않을 본문입니다. 동일한 내용으로 수정 요청을 보냅니다. 최소 30자 이상의 내용이 필요합니다."
+                "body": "변경되지 않을 본문입니다. 동일한 내용으로 수정 요청을 보냅니다. 최소 30자 이상의 내용이 필요합니다.",
+                "tags": ["springboot", "react"]
             }
             """.trimIndent()
 
@@ -810,10 +834,18 @@ class UpdatePostControllerE2eTest : BaseE2eTest() {
                         .requestFields(
                             fieldWithPath("title")
                                 .type(JsonFieldType.STRING)
-                                .description("기존과 동일한 제목"),
+                                .description("게시글 제목 (최대 150자, 빈 값 불가)"),
                             fieldWithPath("body")
                                 .type(JsonFieldType.STRING)
-                                .description("기존과 동일한 본문"),
+                                .description("게시글 본문 (최소 30자, 최대 50000자)"),
+                            fieldWithPath("tags")
+                                .type(JsonFieldType.ARRAY)
+                                .description("게시글 태그 (선택 사항, 최대 10개, 각 태그는 최대 30자)"),
+                        )
+                        .requestSchema(
+                            schema(
+                                "${PostRequest::class.simpleName}",
+                            ),
                         )
                         .build(),
                 ),

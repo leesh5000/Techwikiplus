@@ -115,14 +115,14 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
                                 .type(JsonFieldType.ARRAY)
                                 .description("게시글 태그 (선택 사항, 최대 10개, 각 태그는 최대 30자)"),
                         )
-                        .responseHeaders(
-                            headerWithName(HttpHeaders.LOCATION)
-                                .description("생성된 게시글의 URI"),
-                        )
                         .requestSchema(
                             schema(
                                 "${PostRequest::class.simpleName}",
                             ),
+                        )
+                        .responseHeaders(
+                            headerWithName(HttpHeaders.LOCATION)
+                                .description("생성된 게시글의 URI"),
                         )
                         .build(),
                 ),

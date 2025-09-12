@@ -1,4 +1,4 @@
-package me.helloc.techwikiplus.post.application.scheduler
+package me.helloc.techwikiplus.post.interfaces.scheduler
 
 import me.helloc.techwikiplus.post.domain.service.PostReviewService
 import me.helloc.techwikiplus.user.domain.service.port.LockManager
@@ -28,7 +28,8 @@ class ReviewDeadlineScheduler(
                 try {
                     lockManager.executeWithLock(
                         key = lockKey,
-                        waitTime = Duration.ofSeconds(0), // 즉시 획득 시도
+                        // 즉시 획득 시도
+                        waitTime = Duration.ofSeconds(0),
                         leaseTime = Duration.ofSeconds(30),
                     ) {
                         postReviewService.completeReview(review.id)

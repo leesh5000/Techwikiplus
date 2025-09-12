@@ -120,8 +120,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                         .description("이메일 형식이 올바르지 않은 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpRequest::class.simpleName}",
+                                "${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -159,8 +158,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                         .description("비밀번호와 비밀번호 확인이 일치하지 않는 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpRequest::class.simpleName}",
+                                "${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -198,8 +196,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                         .description("닉네임이 2자 미만인 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpRequest::class.simpleName}",
+                                "${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -238,8 +235,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                         .description("비밀번호가 8자 미만인 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpRequest::class.simpleName}",
+                                "${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -278,8 +274,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                         .description("비밀번호에 대문자가 포함되지 않은 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpRequest::class.simpleName}",
+                                "${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -321,8 +316,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                         .description("비밀번호에 소문자가 포함되지 않은 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpRequest::class.simpleName}",
+                                "${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -364,8 +358,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                         .description("비밀번호에 특수문자가 포함되지 않은 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpRequest::class.simpleName}",
+                                "${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -407,8 +400,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                         .description("비밀번호가 30자를 초과하는 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpRequest::class.simpleName}",
+                                "${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -459,8 +451,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                         .description("이미 등록된 이메일로 회원가입을 시도하는 경우 409 Conflict를 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpRequest::class.simpleName}",
+                                "${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -519,8 +510,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                         .description("이미 사용 중인 닉네임으로 회원가입을 시도하는 경우 409 Conflict를 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpRequest::class.simpleName}",
+                                "${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -564,8 +554,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                         )
                         .requestSchema(
                             schema(
-                                "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpRequest::class.simpleName}",
+                                "${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -606,8 +595,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                         .description("닉네임에 허용되지 않는 특수문자가 포함된 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpRequest::class.simpleName}",
+                                "${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -649,8 +637,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                         .description("닉네임이 20자를 초과하는 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpRequest::class.simpleName}",
+                                "${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -691,8 +678,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                         .description("닉네임에 공백이 포함된 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpRequest::class.simpleName}",
+                                "${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -734,8 +720,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                         .description("닉네임이 공백만으로 이루어진 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpRequest::class.simpleName}",
+                                "${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -777,8 +762,7 @@ class UserSignUpControllerE2eTest : BaseE2eTest() {
                         .description("이메일이 공백만으로 이루어진 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             schema(
-                                "${UserSignUpController::class.simpleName}" +
-                                    ".${UserSignUpRequest::class.simpleName}",
+                                "${UserSignUpRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()

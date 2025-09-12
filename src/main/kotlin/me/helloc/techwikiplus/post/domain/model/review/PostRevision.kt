@@ -7,7 +7,8 @@ import java.time.Instant
 class PostRevision(
     val id: PostRevisionId,
     val reviewId: PostReviewId,
-    val authorId: Long?, // nullable for anonymous users
+    // nullable for anonymous users
+    val authorId: Long?,
     val title: PostTitle,
     val body: PostBody,
     val submittedAt: Instant,

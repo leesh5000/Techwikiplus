@@ -5,6 +5,7 @@ import me.helloc.techwikiplus.post.domain.model.post.PostId
 import me.helloc.techwikiplus.post.domain.model.post.PostTitle
 import me.helloc.techwikiplus.post.domain.model.tag.TagName
 import me.helloc.techwikiplus.post.domain.service.UpdatePostService
+import me.helloc.techwikiplus.post.dto.request.PostRequest
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
@@ -20,7 +21,7 @@ class UpdatePostController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun update(
         @PathVariable postId: Long,
-        @RequestBody request: Request,
+        @RequestBody request: PostRequest,
     ) {
         val tagNames = request.tags?.map { TagName(it) } ?: emptyList()
 
@@ -31,10 +32,4 @@ class UpdatePostController(
             tagNames = tagNames,
         )
     }
-
-    data class Request(
-        val title: String,
-        val body: String,
-        val tags: List<String>? = null,
-    )
 }

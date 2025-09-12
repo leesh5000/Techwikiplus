@@ -173,8 +173,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
                         .description("인증 코드가 일치하지 않는 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             Schema.Companion.schema(
-                                "${UserVerifyController::class.simpleName}" +
-                                    ".${UserVerifyRequest::class.simpleName}",
+                                "${UserVerifyRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -226,8 +225,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
                         .description("인증 코드가 만료된 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             Schema.Companion.schema(
-                                "${UserVerifyController::class.simpleName}" +
-                                    ".${UserVerifyRequest::class.simpleName}",
+                                "${UserVerifyRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -269,8 +267,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
                         .description("등록되지 않은 이메일로 인증을 시도하는 경우 404 Not Found를 반환합니다.")
                         .requestSchema(
                             Schema.Companion.schema(
-                                "${UserVerifyController::class.simpleName}" +
-                                    ".${UserVerifyRequest::class.simpleName}",
+                                "${UserVerifyRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -316,8 +313,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
                         .description("이미 인증된 사용자가 재인증을 시도하는 경우 404 Not Found 반환합니다.")
                         .requestSchema(
                             Schema.Companion.schema(
-                                "${UserVerifyController::class.simpleName}" +
-                                    ".${UserVerifyRequest::class.simpleName}",
+                                "${UserVerifyRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -357,8 +353,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
                         .description("이메일 형식이 올바르지 않은 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             Schema.Companion.schema(
-                                "${UserVerifyController::class.simpleName}" +
-                                    ".${UserVerifyRequest::class.simpleName}",
+                                "${UserVerifyRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -404,8 +399,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
                         .description("인증 코드가 6자리가 아닌 경우 400 Bad Request를 반환합니다.")
                         .requestSchema(
                             Schema.Companion.schema(
-                                "${UserVerifyController::class.simpleName}" +
-                                    ".${UserVerifyRequest::class.simpleName}",
+                                "${UserVerifyRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()
@@ -562,8 +556,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
                         )
                         .requestSchema(
                             Schema.Companion.schema(
-                                "${UserVerifyController::class.simpleName}" +
-                                    ".${UserVerifyRequest::class.simpleName}",
+                                "${UserVerifyRequest::class.simpleName}",
                             ),
                         )
                         .withStandardErrorResponse()

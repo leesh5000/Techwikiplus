@@ -49,7 +49,8 @@ class RevisionVoteService(
             // 투표 저장
             val vote =
                 RevisionVote(
-                    id = 0L, // Repository에서 생성
+                    // Repository에서 생성
+                    id = 0L,
                     revisionId = revisionId,
                     voterId = voterId,
                     votedAt = clockHolder.now(),
