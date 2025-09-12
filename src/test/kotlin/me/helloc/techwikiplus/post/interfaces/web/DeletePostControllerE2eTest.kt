@@ -25,7 +25,10 @@ import me.helloc.techwikiplus.user.domain.model.UserId
 import me.helloc.techwikiplus.user.domain.model.UserRole
 import me.helloc.techwikiplus.user.domain.model.UserStatus
 import me.helloc.techwikiplus.user.domain.service.port.UserRepository
+import org.junit.jupiter.api.MethodOrderer
+import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -54,6 +57,7 @@ import java.time.Instant
         "api.documentation.enabled=true",
     ],
 )
+@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class DeletePostControllerE2eTest : BaseE2eTest() {
     @Autowired
     private lateinit var postRepository: PostRepository
@@ -74,6 +78,7 @@ class DeletePostControllerE2eTest : BaseE2eTest() {
     private lateinit var tagIdGenerator: TagIdGenerator
 
     @Test
+    @Order(1)
     fun `DELETE posts-postId - 관리자가 존재하는 게시글을 삭제하면 204 NO_CONTENT를 반환해야 한다`() {
         // Given - 관리자 계정 생성
         val admin = createAdminUser()
@@ -96,7 +101,7 @@ class DeletePostControllerE2eTest : BaseE2eTest() {
             .andExpect(MockMvcResultMatchers.status().isNoContent)
             .andDo(
                 documentWithResource(
-                    "delete-post",
+                    "게시글-삭제-성공",
                     builder()
                         .tag("Post")
                         .summary("게시글 삭제")
@@ -119,6 +124,7 @@ class DeletePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(2)
     fun `DELETE posts-postId - 태그가 있는 게시글을 삭제해도 태그 카운트는 유지되어야 한다 (Soft Delete)`() {
         // Given - 관리자 계정 생성
         val admin = createAdminUser()
@@ -162,6 +168,7 @@ class DeletePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(20)
     fun `DELETE posts-postId - 일반 사용자가 게시글 삭제를 시도하면 403 FORBIDDEN을 반환해야 한다`() {
         // Given - 일반 사용자 생성
         val user = createTestUser()
@@ -190,6 +197,7 @@ class DeletePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(21)
     fun `DELETE posts-postId - 인증되지 않은 사용자가 게시글 삭제를 시도하면 403 FORBIDDEN을 반환해야 한다`() {
         // Given - 테스트 게시글 생성
         val post =
@@ -208,7 +216,8 @@ class DeletePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
-    fun `DELETE posts-postId - 존재하지 않는 게시글을 삭제하면 404 NOT_FOUND를 반환해야 한다`() {
+    @Order(30)
+    fun `DELETE posts-postId - 존재하지 않는 게시글을 삭제하면 404 NOT_FOUND를 반하해야 한다`() {
         // Given - 관리자 계정 생성
         val admin = createAdminUser()
         val adminToken = jwtTokenManager.generateAccessToken(admin.id).token
@@ -226,6 +235,7 @@ class DeletePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(31)
     fun `DELETE posts-postId - 이미 삭제된 게시글을 다시 삭제하면 410 Gone를 반환해야 한다`() {
         // Given - 관리자 계정 생성
         val admin = createAdminUser()
@@ -250,6 +260,7 @@ class DeletePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(3)
     fun `DELETE posts-postId - DRAFT 상태의 게시글도 삭제할 수 있어야 한다`() {
         // Given - 관리자 계정 생성
         val admin = createAdminUser()
@@ -277,6 +288,7 @@ class DeletePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(4)
     fun `DELETE posts-postId - IN_REVIEW 상태의 게시글도 삭제할 수 있어야 한다`() {
         // Given - 관리자 계정 생성
         val admin = createAdminUser()

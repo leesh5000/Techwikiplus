@@ -19,7 +19,10 @@ import me.helloc.techwikiplus.user.domain.model.UserId
 import me.helloc.techwikiplus.user.domain.model.UserRole
 import me.helloc.techwikiplus.user.domain.model.UserStatus
 import me.helloc.techwikiplus.user.domain.service.port.UserRepository
+import org.junit.jupiter.api.MethodOrderer
+import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -48,6 +51,7 @@ import java.time.Instant
         "api.documentation.enabled=true",
     ],
 )
+@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class CreatePostControllerE2eTest : BaseE2eTest() {
     @Autowired
     private lateinit var postRepository: PostRepository
@@ -62,6 +66,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
     private lateinit var jwtTokenManager: JwtTokenManager
 
     @Test
+    @Order(1)
     fun `POST posts - 유효한 게시글 데이터로 201 Created를 반환해야 한다`() {
         // Given - ADMIN 사용자 생성
         val adminUser = createTestUser(role = UserRole.ADMIN)
@@ -140,6 +145,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(10)
     fun `POST posts - 제목이 비어있는 경우 400 Bad Request를 반환해야 한다`() {
         // Given - ADMIN 사용자 생성
         val adminUser = createTestUser(role = UserRole.ADMIN)
@@ -180,6 +186,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(11)
     fun `POST posts - 제목이 150자를 초과하는 경우 400 Bad Request를 반환해야 한다`() {
         // Given - ADMIN 사용자 생성
         val adminUser = createTestUser(role = UserRole.ADMIN)
@@ -221,6 +228,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(12)
     fun `POST posts - 본문이 비어있는 경우 400 Bad Request를 반환해야 한다`() {
         // Given - ADMIN 사용자 생성
         val adminUser = createTestUser(role = UserRole.ADMIN)
@@ -261,6 +269,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(13)
     fun `POST posts - 본문이 30자 미만인 경우 400 Bad Request를 반환해야 한다`() {
         // Given - ADMIN 사용자 생성
         val adminUser = createTestUser(role = UserRole.ADMIN)
@@ -301,6 +310,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(14)
     fun `POST posts - 본문이 50000자를 초과하는 경우 400 Bad Request를 반환해야 한다`() {
         // Given - ADMIN 사용자 생성
         val adminUser = createTestUser(role = UserRole.ADMIN)
@@ -342,6 +352,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(3)
     fun `POST posts - 제목에 특수문자가 포함된 경우에도 정상 생성되어야 한다`() {
         // Given - ADMIN 사용자 생성
         val adminUser = createTestUser(role = UserRole.ADMIN)
@@ -366,6 +377,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(4)
     fun `POST posts - 동일한 제목으로 여러 게시글을 생성할 수 있어야 한다`() {
         // Given - ADMIN 사용자 생성
         val adminUser = createTestUser(role = UserRole.ADMIN)
@@ -429,6 +441,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(5)
     fun `POST posts - 연속으로 여러 게시글을 생성할 수 있어야 한다`() {
         // Given - ADMIN 사용자 생성
         val adminUser = createTestUser(role = UserRole.ADMIN)
@@ -480,6 +493,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(2)
     fun `POST posts - ADMIN 권한이 있는 사용자만 게시글을 생성할 수 있다`() {
         // Given - ADMIN 사용자 생성
         val adminUser = createTestUser(role = UserRole.ADMIN)
@@ -560,6 +574,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(20)
     fun `POST posts - USER 권한만 있는 사용자는 게시글을 생성할 수 없다`() {
         // Given - 일반 USER 생성
         val normalUser = createTestUser(role = UserRole.USER)
@@ -611,6 +626,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(21)
     fun `POST posts - 인증되지 않은 사용자는 게시글을 생성할 수 없다`() {
         // Given - 인증 헤더 없이 요청
         val request =
@@ -652,6 +668,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(6)
     fun `POST posts - 중복된 태그는 자동으로 제거되어야 한다`() {
         // Given - ADMIN 사용자 생성
         val adminUser = createTestUser(role = UserRole.ADMIN)
@@ -737,6 +754,7 @@ class CreatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(7)
     fun `POST posts - 제목과 본문의 앞뒤 공백은 자동으로 제거되어야 한다`() {
         // Given - ADMIN 사용자 생성
         val adminUser = createTestUser(role = UserRole.ADMIN)

@@ -33,11 +33,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -105,7 +102,7 @@ class RevisionVoteControllerE2eTest : BaseE2eTest() {
             .andExpect(status().isNoContent)
             .andDo(
                 documentWithResource(
-                    identifier = "revision-vote-create-success",
+                    identifier = "개정안 투표 성공",
                     resourceParameters =
                         ResourceSnippetParameters.builder()
                             .tag("Revision Vote")
@@ -164,7 +161,7 @@ class RevisionVoteControllerE2eTest : BaseE2eTest() {
             .andExpect(jsonPath("$.code").value("ALREADY_VOTED"))
             .andDo(
                 documentWithResource(
-                    identifier = "revision-vote-create-duplicate",
+                    identifier = "개정안 중복 투표",
                     resourceParameters =
                         ResourceSnippetParameters.builder()
                             .tag("Revision Vote")
@@ -198,7 +195,7 @@ class RevisionVoteControllerE2eTest : BaseE2eTest() {
             .andExpect(jsonPath("$.code").value("REVISION_NOT_FOUND"))
             .andDo(
                 documentWithResource(
-                    identifier = "revision-vote-create-not-found",
+                    identifier = "존재하지 않는 개정안 투표",
                     resourceParameters =
                         ResourceSnippetParameters.builder()
                             .tag("Revision Vote")
@@ -227,7 +224,7 @@ class RevisionVoteControllerE2eTest : BaseE2eTest() {
             .andExpect(status().isUnauthorized)
             .andDo(
                 documentWithResource(
-                    identifier = "revision-vote-create-unauthorized",
+                    identifier = "비로그인 사용자 투표",
                     resourceParameters =
                         ResourceSnippetParameters.builder()
                             .tag("Revision Vote")

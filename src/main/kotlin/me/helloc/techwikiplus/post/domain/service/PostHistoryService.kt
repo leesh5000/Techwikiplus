@@ -1,7 +1,6 @@
 package me.helloc.techwikiplus.post.domain.service
 
 import me.helloc.techwikiplus.common.domain.service.port.ClockHolder
-import me.helloc.techwikiplus.post.domain.model.history.PostChangeType
 import me.helloc.techwikiplus.post.domain.model.history.PostHistory
 import me.helloc.techwikiplus.post.domain.model.post.Post
 import me.helloc.techwikiplus.post.domain.model.post.PostId
@@ -21,7 +20,6 @@ class PostHistoryService(
 ) {
     fun saveHistory(
         post: Post,
-        changeType: PostChangeType,
         reviewId: PostReviewId? = null,
         revisionId: PostRevisionId? = null,
         changedBy: Long? = null,
@@ -32,7 +30,6 @@ class PostHistoryService(
                 postId = post.id,
                 title = post.title.value,
                 body = post.body.value,
-                changeType = changeType,
                 changedAt = clockHolder.now(),
                 reviewId = reviewId,
                 revisionId = revisionId,

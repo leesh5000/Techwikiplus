@@ -27,7 +27,10 @@ import me.helloc.techwikiplus.user.domain.model.UserId
 import me.helloc.techwikiplus.user.domain.model.UserRole
 import me.helloc.techwikiplus.user.domain.model.UserStatus
 import me.helloc.techwikiplus.user.domain.service.port.UserRepository
+import org.junit.jupiter.api.MethodOrderer
+import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -57,6 +60,7 @@ import java.time.Instant
         "api.documentation.enabled=true",
     ],
 )
+@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class UpdatePostControllerE2eTest : BaseE2eTest() {
     @Autowired
     private lateinit var postRepository: PostRepository
@@ -77,6 +81,7 @@ class UpdatePostControllerE2eTest : BaseE2eTest() {
     private lateinit var tagIdGenerator: TagIdGenerator
 
     @Test
+    @Order(1)
     fun `PUT posts - 게시글 제목과 본문을 수정할 수 있어야 한다`() {
         // Given - 사용자 생성 및 인증 토큰 발급
         val user = createTestUser(role = UserRole.ADMIN)
@@ -152,6 +157,7 @@ class UpdatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(2)
     fun `PUT posts - 태그를 추가하여 게시글을 수정할 수 있어야 한다`() {
         // Given - 사용자 생성 및 인증 토큰 발급
         val user = createTestUser(role = UserRole.ADMIN)
@@ -229,6 +235,7 @@ class UpdatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(3)
     fun `PUT posts - 태그를 변경하여 게시글을 수정할 수 있어야 한다`() {
         // Given - 사용자 생성 및 인증 토큰 발급
         val user = createTestUser(role = UserRole.ADMIN)
@@ -311,6 +318,7 @@ class UpdatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(4)
     fun `PUT posts - 태그를 모두 제거하여 게시글을 수정할 수 있어야 한다`() {
         // Given - 사용자 생성 및 인증 토큰 발급
         val user = createTestUser(role = UserRole.ADMIN)
@@ -390,6 +398,7 @@ class UpdatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(30)
     fun `PUT posts - 존재하지 않는 게시글 ID로 수정 시 404를 반환해야 한다`() {
         // Given - 사용자 생성 및 인증 토큰 발급
         val user = createTestUser(role = UserRole.ADMIN)
@@ -447,6 +456,7 @@ class UpdatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(10)
     fun `PUT posts - 제목이 빈 문자열이면 400 Bad Request를 반환해야 한다`() {
         // Given - 사용자 생성 및 인증 토큰 발급
         val user = createTestUser(role = UserRole.ADMIN)
@@ -509,6 +519,7 @@ class UpdatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(11)
     fun `PUT posts - 제목이 255자를 초과하면 400 Bad Request를 반환해야 한다`() {
         // Given - 사용자 생성 및 인증 토큰 발급
         val user = createTestUser(role = UserRole.ADMIN)
@@ -572,6 +583,7 @@ class UpdatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(12)
     fun `PUT posts - 본문이 30자 미만이면 400 Bad Request를 반환해야 한다`() {
         // Given - 사용자 생성 및 인증 토큰 발급
         val user = createTestUser(role = UserRole.ADMIN)
@@ -643,6 +655,7 @@ class UpdatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(5)
     fun `PUT posts - 삭제된 게시글도 수정할 수 있다`() {
         // Given - 사용자 생성 및 인증 토큰 발급
         val user = createTestUser(role = UserRole.ADMIN)
@@ -712,6 +725,7 @@ class UpdatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(13)
     fun `PUT posts - 잘못된 태그 이름을 전달하면 400 Bad Request를 반환해야 한다`() {
         // Given - 사용자 생성 및 인증 토큰 발급
         val user = createTestUser(role = UserRole.ADMIN)
@@ -783,6 +797,7 @@ class UpdatePostControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(6)
     fun `PUT posts - 동일한 내용으로 수정해도 정상 처리되어야 한다`() {
         // Given - 사용자 생성 및 인증 토큰 발급
         val user = createTestUser(role = UserRole.ADMIN)

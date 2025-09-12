@@ -17,7 +17,10 @@ import me.helloc.techwikiplus.user.domain.service.port.PasswordEncryptor
 import me.helloc.techwikiplus.user.domain.service.port.UserIdGenerator
 import me.helloc.techwikiplus.user.domain.service.port.UserRepository
 import me.helloc.techwikiplus.user.dto.request.UserVerifyRequest
+import org.junit.jupiter.api.MethodOrderer
+import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.restdocs.payload.JsonFieldType
@@ -45,6 +48,7 @@ import java.time.Instant
         "api.documentation.enabled=true",
     ],
 )
+@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class UserVerifyControllerE2eTest : BaseE2eTest() {
     @Autowired
     private lateinit var userRepository: UserRepository
@@ -59,6 +63,7 @@ class UserVerifyControllerE2eTest : BaseE2eTest() {
     private lateinit var passwordEncryptor: PasswordEncryptor
 
     @Test
+    @Order(1)
     fun `POST verify - 유효한 인증 코드로 201 Created를 반환해야 한다`() {
         // Given
         val email = "test@example.com"

@@ -2,7 +2,6 @@ package me.helloc.techwikiplus.common.infrastructure.persistence
 
 import me.helloc.techwikiplus.common.infrastructure.persistence.jpa.PostHistoryJpaRepository
 import me.helloc.techwikiplus.common.infrastructure.persistence.jpa.entity.PostHistoryEntity
-import me.helloc.techwikiplus.post.domain.model.history.PostChangeType
 import me.helloc.techwikiplus.post.domain.model.history.PostHistory
 import me.helloc.techwikiplus.post.domain.model.history.PostHistoryId
 import me.helloc.techwikiplus.post.domain.model.post.PostId
@@ -35,7 +34,6 @@ class PostHistoryRepositoryImpl(
             postId = domain.postId.value,
             title = domain.title,
             body = domain.body,
-            changeType = domain.changeType.name,
             changedAt = domain.changedAt,
             reviewId = domain.reviewId?.value,
             revisionId = domain.revisionId?.value,
@@ -49,7 +47,6 @@ class PostHistoryRepositoryImpl(
             postId = PostId(entity.postId),
             title = entity.title,
             body = entity.body,
-            changeType = PostChangeType.valueOf(entity.changeType),
             changedAt = entity.changedAt,
             reviewId = entity.reviewId?.let { PostReviewId(it) },
             revisionId = entity.revisionId?.let { PostRevisionId(it) },

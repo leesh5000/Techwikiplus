@@ -29,7 +29,10 @@ import me.helloc.techwikiplus.user.domain.model.UserId
 import me.helloc.techwikiplus.user.domain.model.UserRole
 import me.helloc.techwikiplus.user.domain.model.UserStatus
 import me.helloc.techwikiplus.user.domain.service.port.UserRepository
+import org.junit.jupiter.api.MethodOrderer
+import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -59,6 +62,7 @@ import java.time.Instant
         "api.documentation.enabled=true",
     ],
 )
+@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class PostRevisionControllerE2eTest : BaseE2eTest() {
     @Autowired
     private lateinit var postRepository: PostRepository
@@ -82,6 +86,7 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
     private lateinit var jwtTokenManager: JwtTokenManager
 
     @Test
+    @Order(1)
     fun `POST revisions - 로그인한 사용자가 검수 중인 게시글에 개정안을 제출할 수 있다`() {
         // Given - 게시글과 검수 생성
         val post = createTestPost()
@@ -184,6 +189,7 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(2)
     fun `POST revisions - 비로그인 사용자도 개정안을 제출할 수 있다`() {
         // Given - 게시글과 검수 생성
         val post = createTestPost()
@@ -263,6 +269,7 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(3)
     fun `POST revisions - 동일한 검수에 여러 개정안을 제출할 수 있다`() {
         // Given - 게시글과 검수 생성
         val post = createTestPost()
@@ -350,6 +357,7 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(10)
     fun `POST revisions - 제목이 비어있으면 400 Bad Request를 반환한다`() {
         // Given
         val post = createTestPost()
@@ -401,6 +409,7 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(11)
     fun `POST revisions - 본문이 너무 짧으면 400 Bad Request를 반환한다`() {
         // Given
         val post = createTestPost()
@@ -452,6 +461,7 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(12)
     fun `POST revisions - 잘못된 형식의 검수 ID로 요청하면 400 Bad Request를 반환한다`() {
         // Given
         val invalidReviewId = "invalid-id"
@@ -497,6 +507,7 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(4)
     fun `POST revisions - 만료된 토큰으로 요청 시에도 개정안을 제출할 수 있다`() {
         // Given
         val post = createTestPost()
@@ -553,6 +564,7 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
+    @Order(5)
     fun `POST revisions - 개정안 제출 시 투표 수는 0으로 초기화된다`() {
         // Given
         val post = createTestPost()

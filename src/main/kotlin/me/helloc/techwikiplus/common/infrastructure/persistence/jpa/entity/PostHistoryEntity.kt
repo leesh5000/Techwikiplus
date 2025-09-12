@@ -17,8 +17,6 @@ class PostHistoryEntity(
     val title: String,
     @Column(nullable = false, columnDefinition = "TEXT")
     val body: String,
-    @Column(name = "change_type", nullable = false, length = 20)
-    val changeType: String,
     @Column(name = "changed_at", nullable = false)
     val changedAt: Instant,
     @Column(name = "review_id")

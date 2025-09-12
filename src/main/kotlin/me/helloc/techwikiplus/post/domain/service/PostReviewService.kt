@@ -3,10 +3,11 @@ package me.helloc.techwikiplus.post.domain.service
 import me.helloc.techwikiplus.common.domain.service.port.ClockHolder
 import me.helloc.techwikiplus.post.domain.exception.PostDomainException
 import me.helloc.techwikiplus.post.domain.exception.PostErrorCode
-import me.helloc.techwikiplus.post.domain.model.history.PostChangeType
 import me.helloc.techwikiplus.post.domain.model.post.PostId
+import me.helloc.techwikiplus.post.domain.model.post.PostStatus
 import me.helloc.techwikiplus.post.domain.model.review.PostReview
 import me.helloc.techwikiplus.post.domain.model.review.PostReviewId
+import me.helloc.techwikiplus.post.domain.model.review.PostReviewStatus
 import me.helloc.techwikiplus.post.domain.model.review.PostRevision
 import me.helloc.techwikiplus.post.domain.service.port.PostRepository
 import me.helloc.techwikiplus.post.domain.service.port.PostReviewIdGenerator
@@ -41,7 +42,7 @@ class PostReviewService(
                 )
 
         // 삭제된 게시글은 검수를 시작할 수 없음
-        if (post.status == me.helloc.techwikiplus.post.domain.model.post.PostStatus.DELETED) {
+        if (post.status == PostStatus.DELETED) {
             throw PostDomainException(
                 postErrorCode = PostErrorCode.POST_NOT_FOUND,
                 params = arrayOf(postId.value),
@@ -64,6 +65,10 @@ class PostReviewService(
                 startedBy = startedBy,
             )
 
+        // Post 상태를 IN_REVIEW로 변경
+        val updatedPost = post.submitForReview(clockHolder.now())
+        postRepository.save(updatedPost)
+
         return postReviewRepository.save(review)
     }
 
@@ -83,7 +88,7 @@ class PostReviewService(
                     )
 
             // 이미 완료된 리뷰인지 확인
-            if (review.status != me.helloc.techwikiplus.post.domain.model.review.PostReviewStatus.IN_REVIEW) {
+            if (review.status != PostReviewStatus.IN_REVIEW) {
                 return@executeWithLock
             }
 
@@ -98,7 +103,7 @@ class PostReviewService(
                         postId = review.postId,
                         startedAt = review.startedAt,
                         deadline = review.deadline,
-                        status = me.helloc.techwikiplus.post.domain.model.review.PostReviewStatus.CANCELLED,
+                        status = PostReviewStatus.CANCELLED,
                         winningRevisionId = null,
                         startedBy = review.startedBy,
                     )
@@ -131,7 +136,7 @@ class PostReviewService(
                 post.copy(
                     title = winningRevision.title,
                     body = winningRevision.body,
-                    status = me.helloc.techwikiplus.post.domain.model.post.PostStatus.REVIEWED,
+                    status = PostStatus.REVIEWED,
                     updatedAt = clockHolder.now(),
                 )
             postRepository.save(updatedPost)
@@ -139,7 +144,6 @@ class PostReviewService(
             // 변경 이력 저장
             postHistoryService.saveHistory(
                 post = updatedPost,
-                changeType = PostChangeType.REVIEWED,
                 reviewId = review.id,
                 revisionId = winningRevision.id,
                 changedBy = winningRevision.authorId,

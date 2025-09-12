@@ -1,6 +1,5 @@
 package me.helloc.techwikiplus.post.interfaces.web.dto
 
-import me.helloc.techwikiplus.post.domain.model.history.PostChangeType
 import me.helloc.techwikiplus.post.domain.model.history.PostHistory
 import java.time.Instant
 
@@ -9,7 +8,6 @@ data class PostHistoryResponse(
     val postId: Long,
     val title: String,
     val body: String,
-    val changeType: PostChangeType,
     val changedAt: Instant,
     val reviewId: Long?,
     val revisionId: Long?,
@@ -22,7 +20,6 @@ data class PostHistoryResponse(
                 postId = history.postId.value,
                 title = history.title,
                 body = history.body,
-                changeType = history.changeType,
                 changedAt = history.changedAt,
                 reviewId = history.reviewId?.value,
                 revisionId = history.revisionId?.value,

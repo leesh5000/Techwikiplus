@@ -170,6 +170,11 @@ class PostReviewControllerE2eTest : BaseE2eTest() {
         savedReview!!.postId.value shouldBe post.id.value
         savedReview.status shouldBe PostReviewStatus.IN_REVIEW
         savedReview.startedBy shouldBe user.id.value
+
+        // 게시글 상태가 IN_REVIEW로 변경되었는지 확인
+        val updatedPost = postRepository.findBy(post.id)
+        updatedPost shouldNotBe null
+        updatedPost!!.status shouldBe PostStatus.IN_REVIEW
     }
 
     @Test

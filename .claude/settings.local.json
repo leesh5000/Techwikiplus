@@ -35,7 +35,8 @@
       "mcp__ide__getDiagnostics",
       "Bash(.\\gradlew.bat test:*)",
       "Bash(gradlew.bat test:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(dir \"C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\resources\\db\\migration\")"
     ],
     "deny": [],
     "ask": []
