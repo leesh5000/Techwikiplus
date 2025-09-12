@@ -58,7 +58,7 @@ import java.time.Instant
         "api.documentation.enabled=true",
     ],
 )
-class ReadPostControllerE2eTest : BaseE2eTest() {
+class PostQueryControllerE2eTest : BaseE2eTest() {
     @Autowired
     private lateinit var postRepository: PostRepository
 

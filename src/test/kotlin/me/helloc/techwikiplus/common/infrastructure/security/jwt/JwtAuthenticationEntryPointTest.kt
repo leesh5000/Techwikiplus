@@ -274,7 +274,7 @@ class JwtAuthenticationEntryPointTest : DescribeSpec({
         context("일반 AuthenticationException이 전달될 때") {
             it("401 Unauthorized와 함께 기본 인증 필요 메시지를 반환해야 함") {
                 // given
-                every { authException.message } returns "Some authentication error"
+                every { authException.message } returns "알 수 없는 인증 오류"
                 every { response.writer } returns writer
 
                 // when
@@ -293,7 +293,7 @@ class JwtAuthenticationEntryPointTest : DescribeSpec({
                                     .registerModule(KotlinModule.Builder().build())
                             val errorResponse = mapper.readValue(jsonString, ErrorResponse::class.java)
                             errorResponse.code == "UNAUTHORIZED" &&
-                                errorResponse.message == "Some authentication error"
+                                errorResponse.message == "인증이 필요합니다"
                         },
                     )
                 }

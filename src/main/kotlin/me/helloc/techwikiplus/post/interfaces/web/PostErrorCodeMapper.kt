@@ -58,6 +58,21 @@ class PostErrorCodeMapper {
             PostErrorCode.INVALID_POST_VERSION_FORMAT,
             -> HttpStatus.BAD_REQUEST
 
+            // Review
+            PostErrorCode.INVALID_POST_REVIEW_ID_FORMAT -> HttpStatus.BAD_REQUEST
+            PostErrorCode.INVALID_REVIEW_STATE -> HttpStatus.CONFLICT
+            PostErrorCode.REVIEW_NOT_FOUND -> HttpStatus.NOT_FOUND
+            PostErrorCode.REVIEW_ALREADY_EXISTS -> HttpStatus.CONFLICT
+            PostErrorCode.REVIEW_EXPIRED -> HttpStatus.GONE
+
+            // Revision
+            PostErrorCode.REVISION_NOT_FOUND -> HttpStatus.NOT_FOUND
+            PostErrorCode.DUPLICATE_REVISION -> HttpStatus.CONFLICT
+
+            // Vote
+            PostErrorCode.ALREADY_VOTED -> HttpStatus.CONFLICT
+            PostErrorCode.INVALID_VOTE -> HttpStatus.BAD_REQUEST
+
             // Generic
             PostErrorCode.VALIDATION_ERROR,
             PostErrorCode.INVALID_PAGINATION_LIMIT,
@@ -185,6 +200,40 @@ class PostErrorCodeMapper {
                         "중복된 태그입니다"
                     }
 
+                // Review
+                PostErrorCode.INVALID_REVIEW_STATE -> "유효하지 않은 리뷰 상태입니다"
+                PostErrorCode.REVIEW_NOT_FOUND ->
+                    if (params.isNotEmpty()) {
+                        "리뷰(ID: ${params[0]})를 찾을 수 없습니다"
+                    } else {
+                        "리뷰를 찾을 수 없습니다"
+                    }
+                PostErrorCode.REVIEW_ALREADY_EXISTS ->
+                    if (params.isNotEmpty()) {
+                        "게시글(ID: ${params[0]})에 이미 진행 중인 리뷰가 있습니다"
+                    } else {
+                        "이미 진행 중인 리뷰가 있습니다"
+                    }
+                PostErrorCode.REVIEW_EXPIRED -> "리뷰 기간이 만료되었습니다"
+
+                // Revision
+                PostErrorCode.REVISION_NOT_FOUND ->
+                    if (params.isNotEmpty()) {
+                        "수정본(ID: ${params[0]})을 찾을 수 없습니다"
+                    } else {
+                        "수정본을 찾을 수 없습니다"
+                    }
+                PostErrorCode.DUPLICATE_REVISION -> "중복된 수정본입니다"
+
+                // Vote
+                PostErrorCode.ALREADY_VOTED ->
+                    if (params.isNotEmpty()) {
+                        "이미 투표한 수정본(ID: ${params[0]})입니다"
+                    } else {
+                        "이미 투표했습니다"
+                    }
+                PostErrorCode.INVALID_VOTE -> "유효하지 않은 투표입니다"
+
                 // Application Level
                 PostErrorCode.CREATE_POST_FAILED -> "게시글 생성 처리 중 오류가 발생했습니다"
                 PostErrorCode.UPDATE_POST_FAILED -> "게시글 수정 처리 중 오류가 발생했습니다"
@@ -206,6 +255,13 @@ class PostErrorCodeMapper {
                         "스크롤/페이지 크기는 최대 ${params[0]}~${params[1]}까지 가능합니다"
                     } else {
                         "스크롤/페이지 크기가 유효하지 않습니다"
+                    }
+
+                PostErrorCode.INVALID_POST_REVIEW_ID_FORMAT ->
+                    if (params.isNotEmpty()) {
+                        "유효하지 않은 게시글 리뷰 ID 형식입니다"
+                    } else {
+                        "유효하지 않은 게시글 리뷰 ID 형식입니다"
                     }
             }
 

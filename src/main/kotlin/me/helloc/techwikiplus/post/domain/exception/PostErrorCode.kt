@@ -49,8 +49,23 @@ enum class PostErrorCode {
     // Pagination Validation
     INVALID_PAGINATION_LIMIT,
 
+    // Review
+    INVALID_REVIEW_STATE,
+    REVIEW_NOT_FOUND,
+    REVIEW_ALREADY_EXISTS,
+    REVIEW_EXPIRED,
+
+    // Revision
+    REVISION_NOT_FOUND,
+    DUPLICATE_REVISION,
+
+    // Vote
+    ALREADY_VOTED,
+    INVALID_VOTE,
+
     // Generic
     VALIDATION_ERROR,
     DOMAIN_ERROR,
     INTERNAL_ERROR,
+    INVALID_POST_REVIEW_ID_FORMAT,
 }

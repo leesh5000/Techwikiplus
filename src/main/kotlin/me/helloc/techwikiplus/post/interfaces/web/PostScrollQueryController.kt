@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class ReadPostScrollController(
+class PostScrollQueryController(
     private val service: PostReadService,
 ) {
     @GetMapping("/api/v1/posts", produces = ["application/json"])

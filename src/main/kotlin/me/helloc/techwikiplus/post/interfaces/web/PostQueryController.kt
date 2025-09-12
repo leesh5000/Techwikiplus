@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class ReadPostController(
+class PostQueryController(
     private val service: PostReadService,
 ) {
     @GetMapping("/api/v1/posts/{postId}", produces = ["application/json"])

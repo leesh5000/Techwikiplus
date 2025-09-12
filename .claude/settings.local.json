@@ -32,7 +32,10 @@
       "Read(/C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\kotlin\\me\\helloc\\techwikiplus\\post\\domain\\exception/**)",
       "Read(/C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\test\\kotlin\\me\\helloc\\techwikiplus\\common\\infrastructure/**)",
       "Read(/C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\kotlin\\me\\helloc\\techwikiplus\\common\\infrastructure\\persistence\\jpa\\entity/**)",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "Bash(.\\gradlew.bat test:*)",
+      "Bash(gradlew.bat test:*)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "ask": []
