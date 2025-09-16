@@ -14,17 +14,17 @@ import org.springframework.stereotype.Service
 class PostReadService(
     private val repository: PostRepository,
 ) {
-    fun getBy(postId: PostId): Post {
+    fun getPostScrollResponse(postId: PostId): Post {
         return repository.findBy(postId)
             ?: throw PostDomainException(PostErrorCode.POST_NOT_FOUND, arrayOf(postId))
     }
 
     fun getPostResponse(postId: PostId): PostResponse {
-        val post = getBy(postId)
+        val post = getPostScrollResponse(postId)
         return PostResponse.from(post)
     }
 
-    fun getBy(
+    fun getPostScrollResponse(
         cursor: PostId?,
         limit: Int,
     ): PostScrollResponse {

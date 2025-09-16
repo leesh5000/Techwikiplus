@@ -32,7 +32,7 @@ class UpdatePostService(
         postAuthorizationService.requireAdminRole()
 
         // 2. 기존 게시글 조회
-        val post: Post = postReadService.getBy(postId)
+        val post: Post = postReadService.getPostScrollResponse(postId)
         val beforeTagNames = post.tags.map { it.tagName }
 
         // 3. 태그 조회 (없으면 생성)

@@ -1,11 +1,9 @@
 package me.helloc.techwikiplus.post.interfaces.web
 
 import me.helloc.techwikiplus.common.infrastructure.security.context.SecurityContextService
-import me.helloc.techwikiplus.post.domain.model.post.PostBody
-import me.helloc.techwikiplus.post.domain.model.post.PostTitle
 import me.helloc.techwikiplus.post.domain.model.review.PostReviewId
 import me.helloc.techwikiplus.post.domain.service.PostRevisionService
-import me.helloc.techwikiplus.post.dto.request.PostRequest
+import me.helloc.techwikiplus.post.dto.request.PostRevisionRequest
 import me.helloc.techwikiplus.post.dto.response.PostRevisionResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
@@ -26,7 +24,7 @@ class PostRevisionController(
     )
     fun submitRevision(
         @PathVariable reviewId: String,
-        @RequestBody request: PostRequest,
+        @RequestBody request: PostRevisionRequest,
     ): ResponseEntity<PostRevisionResponse> {
         // 현재 로그인한 사용자 ID 가져오기 (비로그인 시 null)
         val authorId = securityContextService.getCurrentUserId()?.value
@@ -34,8 +32,7 @@ class PostRevisionController(
         val revision =
             postRevisionService.submitRevision(
                 reviewId = PostReviewId(reviewId.toLong()),
-                title = PostTitle(request.title),
-                body = PostBody(request.body),
+                request = request,
                 authorId = authorId,
             )
 

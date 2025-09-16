@@ -63,6 +63,12 @@ enum class PostErrorCode {
     ALREADY_VOTED,
     INVALID_VOTE,
 
+    // Review Comment
+    BLANK_REVIEW_COMMENT,
+    REVIEW_COMMENT_TOO_LONG,
+    INVALID_LINE_NUMBER,
+    INVALID_REVIEW_COMMENT_ID_FORMAT,
+
     // Generic
     VALIDATION_ERROR,
     DOMAIN_ERROR,

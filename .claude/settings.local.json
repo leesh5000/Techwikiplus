@@ -36,7 +36,8 @@
       "Bash(.\\gradlew.bat test:*)",
       "Bash(gradlew.bat test:*)",
       "Bash(grep:*)",
-      "Bash(dir \"C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\resources\\db\\migration\")"
+      "Bash(dir \"C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\resources\\db\\migration\")",
+      "Bash(gradlew.bat compileKotlin:*)"
     ],
     "deny": [],
     "ask": []

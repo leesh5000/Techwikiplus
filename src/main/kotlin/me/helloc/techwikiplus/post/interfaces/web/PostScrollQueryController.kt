@@ -22,7 +22,7 @@ class PostScrollQueryController(
 
         // UseCase 호출
         val response =
-            service.getBy(
+            service.getPostScrollResponse(
                 cursor = postCursor,
                 limit = limit,
             )

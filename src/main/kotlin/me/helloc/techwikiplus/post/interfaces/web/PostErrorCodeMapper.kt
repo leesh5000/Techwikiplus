@@ -73,6 +73,13 @@ class PostErrorCodeMapper {
             PostErrorCode.ALREADY_VOTED -> HttpStatus.CONFLICT
             PostErrorCode.INVALID_VOTE -> HttpStatus.BAD_REQUEST
 
+            // Review Comment
+            PostErrorCode.BLANK_REVIEW_COMMENT,
+            PostErrorCode.REVIEW_COMMENT_TOO_LONG,
+            PostErrorCode.INVALID_LINE_NUMBER,
+            PostErrorCode.INVALID_REVIEW_COMMENT_ID_FORMAT,
+            -> HttpStatus.BAD_REQUEST
+
             // Generic
             PostErrorCode.VALIDATION_ERROR,
             PostErrorCode.INVALID_PAGINATION_LIMIT,
@@ -233,6 +240,27 @@ class PostErrorCodeMapper {
                         "이미 투표했습니다"
                     }
                 PostErrorCode.INVALID_VOTE -> "유효하지 않은 투표입니다"
+
+                // Review Comment
+                PostErrorCode.BLANK_REVIEW_COMMENT -> "검수 의견은 필수 입력 항목입니다"
+                PostErrorCode.REVIEW_COMMENT_TOO_LONG ->
+                    if (params.isNotEmpty()) {
+                        "검수 의견은 최대 ${params[0]}자 이하여야 합니다"
+                    } else {
+                        "검수 의견이 너무 깁니다"
+                    }
+                PostErrorCode.INVALID_LINE_NUMBER ->
+                    if (params.isNotEmpty()) {
+                        "유효하지 않은 라인 번호입니다: ${params[0]}"
+                    } else {
+                        "유효하지 않은 라인 번호입니다"
+                    }
+                PostErrorCode.INVALID_REVIEW_COMMENT_ID_FORMAT ->
+                    if (params.isNotEmpty()) {
+                        "유효하지 않은 검수 의견 ID 형식입니다: ${params[0]}"
+                    } else {
+                        "유효하지 않은 검수 의견 ID 형식입니다"
+                    }
 
                 // Application Level
                 PostErrorCode.CREATE_POST_FAILED -> "게시글 생성 처리 중 오류가 발생했습니다"

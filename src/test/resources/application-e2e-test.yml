@@ -4,8 +4,30 @@ spring:
     name: techwikiplus-user-integration-test
     version: INTEGRATION-TEST-VERSION
 
-  # 데이터소스는 TestContainersInitializer에서 동적으로 설정됨
-  # 메일 서버 설정도 TestContainersInitializer에서 동적으로 설정됨
+  # 데이터소스는 TestContainersInitializer에서 동적으로 설정되지만
+  # HikariCP 풀 설정은 여기서 오버라이드
+  datasource:
+    hikari:
+      maximum-pool-size: 5  # 테스트용 작은 풀 크기
+      minimum-idle: 1
+      connection-timeout: 5000  # 5초
+      idle-timeout: 10000  # 10초
+      max-lifetime: 30000  # 30초
+      leak-detection-threshold: 2000  # 누수 감지 2초
+
+  # Redis 설정 - 테스트 환경용 타임아웃 설정 추가
+  data:
+    redis:
+      # Lettuce 클라이언트 설정
+      timeout: 2s  # 명령 타임아웃
+      lettuce:
+        pool:
+          enabled: false  # 테스트에서는 풀 비활성화
+        shutdown-timeout: 100ms  # 빠른 종료를 위한 짧은 타임아웃
+        cluster:
+          refresh:
+            adaptive: false  # 적응형 새로고침 비활성화
+            period: 60s
 
 # API 문서화 활성화
 api:
@@ -19,3 +41,6 @@ logging:
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    # Redis 연결 로그 레벨 조정
+    io.lettuce.core.protocol.ConnectionWatchdog: WARN
+    io.lettuce.core: WARN

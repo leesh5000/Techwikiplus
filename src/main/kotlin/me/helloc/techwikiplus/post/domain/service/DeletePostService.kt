@@ -19,7 +19,7 @@ class DeletePostService(
         postAuthorizationService.requireAdminRole()
 
         // 2. 기존 게시글 조회
-        val post = postReadService.getBy(postId)
+        val post = postReadService.getPostScrollResponse(postId)
 
         // 3. 게시글 삭제 (Soft Delete)
         // Soft Delete는 태그 카운트를 감소시키지 않음 (복원 가능하므로)

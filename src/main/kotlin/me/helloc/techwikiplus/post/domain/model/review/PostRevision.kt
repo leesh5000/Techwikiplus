@@ -11,6 +11,7 @@ class PostRevision(
     val authorId: Long?,
     val title: PostTitle,
     val body: PostBody,
+    val reviewComments: List<ReviewComment> = emptyList(),
     val submittedAt: Instant,
     val voteCount: Int = 0,
 ) {
@@ -21,6 +22,7 @@ class PostRevision(
             authorId = authorId,
             title = title,
             body = body,
+            reviewComments = reviewComments,
             submittedAt = submittedAt,
             voteCount = voteCount + 1,
         )
@@ -33,6 +35,7 @@ class PostRevision(
             authorId = authorId,
             title = title,
             body = body,
+            reviewComments = reviewComments,
             submittedAt = submittedAt,
             voteCount = maxOf(0, voteCount - 1),
         )

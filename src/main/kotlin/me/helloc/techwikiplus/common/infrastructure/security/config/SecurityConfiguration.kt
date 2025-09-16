@@ -47,6 +47,7 @@ class SecurityConfiguration(
                         "/api/v1/posts/{postId}/reviews",
                         "/api/v1/reviews/{reviewId}",
                         "/api/v1/reviews/{reviewId}/revisions",
+                        "/api/v1/types/**",
                     ).permitAll()
                     // Actuator 엔드포인트 (헬스체크 및 모니터링)
                     .requestMatchers(

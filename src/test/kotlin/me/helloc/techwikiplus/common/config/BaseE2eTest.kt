@@ -8,12 +8,14 @@ import me.helloc.techwikiplus.common.config.documentation.ApiDocumentationSuppor
 import me.helloc.techwikiplus.common.config.documentation.maskHeaders
 import me.helloc.techwikiplus.common.config.documentation.maskSensitiveData
 import me.helloc.techwikiplus.common.config.testcontainers.TestContainersInitializer
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.redis.connection.RedisConnectionFactory
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.restdocs.RestDocumentationContextProvider
 import org.springframework.restdocs.RestDocumentationExtension
@@ -93,6 +95,21 @@ abstract class BaseE2eTest : ApiDocumentationSupport {
         }
     }
 
+    @AfterEach
+    fun tearDown() {
+        // 각 테스트 후 Redis 연결을 명시적으로 정리
+        try {
+            // Redis 연결 팩토리를 통해 모든 연결 종료
+            val connectionFactory = stringRedisTemplate.connectionFactory
+            if (connectionFactory is RedisConnectionFactory) {
+                // Lettuce 연결을 즉시 종료하도록 플러시
+                connectionFactory.connection?.close()
+            }
+        } catch (e: Exception) {
+            // 테스트 종료 시 발생하는 연결 예외는 무시
+        }
+    }
+
     /**
      * Redis 캐시를 초기화하여 테스트 간 격리를 보장
      *
@@ -101,7 +118,11 @@ abstract class BaseE2eTest : ApiDocumentationSupport {
      * 수동으로 초기화해야 합니다.
      */
     private fun clearRedisCache() {
-        stringRedisTemplate.connectionFactory?.connection?.serverCommands()?.flushAll()
+        try {
+            stringRedisTemplate.connectionFactory?.connection?.serverCommands()?.flushAll()
+        } catch (e: Exception) {
+            // 연결이 이미 끊어진 경우 예외 무시
+        }
     }
 
     override fun documentWithResource(

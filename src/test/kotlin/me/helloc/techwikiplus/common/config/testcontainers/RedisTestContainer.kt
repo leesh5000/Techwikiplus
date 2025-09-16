@@ -18,6 +18,8 @@ object RedisTestContainer {
             .withExposedPorts(REDIS_PORT)
             .withReuse(true)
             .withLabel("testcontainers.reuse.enable", "true")
+            // 컨테이너 중지 시 즉시 제거 설정
+            .withCommand("redis-server", "--save", "\"\"", "--appendonly", "no")
             .apply {
                 start()
                 // JVM 종료 시 컨테이너 정리를 위한 shutdown hook 추가

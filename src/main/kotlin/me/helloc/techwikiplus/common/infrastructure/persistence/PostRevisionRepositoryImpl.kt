@@ -1,18 +1,26 @@
 package me.helloc.techwikiplus.common.infrastructure.persistence
 
+import me.helloc.techwikiplus.common.domain.service.port.ClockHolder
 import me.helloc.techwikiplus.common.infrastructure.persistence.jpa.PostRevisionJpaRepository
 import me.helloc.techwikiplus.common.infrastructure.persistence.jpa.entity.PostRevisionEntity
+import me.helloc.techwikiplus.common.infrastructure.persistence.jpa.entity.ReviewCommentEntity
 import me.helloc.techwikiplus.post.domain.model.post.PostBody
 import me.helloc.techwikiplus.post.domain.model.post.PostTitle
 import me.helloc.techwikiplus.post.domain.model.review.PostReviewId
 import me.helloc.techwikiplus.post.domain.model.review.PostRevision
 import me.helloc.techwikiplus.post.domain.model.review.PostRevisionId
+import me.helloc.techwikiplus.post.domain.model.review.ReviewComment
+import me.helloc.techwikiplus.post.domain.model.review.ReviewCommentId
+import me.helloc.techwikiplus.post.domain.model.review.ReviewCommentType
 import me.helloc.techwikiplus.post.domain.service.port.PostRevisionRepository
+import me.helloc.techwikiplus.post.domain.service.port.ReviewCommentIdGenerator
 import org.springframework.stereotype.Repository
 
 @Repository
 class PostRevisionRepositoryImpl(
     private val jpaRepository: PostRevisionJpaRepository,
+    private val reviewCommentIdGenerator: ReviewCommentIdGenerator,
+    private val clockHolder: ClockHolder,
 ) : PostRevisionRepository {
     override fun save(postRevision: PostRevision): PostRevision {
         val entity = toEntity(postRevision)
@@ -29,15 +37,32 @@ class PostRevisionRepositoryImpl(
     }
 
     private fun toEntity(domain: PostRevision): PostRevisionEntity {
-        return PostRevisionEntity(
-            id = domain.id.value,
-            reviewId = domain.reviewId.value,
-            authorId = domain.authorId,
-            title = domain.title.value,
-            body = domain.body.value,
-            submittedAt = domain.submittedAt,
-            voteCount = domain.voteCount,
-        )
+        val entity =
+            PostRevisionEntity(
+                id = domain.id.value,
+                reviewId = domain.reviewId.value,
+                authorId = domain.authorId,
+                title = domain.title.value,
+                body = domain.body.value,
+                submittedAt = domain.submittedAt,
+                voteCount = domain.voteCount,
+            )
+
+        // Add review comments to entity
+        domain.reviewComments.forEach { comment ->
+            entity.reviewComments.add(
+                ReviewCommentEntity(
+                    id = comment.id.value,
+                    revisionId = domain.id.value,
+                    lineNumber = comment.lineNumber,
+                    comment = comment.comment,
+                    commentType = comment.type.name,
+                    createdAt = clockHolder.now(),
+                ),
+            )
+        }
+
+        return entity
     }
 
     private fun toDomain(entity: PostRevisionEntity): PostRevision {
@@ -47,6 +72,15 @@ class PostRevisionRepositoryImpl(
             authorId = entity.authorId,
             title = PostTitle(entity.title),
             body = PostBody(entity.body),
+            reviewComments =
+                entity.reviewComments.map { commentEntity ->
+                    ReviewComment(
+                        id = ReviewCommentId(commentEntity.id),
+                        lineNumber = commentEntity.lineNumber,
+                        comment = commentEntity.comment,
+                        type = ReviewCommentType.valueOf(commentEntity.commentType),
+                    )
+                },
             submittedAt = entity.submittedAt,
             voteCount = entity.voteCount,
         )
