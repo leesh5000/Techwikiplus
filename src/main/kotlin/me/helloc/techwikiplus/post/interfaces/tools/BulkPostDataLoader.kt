@@ -1,4 +1,4 @@
-package me.helloc.techwikiplus.tools
+package me.helloc.techwikiplus.post.interfaces.tools
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -255,7 +255,7 @@ class BulkPostDataLoader(
             // 3. 태그 post_count 업데이트
             updateTagPostCounts()
 
-            printFinalSummary(totalCount)
+            printFinalSummary()
         } catch (e: Exception) {
             logger.error("데이터 삽입 중 오류 발생", e)
             throw e
@@ -515,7 +515,7 @@ class BulkPostDataLoader(
         logger.info("")
     }
 
-    private fun printFinalSummary(totalCount: Long) {
+    private fun printFinalSummary() {
         val finalCount = processedCount.get()
         val finalTagsCount = processedTagsCount.get()
         val totalElapsedMs = System.currentTimeMillis() - startTime.get()

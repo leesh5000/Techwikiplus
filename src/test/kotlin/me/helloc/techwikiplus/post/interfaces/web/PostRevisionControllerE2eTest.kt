@@ -590,6 +590,7 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
                             lineNumber = 10,
                             comment = "이 부분의 설명이 부정확합니다. 올바른 정보로 수정이 필요합니다.",
                             type = "INACCURACY",
+                            suggestedChange = "정확한 정보로 수정된 내용",
                         ),
                     ),
             )
@@ -650,6 +651,9 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
                             fieldWithPath("reviewComments[].type")
                                 .type(JsonFieldType.STRING)
                                 .description("댓글 타입 (INACCURACY 또는 NEEDS_IMPROVEMENT)"),
+                            fieldWithPath("reviewComments[].suggestedChange")
+                                .type(JsonFieldType.STRING)
+                                .description("제안된 변경 내용"),
                         )
                         .responseHeaders(
                             headerWithName(HttpHeaders.LOCATION)
@@ -692,16 +696,19 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
                             lineNumber = 5,
                             comment = "이 부분의 정보가 오래되었습니다.",
                             type = "INACCURACY",
+                            suggestedChange = "최신 정보로 업데이트된 내용",
                         ),
                         ReviewCommentRequest(
                             lineNumber = 15,
                             comment = "코드 예제를 추가하면 더 명확할 것 같습니다.",
                             type = "NEEDS_IMPROVEMENT",
+                            suggestedChange = "코드 예제가 포함된 설명",
                         ),
                         ReviewCommentRequest(
                             lineNumber = 25,
                             comment = "용어 설명이 부족합니다.",
                             type = "NEEDS_IMPROVEMENT",
+                            suggestedChange = "상세한 용어 설명이 포함된 내용",
                         ),
                     ),
             )
@@ -754,6 +761,7 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
                             // 빈 댓글
                             comment = "",
                             type = "INACCURACY",
+                            suggestedChange = "제안된 변경 내용",
                         ),
                     ),
             )
@@ -815,6 +823,7 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
                             lineNumber = 10,
                             comment = veryLongComment,
                             type = "NEEDS_IMPROVEMENT",
+                            suggestedChange = "개선된 코드",
                         ),
                     ),
             )
@@ -847,6 +856,7 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
                             lineNumber = 0,
                             comment = "이 댓글은 잘못된 라인 번호를 가지고 있습니다.",
                             type = "INACCURACY",
+                            suggestedChange = "수정된 내용",
                         ),
                     ),
             )
@@ -904,7 +914,8 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
                     {
                         "lineNumber": 10,
                         "comment": "이 댓글은 잘못된 타입을 가지고 있습니다.",
-                        "type": "INVALID_TYPE"
+                        "type": "INVALID_TYPE",
+                        "suggestedChange": "수정된 내용"
                     }
                 ]
             }
@@ -956,6 +967,7 @@ class PostRevisionControllerE2eTest : BaseE2eTest() {
                             lineNumber = 5,
                             comment = "개선이 필요한 부분입니다.",
                             type = "NEEDS_IMPROVEMENT",
+                            suggestedChange = "개선된 코드 제안",
                         ),
                     ),
             )

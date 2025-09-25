@@ -18,7 +18,7 @@ import me.helloc.techwikiplus.post.domain.service.port.PostIdGenerator
 import me.helloc.techwikiplus.post.domain.service.port.PostRepository
 import me.helloc.techwikiplus.post.domain.service.port.PostReviewIdGenerator
 import me.helloc.techwikiplus.post.domain.service.port.PostReviewRepository
-import me.helloc.techwikiplus.post.interfaces.web.dto.PostReviewResponse
+import me.helloc.techwikiplus.post.dto.response.PostReviewResponse
 import me.helloc.techwikiplus.user.domain.model.Email
 import me.helloc.techwikiplus.user.domain.model.EncodedPassword
 import me.helloc.techwikiplus.user.domain.model.Nickname

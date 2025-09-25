@@ -31,14 +31,7 @@ class PostReviewController(
                 startedBy = startedBy,
             )
 
-        val response =
-            PostReviewResponse(
-                reviewId = review.id.value.toString(),
-                postId = review.postId.value.toString(),
-                startedAt = review.startedAt,
-                deadline = review.deadline,
-                status = review.status.name,
-            )
+        val response = PostReviewResponse.from(review)
 
         val location =
             ServletUriComponentsBuilder

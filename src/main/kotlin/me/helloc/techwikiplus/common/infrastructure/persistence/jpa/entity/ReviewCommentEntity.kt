@@ -20,6 +20,8 @@ open class ReviewCommentEntity(
     open val comment: String,
     @Column(name = "comment_type", nullable = false, length = 50)
     open val commentType: String,
+    @Column(name = "suggested_change", nullable = false, columnDefinition = "TEXT")
+    open val suggestedChange: String,
     @Column(name = "created_at", nullable = false)
     open val createdAt: Instant,
 ) {
@@ -30,6 +32,7 @@ open class ReviewCommentEntity(
         lineNumber = 0,
         comment = "",
         commentType = "GENERAL",
+        suggestedChange = "",
         createdAt = Instant.now(),
     )
 }

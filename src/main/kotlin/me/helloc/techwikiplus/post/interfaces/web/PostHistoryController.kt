@@ -2,7 +2,7 @@ package me.helloc.techwikiplus.post.interfaces.web
 
 import me.helloc.techwikiplus.post.domain.model.post.PostId
 import me.helloc.techwikiplus.post.domain.service.PostHistoryService
-import me.helloc.techwikiplus.post.interfaces.web.dto.PostHistoryResponse
+import me.helloc.techwikiplus.post.dto.response.PostHistoryResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

@@ -13,6 +13,7 @@ import me.helloc.techwikiplus.post.domain.service.port.PostRepository
 import me.helloc.techwikiplus.post.domain.service.port.PostReviewIdGenerator
 import me.helloc.techwikiplus.post.domain.service.port.PostReviewRepository
 import me.helloc.techwikiplus.post.domain.service.port.PostRevisionRepository
+import me.helloc.techwikiplus.post.dto.response.ReviewHistoryResponse
 import me.helloc.techwikiplus.user.domain.service.port.LockManager
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -173,5 +174,23 @@ class PostReviewService(
     @Transactional(readOnly = true)
     fun getReviewsByPostId(postId: PostId): List<PostReview> {
         return postReviewRepository.findAllByPostId(postId)
+    }
+
+    @Transactional(readOnly = true)
+    fun getReviewHistories(postId: PostId): List<ReviewHistoryResponse> {
+        // 게시글 존재 여부 확인
+        postRepository.findBy(postId)
+            ?: throw PostDomainException(
+                postErrorCode = PostErrorCode.POST_NOT_FOUND,
+                params = arrayOf(postId.value),
+            )
+
+        // 해당 게시글의 모든 리뷰 내역 조회
+        val reviews = postReviewRepository.findAllByPostId(postId)
+
+        // 최신순(startedAt 기준)으로 정렬하여 반환
+        return reviews
+            .sortedByDescending { it.startedAt }
+            .map { ReviewHistoryResponse.from(it) }
     }
 }

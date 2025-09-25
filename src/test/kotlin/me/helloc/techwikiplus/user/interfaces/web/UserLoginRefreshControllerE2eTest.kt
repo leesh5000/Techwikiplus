@@ -157,6 +157,7 @@ class UserLoginRefreshControllerE2eTest : BaseE2eTest() {
             )
 
         // When & Then
+        // 잘못된 형식의 토큰은 MalformedJwtException을 발생시켜 INVALID_TOKEN으로 처리됨
         mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/users/login/refresh")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -164,7 +165,7 @@ class UserLoginRefreshControllerE2eTest : BaseE2eTest() {
                 .content(objectMapper.writeValueAsString(request)),
         )
             .andExpect(MockMvcResultMatchers.status().isUnauthorized)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("UNAUTHORIZED"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("INVALID_TOKEN"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").exists())
             .andDo(
                 documentWithResource(
@@ -208,7 +209,7 @@ class UserLoginRefreshControllerE2eTest : BaseE2eTest() {
                 .content(objectMapper.writeValueAsString(request)),
         )
             .andExpect(MockMvcResultMatchers.status().isUnauthorized)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("UNAUTHORIZED"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("INVALID_TOKEN"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").exists())
             .andDo(
                 documentWithResource(
@@ -277,32 +278,32 @@ class UserLoginRefreshControllerE2eTest : BaseE2eTest() {
     }
 
     @Test
-    fun `POST login refresh - 존재하지 않는 사용자 ID로 401 Unauthorized를 반환해야 한다`() {
+    fun `POST login refresh - 존재하지 않는 사용자 ID로 404 Not Found를 반환해야 한다`() {
         // Given
         val request =
             UserLoginRefreshRequest(
-                userId = "99999999999", // 존재하지 않는 사용자 ID
+                userId = "99999999999",
                 refreshToken = "some.refresh.token",
             )
 
         // When & Then
-        // 잘못된 토큰으로 인해 토큰 검증 단계에서 401이 반환됨
+        // 존재하지 않는 사용자 조회 시 404 반환
         mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/users/login/refresh")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)),
         )
-            .andExpect(MockMvcResultMatchers.status().isUnauthorized)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("UNAUTHORIZED"))
+            .andExpect(MockMvcResultMatchers.status().isNotFound)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("USER_NOT_FOUND"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").exists())
             .andDo(
                 documentWithResource(
                     "존재하지 않는 사용자 토큰 갱신",
                     ResourceSnippetParameters.Companion.builder()
                         .tag("User")
-                        .summary("토큰 갱신 - 유효하지 않은 토큰")
-                        .description("유효하지 않은 토큰으로 갱신을 시도하는 경우 401 Unauthorized를 반환합니다.")
+                        .summary("토큰 갱신 - 존재하지 않는 사용자")
+                        .description("존재하지 않는 사용자 ID로 갱신을 시도하는 경우 404 Not Found를 반환합니다.")
                         .requestSchema(
                             schema(
                                 "${UserLoginRefreshRequest::class.simpleName}",

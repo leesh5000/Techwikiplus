@@ -25,6 +25,32 @@ class JwtAuthenticationFilter(
         private val log = LoggerFactory.getLogger(JwtAuthenticationFilter::class.java)
         private const val AUTHORIZATION_HEADER = "Authorization"
         private const val BEARER_PREFIX = "Bearer "
+
+        private val PUBLIC_ENDPOINTS =
+            setOf(
+                "/api/v1/users/signup",
+                "/api/v1/users/login",
+                "/api/v1/users/login/refresh",
+                "/api/v1/users/verify",
+                "/api/v1/users/verify/resend",
+                "/api/v1/posts",
+                "/api/v1/types",
+            )
+
+        private val PUBLIC_PATH_PATTERNS =
+            listOf(
+                Regex("/api/v1/posts/[^/]+$"),
+                Regex("/api/v1/posts/[^/]+/reviews$"),
+                Regex("/api/v1/reviews/[^/]+$"),
+                Regex("/api/v1/reviews/[^/]+/revisions$"),
+                Regex("/api/v1/types/.*"),
+                Regex("/actuator/.*"),
+                Regex("/swagger-ui/.*"),
+                Regex("/v3/api-docs/.*"),
+                Regex("/api-docs/.*"),
+                Regex("/static/.*"),
+                Regex("/resources/.*"),
+            )
     }
 
     override fun doFilterInternal(
@@ -32,6 +58,8 @@ class JwtAuthenticationFilter(
         response: HttpServletResponse,
         filterChain: FilterChain,
     ) {
+        val isPublicEndpoint = isPublicEndpoint(request.requestURI)
+
         try {
             val token = extractTokenFromHeader(request)
 
@@ -46,6 +74,13 @@ class JwtAuthenticationFilter(
                     try {
                         user.validateUserStatus()
                     } catch (e: UserDomainException) {
+                        // For public endpoints, continue without authentication
+                        if (isPublicEndpoint) {
+                            log.debug("User status validation failed for public endpoint: ${e.userErrorCode}")
+                            filterChain.doFilter(request, response)
+                            return
+                        }
+
                         // Convert to AuthenticationException and call EntryPoint
                         val authException =
                             UserStatusAuthenticationException(
@@ -68,6 +103,13 @@ class JwtAuthenticationFilter(
                     SecurityContextHolder.getContext().authentication = authentication
                     log.debug("JWT authentication successful for user: ${userId.value} with role: ${user.role.name}")
                 } else {
+                    // For public endpoints, continue without authentication
+                    if (isPublicEndpoint) {
+                        log.debug("User not found for public endpoint, continuing as anonymous")
+                        filterChain.doFilter(request, response)
+                        return
+                    }
+
                     // User not found - treat as invalid token
                     val authException =
                         UserStatusAuthenticationException(
@@ -80,6 +122,13 @@ class JwtAuthenticationFilter(
                 }
             }
         } catch (e: UserDomainException) {
+            // For public endpoints, continue without authentication
+            if (isPublicEndpoint) {
+                log.debug("Token validation failed for public endpoint: ${e.userErrorCode}, continuing as anonymous")
+                filterChain.doFilter(request, response)
+                return
+            }
+
             // Handle token validation errors
             val authException =
                 UserStatusAuthenticationException(
@@ -104,6 +153,18 @@ class JwtAuthenticationFilter(
             bearerToken.substring(BEARER_PREFIX.length)
         } else {
             null
+        }
+    }
+
+    private fun isPublicEndpoint(requestUri: String): Boolean {
+        // Check exact matches
+        if (PUBLIC_ENDPOINTS.contains(requestUri)) {
+            return true
+        }
+
+        // Check pattern matches
+        return PUBLIC_PATH_PATTERNS.any { pattern ->
+            pattern.matches(requestUri)
         }
     }
 }

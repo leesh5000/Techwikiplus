@@ -1,4 +1,4 @@
-package me.helloc.techwikiplus.post.interfaces.web.dto
+package me.helloc.techwikiplus.post.dto.response
 
 import me.helloc.techwikiplus.post.domain.model.history.PostHistory
 import java.time.Instant

@@ -78,6 +78,9 @@ class PostErrorCodeMapper {
             PostErrorCode.REVIEW_COMMENT_TOO_LONG,
             PostErrorCode.INVALID_LINE_NUMBER,
             PostErrorCode.INVALID_REVIEW_COMMENT_ID_FORMAT,
+            PostErrorCode.BLANK_SUGGESTED_CHANGE,
+            PostErrorCode.SUGGESTED_CHANGE_TOO_LONG,
+            PostErrorCode.TOTAL_SUGGESTED_CHANGES_TOO_LONG,
             -> HttpStatus.BAD_REQUEST
 
             // Generic
@@ -260,6 +263,19 @@ class PostErrorCodeMapper {
                         "유효하지 않은 검수 의견 ID 형식입니다: ${params[0]}"
                     } else {
                         "유효하지 않은 검수 의견 ID 형식입니다"
+                    }
+                PostErrorCode.BLANK_SUGGESTED_CHANGE -> "변경 제안 내용은 필수 입력 항목입니다"
+                PostErrorCode.SUGGESTED_CHANGE_TOO_LONG ->
+                    if (params.isNotEmpty()) {
+                        "제안된 변경 내용은 최대 ${params[0]}자 이하여야 합니다"
+                    } else {
+                        "제안된 변경 내용이 너무 깁니다"
+                    }
+                PostErrorCode.TOTAL_SUGGESTED_CHANGES_TOO_LONG ->
+                    if (params.size >= 2) {
+                        "모든 변경 제안의 총 길이(${params[0]}자)가 본문 최대 길이(${params[1]}자)를 초과합니다"
+                    } else {
+                        "모든 변경 제안의 총 길이가 본문 최대 길이를 초과합니다"
                     }
 
                 // Application Level

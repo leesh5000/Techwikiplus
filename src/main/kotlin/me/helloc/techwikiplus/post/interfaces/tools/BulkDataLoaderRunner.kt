@@ -1,4 +1,4 @@
-package me.helloc.techwikiplus.tools
+package me.helloc.techwikiplus.post.interfaces.tools
 
 import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner

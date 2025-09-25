@@ -37,7 +37,13 @@
       "Bash(gradlew.bat test:*)",
       "Bash(grep:*)",
       "Bash(dir \"C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\resources\\db\\migration\")",
-      "Bash(gradlew.bat compileKotlin:*)"
+      "Bash(gradlew.bat compileKotlin:*)",
+      "Bash(claude --version)",
+      "Bash(dir \"C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\kotlin\\me\\helloc\\techwikiplus\\post\\dto\\response\")",
+      "Bash(dir \"C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\resources\\db\\migration\" /B)",
+      "Bash(dir \"C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\kotlin\\me\\helloc\\techwikiplus\\post\\domain\\model\\review\" /B)",
+      "Bash(dir \"C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\kotlin\\me\\helloc\\techwikiplus\\post\\interfaces\\web\")",
+      "Bash(dir \"C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\kotlin\\me\\helloc\\techwikiplus\\post\\domain\\model\\post\")"
     ],
     "deny": [],
     "ask": []

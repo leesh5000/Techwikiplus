@@ -1,9 +1,13 @@
 package me.helloc.techwikiplus.common.infrastructure.security.jwt
 
 import io.jsonwebtoken.ExpiredJwtException
+import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.MalformedJwtException
 import io.jsonwebtoken.SignatureAlgorithm
+import io.jsonwebtoken.UnsupportedJwtException
 import io.jsonwebtoken.security.Keys
+import io.jsonwebtoken.security.SignatureException
 import me.helloc.techwikiplus.user.domain.exception.UserDomainException
 import me.helloc.techwikiplus.user.domain.exception.UserErrorCode
 import me.helloc.techwikiplus.user.domain.model.UserId
@@ -82,7 +86,15 @@ class JwtTokenManager(
             }
             return tokenUserId
         } catch (e: ExpiredJwtException) {
-            throw UserDomainException(UserErrorCode.TOKEN_EXPIRED, arrayOf("Refresh token"))
+            throw UserDomainException(UserErrorCode.TOKEN_EXPIRED, arrayOf("Refresh token"), e)
+        } catch (e: MalformedJwtException) {
+            throw UserDomainException(UserErrorCode.INVALID_TOKEN, arrayOf("Malformed refresh token"), e)
+        } catch (e: SignatureException) {
+            throw UserDomainException(UserErrorCode.INVALID_TOKEN, arrayOf("Invalid token signature"), e)
+        } catch (e: UnsupportedJwtException) {
+            throw UserDomainException(UserErrorCode.INVALID_TOKEN, arrayOf("Unsupported token format"), e)
+        } catch (e: JwtException) {
+            throw UserDomainException(UserErrorCode.INVALID_TOKEN, arrayOf("Invalid refresh token"), e)
         }
     }
 
@@ -105,7 +117,15 @@ class JwtTokenManager(
 
             return UserId.from(claims.subject)
         } catch (e: ExpiredJwtException) {
-            throw UserDomainException(UserErrorCode.TOKEN_EXPIRED, arrayOf("Access token"))
+            throw UserDomainException(UserErrorCode.TOKEN_EXPIRED, arrayOf("Access token"), e)
+        } catch (e: MalformedJwtException) {
+            throw UserDomainException(UserErrorCode.INVALID_TOKEN, arrayOf("Malformed access token"), e)
+        } catch (e: SignatureException) {
+            throw UserDomainException(UserErrorCode.INVALID_TOKEN, arrayOf("Invalid token signature"), e)
+        } catch (e: UnsupportedJwtException) {
+            throw UserDomainException(UserErrorCode.INVALID_TOKEN, arrayOf("Unsupported token format"), e)
+        } catch (e: JwtException) {
+            throw UserDomainException(UserErrorCode.INVALID_TOKEN, arrayOf("Invalid access token"), e)
         }
     }
 }

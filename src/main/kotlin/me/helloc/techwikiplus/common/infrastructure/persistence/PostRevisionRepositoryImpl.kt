@@ -57,6 +57,7 @@ class PostRevisionRepositoryImpl(
                     lineNumber = comment.lineNumber,
                     comment = comment.comment,
                     commentType = comment.type.name,
+                    suggestedChange = comment.suggestedChange,
                     createdAt = clockHolder.now(),
                 ),
             )
@@ -79,6 +80,7 @@ class PostRevisionRepositoryImpl(
                         lineNumber = commentEntity.lineNumber,
                         comment = commentEntity.comment,
                         type = ReviewCommentType.valueOf(commentEntity.commentType),
+                        suggestedChange = commentEntity.suggestedChange,
                     )
                 },
             submittedAt = entity.submittedAt,

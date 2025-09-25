@@ -8,9 +8,11 @@ data class ReviewComment(
     val lineNumber: Int,
     val comment: String,
     val type: ReviewCommentType,
+    val suggestedChange: String,
 ) {
     companion object {
         private const val MAX_COMMENT_LENGTH = 15000
+        private const val MAX_SUGGESTED_CHANGE_LENGTH = 5000
     }
 
     init {
@@ -31,6 +33,19 @@ data class ReviewComment(
             throw PostDomainException(
                 postErrorCode = PostErrorCode.INVALID_LINE_NUMBER,
                 params = arrayOf(lineNumber),
+            )
+        }
+
+        if (suggestedChange.isBlank()) {
+            throw PostDomainException(
+                postErrorCode = PostErrorCode.BLANK_SUGGESTED_CHANGE,
+            )
+        }
+
+        if (suggestedChange.length > MAX_SUGGESTED_CHANGE_LENGTH) {
+            throw PostDomainException(
+                postErrorCode = PostErrorCode.SUGGESTED_CHANGE_TOO_LONG,
+                params = arrayOf(MAX_SUGGESTED_CHANGE_LENGTH),
             )
         }
     }

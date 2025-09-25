@@ -2,7 +2,7 @@ package me.helloc.techwikiplus.post.interfaces.web
 
 import me.helloc.techwikiplus.post.domain.model.review.PostReviewId
 import me.helloc.techwikiplus.post.domain.service.PostReviewService
-import me.helloc.techwikiplus.post.interfaces.web.dto.PostReviewResponse
+import me.helloc.techwikiplus.post.dto.response.PostReviewResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

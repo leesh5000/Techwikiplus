@@ -94,8 +94,8 @@ class PostReviewControllerE2eTest : BaseE2eTest() {
         )
             .andExpect(MockMvcResultMatchers.status().isCreated)
             .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.reviewId").exists())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.postId").value(post.id.value.toString()))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.postId").value(post.id.value))
             .andExpect(MockMvcResultMatchers.jsonPath("$.startedAt").exists())
             .andExpect(MockMvcResultMatchers.jsonPath("$.deadline").exists())
             .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("IN_REVIEW"))
@@ -132,11 +132,11 @@ class PostReviewControllerE2eTest : BaseE2eTest() {
                                 .description("생성된 검수의 URI"),
                         )
                         .responseFields(
-                            fieldWithPath("reviewId")
-                                .type(JsonFieldType.STRING)
+                            fieldWithPath("id")
+                                .type(JsonFieldType.NUMBER)
                                 .description("검수 ID"),
                             fieldWithPath("postId")
-                                .type(JsonFieldType.STRING)
+                                .type(JsonFieldType.NUMBER)
                                 .description("게시글 ID"),
                             fieldWithPath("startedAt")
                                 .type(JsonFieldType.STRING)
@@ -147,6 +147,9 @@ class PostReviewControllerE2eTest : BaseE2eTest() {
                             fieldWithPath("status")
                                 .type(JsonFieldType.STRING)
                                 .description("검수 상태 (IN_REVIEW)"),
+                            fieldWithPath("winningRevisionId")
+                                .type(JsonFieldType.NULL)
+                                .description("승리한 개정안 ID (검수 중일 때는 null)").optional(),
                         )
                         .responseSchema(
                             schema(
@@ -191,8 +194,8 @@ class PostReviewControllerE2eTest : BaseE2eTest() {
         )
             .andExpect(MockMvcResultMatchers.status().isCreated)
             .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.reviewId").exists())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.postId").value(post.id.value.toString()))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.postId").value(post.id.value))
             .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("IN_REVIEW"))
             .andDo { result ->
                 locationHeader = result.response.getHeader(HttpHeaders.LOCATION)
@@ -220,11 +223,11 @@ class PostReviewControllerE2eTest : BaseE2eTest() {
                                 .description("생성된 검수의 URI"),
                         )
                         .responseFields(
-                            fieldWithPath("reviewId")
-                                .type(JsonFieldType.STRING)
+                            fieldWithPath("id")
+                                .type(JsonFieldType.NUMBER)
                                 .description("검수 ID"),
                             fieldWithPath("postId")
-                                .type(JsonFieldType.STRING)
+                                .type(JsonFieldType.NUMBER)
                                 .description("게시글 ID"),
                             fieldWithPath("startedAt")
                                 .type(JsonFieldType.STRING)
@@ -235,6 +238,9 @@ class PostReviewControllerE2eTest : BaseE2eTest() {
                             fieldWithPath("status")
                                 .type(JsonFieldType.STRING)
                                 .description("검수 상태"),
+                            fieldWithPath("winningRevisionId")
+                                .type(JsonFieldType.NULL)
+                                .description("승리한 개숡안 ID").optional(),
                         )
                         .responseSchema(
                             schema(
@@ -394,7 +400,7 @@ class PostReviewControllerE2eTest : BaseE2eTest() {
         response.deadline shouldBe expectedDeadline
 
         // DB 검증
-        val savedReview = postReviewRepository.findById(PostReviewId(response.reviewId.toLong()))
+        val savedReview = postReviewRepository.findById(PostReviewId(response.id))
         savedReview shouldNotBe null
         savedReview!!.deadline shouldBe response.deadline
     }
@@ -452,7 +458,7 @@ class PostReviewControllerE2eTest : BaseE2eTest() {
                 .accept(MediaType.APPLICATION_JSON),
         )
             .andExpect(MockMvcResultMatchers.status().isCreated)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.reviewId").exists())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
             .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("IN_REVIEW"))
             .andDo(
                 documentWithResource(

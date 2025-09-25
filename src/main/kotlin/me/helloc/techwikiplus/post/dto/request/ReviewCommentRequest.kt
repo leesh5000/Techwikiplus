@@ -5,4 +5,5 @@ data class ReviewCommentRequest(
     val comment: String,
     // "INACCURACY" or "NEEDS_IMPROVEMENT"
     val type: String,
+    val suggestedChange: String,
 )
