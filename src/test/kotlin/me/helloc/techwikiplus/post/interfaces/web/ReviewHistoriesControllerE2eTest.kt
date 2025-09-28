@@ -1,7 +1,6 @@
 package me.helloc.techwikiplus.post.interfaces.web
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters.Companion.builder
-import com.epages.restdocs.apispec.Schema.Companion.schema
 import me.helloc.techwikiplus.common.config.BaseE2eTest
 import me.helloc.techwikiplus.common.config.annotations.E2eTest
 import me.helloc.techwikiplus.common.config.documentation.withStandardErrorResponse
@@ -18,7 +17,6 @@ import me.helloc.techwikiplus.post.domain.service.port.PostIdGenerator
 import me.helloc.techwikiplus.post.domain.service.port.PostRepository
 import me.helloc.techwikiplus.post.domain.service.port.PostReviewIdGenerator
 import me.helloc.techwikiplus.post.domain.service.port.PostReviewRepository
-import me.helloc.techwikiplus.post.dto.response.ReviewHistoryResponse
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -96,7 +94,7 @@ class ReviewHistoriesControllerE2eTest : BaseE2eTest() {
 
         // When & Then
         mockMvc.perform(
-            RestDocumentationRequestBuilders.get("/api/v1/posts/{postId}/review-histories", post.id.value)
+            RestDocumentationRequestBuilders.get("/api/v1/posts/{postId}/reviews/histories", post.id.value)
                 .accept(MediaType.APPLICATION_JSON),
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
@@ -149,11 +147,6 @@ class ReviewHistoriesControllerE2eTest : BaseE2eTest() {
                                 .description("리뷰 완료 시간 (ISO-8601 형식, COMPLETED 상태일 때만)")
                                 .optional(),
                         )
-                        .responseSchema(
-                            schema(
-                                "${ReviewHistoryResponse::class.simpleName}Array",
-                            ),
-                        )
                         .build(),
                 ),
             )
@@ -166,7 +159,7 @@ class ReviewHistoriesControllerE2eTest : BaseE2eTest() {
 
         // When & Then
         mockMvc.perform(
-            RestDocumentationRequestBuilders.get("/api/v1/posts/{postId}/review-histories", post.id.value)
+            RestDocumentationRequestBuilders.get("/api/v1/posts/{postId}/reviews/histories", post.id.value)
                 .accept(MediaType.APPLICATION_JSON),
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
@@ -206,7 +199,7 @@ class ReviewHistoriesControllerE2eTest : BaseE2eTest() {
 
         // When & Then
         mockMvc.perform(
-            RestDocumentationRequestBuilders.get("/api/v1/posts/{postId}/review-histories", nonExistentId)
+            RestDocumentationRequestBuilders.get("/api/v1/posts/{postId}/reviews/histories", nonExistentId)
                 .accept(MediaType.APPLICATION_JSON),
         )
             .andExpect(MockMvcResultMatchers.status().isNotFound)
@@ -247,7 +240,7 @@ class ReviewHistoriesControllerE2eTest : BaseE2eTest() {
 
         // When & Then
         mockMvc.perform(
-            RestDocumentationRequestBuilders.get("/api/v1/posts/{postId}/review-histories", post.id.value)
+            RestDocumentationRequestBuilders.get("/api/v1/posts/{postId}/reviews/histories", post.id.value)
                 .accept(MediaType.APPLICATION_JSON),
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
@@ -269,7 +262,7 @@ class ReviewHistoriesControllerE2eTest : BaseE2eTest() {
 
         // When & Then
         mockMvc.perform(
-            RestDocumentationRequestBuilders.get("/api/v1/posts/{postId}/review-histories", post.id.value)
+            RestDocumentationRequestBuilders.get("/api/v1/posts/{postId}/reviews/histories", post.id.value)
                 .accept(MediaType.APPLICATION_JSON),
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
@@ -311,7 +304,7 @@ class ReviewHistoriesControllerE2eTest : BaseE2eTest() {
 
         // When & Then
         mockMvc.perform(
-            RestDocumentationRequestBuilders.get("/api/v1/posts/{postId}/review-histories", post.id.value)
+            RestDocumentationRequestBuilders.get("/api/v1/posts/{postId}/reviews/histories", post.id.value)
                 .accept(MediaType.APPLICATION_JSON),
         )
             .andExpect(MockMvcResultMatchers.status().isOk)

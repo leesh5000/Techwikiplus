@@ -5,7 +5,7 @@ plugins {
     id("org.springframework.boot") version "3.5.4"
     id("io.spring.dependency-management") version "1.1.7"
     // RestDocs API Spec - Spring REST Docs와 OpenAPI 통합
-    id("com.epages.restdocs-api-spec") version "0.19.0"
+    id("com.epages.restdocs-api-spec") version "0.19.2"
     // ktlint: Kotlin 코드 스타일 검사 및 포맷팅 도구
     // - ./gradlew ktlintCheck: 코드 스타일 위반 검사
     // - ./gradlew ktlintFormat: 자동 코드 포맷팅
@@ -84,7 +84,7 @@ dependencies {
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
 
     // RestDocs API Spec - Spring REST Docs와 OpenAPI 통합
-    testImplementation("com.epages:restdocs-api-spec-mockmvc:0.19.0")
+    testImplementation("com.epages:restdocs-api-spec-mockmvc:0.19.2")
 
     // Swagger UI - OpenAPI 문서 시각화
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
@@ -232,6 +232,5 @@ tasks.test {
     }
 
     // 테스트 실행 후 자동으로 OpenAPI 문서 생성 및 복사
-    // openapi3 태스크를 명시적으로 실행하도록 수정
     finalizedBy("openapi3", "copyOpenApiToResources")
 }

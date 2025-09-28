@@ -43,7 +43,11 @@
       "Bash(dir \"C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\resources\\db\\migration\" /B)",
       "Bash(dir \"C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\kotlin\\me\\helloc\\techwikiplus\\post\\domain\\model\\review\" /B)",
       "Bash(dir \"C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\kotlin\\me\\helloc\\techwikiplus\\post\\interfaces\\web\")",
-      "Bash(dir \"C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\kotlin\\me\\helloc\\techwikiplus\\post\\domain\\model\\post\")"
+      "Bash(dir \"C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\kotlin\\me\\helloc\\techwikiplus\\post\\domain\\model\\post\")",
+      "Bash(dir \"C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\kotlin\\me\\helloc\\techwikiplus\\post\\interfaces\\web\\dto\" /B)",
+      "Bash(gradlew.bat openapi3:*)",
+      "Bash(.gradlew.bat openapi3:*)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []

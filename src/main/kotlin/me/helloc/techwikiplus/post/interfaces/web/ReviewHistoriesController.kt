@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 class ReviewHistoriesController(
     private val postReviewService: PostReviewService,
 ) {
-    @GetMapping("/api/v1/posts/{postId}/review-histories")
+    @GetMapping("/api/v1/posts/{postId}/reviews/histories")
     fun getReviewHistories(
         @PathVariable postId: Long,
     ): ResponseEntity<List<ReviewHistoryResponse>> {

@@ -46,7 +46,7 @@ class SecurityConfiguration(
                         "/api/v1/posts/{postId}",
                         "/api/v1/posts/{postId}/histories",
                         "/api/v1/posts/{postId}/reviews",
-                        "/api/v1/posts/{postId}/review-histories",
+                        "/api/v1/posts/{postId}/reviews/histories",
                         "/api/v1/reviews/{reviewId}",
                         "/api/v1/reviews/{reviewId}/revisions",
                         "/api/v1/types/**",
