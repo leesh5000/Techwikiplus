@@ -133,6 +133,37 @@ class PostRepositoryImpl(
         }
     }
 
+    override fun findAll(
+        page: Int,
+        size: Int,
+        excludeDeleted: Boolean,
+    ): List<Post> {
+        val pageable = PageRequest.of(page - 1, size)
+        val excludedStatus = if (excludeDeleted) PostStatus.DELETED.name else ""
+
+        val entities = jpaRepository.findByStatusNotOrderByIdDesc(excludedStatus, pageable)
+
+        if (entities.isEmpty()) {
+            return emptyList()
+        }
+
+        val postIds = entities.map { it.id }
+        val tagsMap = loadTagsForPosts(postIds)
+
+        return entities.map { entity ->
+            mapper.toDomain(entity, tagsMap[entity.id] ?: emptyList())
+        }
+    }
+
+    override fun countAll(excludeDeleted: Boolean): Long {
+        val excludedStatus = if (excludeDeleted) PostStatus.DELETED.name else ""
+        return if (excludeDeleted) {
+            jpaRepository.countByStatusNot(excludedStatus)
+        } else {
+            jpaRepository.count()
+        }
+    }
+
     private fun loadTagsForPosts(postIds: List<Long>): Map<Long, List<PostTag>> {
         val postTagEntities = postTagJpaRepository.findByPostIdInOrderByPostIdAscDisplayOrderAsc(postIds)
         if (postTagEntities.isEmpty()) return emptyMap()

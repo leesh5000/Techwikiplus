@@ -45,6 +45,37 @@ class FakePostRepository : PostRepository {
         return posts.take(limit)
     }
 
+    override fun findAll(
+        page: Int,
+        size: Int,
+        excludeDeleted: Boolean,
+    ): List<Post> {
+        var posts = storage.values.toList()
+
+        // DELETED 상태 제외
+        if (excludeDeleted) {
+            posts = posts.filter { it.status != PostStatus.DELETED }
+        }
+
+        // ID 내림차순 정렬 (Snowflake ID는 큰 값이 최신)
+        posts = posts.sortedByDescending { it.id.value }
+
+        // 페이지네이션 적용 (page는 1부터 시작)
+        val startIndex = (page - 1) * size
+        return posts.drop(startIndex).take(size)
+    }
+
+    override fun countAll(excludeDeleted: Boolean): Long {
+        var posts = storage.values.toList()
+
+        // DELETED 상태 제외
+        if (excludeDeleted) {
+            posts = posts.filter { it.status != PostStatus.DELETED }
+        }
+
+        return posts.size.toLong()
+    }
+
     fun getAll(): List<Post> {
         return storage.values.toList()
     }

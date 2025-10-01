@@ -15,4 +15,12 @@ interface PostRepository {
         limit: Int = 20,
         excludeDeleted: Boolean = true,
     ): List<Post>
+
+    fun findAll(
+        page: Int,
+        size: Int,
+        excludeDeleted: Boolean = true,
+    ): List<Post>
+
+    fun countAll(excludeDeleted: Boolean = true): Long
 }

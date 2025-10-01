@@ -308,6 +308,11 @@ class PostScrollQueryControllerE2eTest : BaseE2eTest() {
                                 .description("다음 페이지 커서 (null)")
                                 .optional(),
                         )
+                        .responseSchema(
+                            schema(
+                                "${PostScrollResponse::class.simpleName}",
+                            ),
+                        )
                         .build(),
                 ),
             )
@@ -419,6 +424,11 @@ class PostScrollQueryControllerE2eTest : BaseE2eTest() {
                                 .type(JsonFieldType.STRING)
                                 .description("다음 페이지 커서")
                                 .optional(),
+                        )
+                        .responseSchema(
+                            schema(
+                                "PostScrollResponse",
+                            ),
                         )
                         .build(),
                 ),
@@ -658,6 +668,11 @@ class PostScrollQueryControllerE2eTest : BaseE2eTest() {
                                 .type(JsonFieldType.STRING)
                                 .description("다음 페이지 커서 (null)")
                                 .optional(),
+                        )
+                        .responseSchema(
+                            schema(
+                                "${PostScrollResponse::class.simpleName}",
+                            ),
                         )
                         .build(),
                 ),

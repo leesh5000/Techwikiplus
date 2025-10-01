@@ -17,4 +17,6 @@ interface PostJpaRepository : JpaRepository<PostEntity, Long> {
         status: String,
         pageable: Pageable,
     ): List<PostEntity>
+
+    fun countByStatusNot(status: String): Long
 }

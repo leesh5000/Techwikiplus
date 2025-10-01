@@ -86,6 +86,7 @@ class PostErrorCodeMapper {
             // Generic
             PostErrorCode.VALIDATION_ERROR,
             PostErrorCode.INVALID_PAGINATION_LIMIT,
+            PostErrorCode.INVALID_PAGE_NUMBER,
             -> HttpStatus.BAD_REQUEST
             PostErrorCode.DOMAIN_ERROR,
             PostErrorCode.INTERNAL_ERROR,
@@ -306,6 +307,13 @@ class PostErrorCodeMapper {
                         "유효하지 않은 게시글 리뷰 ID 형식입니다"
                     } else {
                         "유효하지 않은 게시글 리뷰 ID 형식입니다"
+                    }
+
+                PostErrorCode.INVALID_PAGE_NUMBER ->
+                    if (params.isNotEmpty()) {
+                        "페이지 번호는 1 이상이어야 합니다 (입력값: ${params[0]})"
+                    } else {
+                        "페이지 번호는 1 이상이어야 합니다"
                     }
             }
 

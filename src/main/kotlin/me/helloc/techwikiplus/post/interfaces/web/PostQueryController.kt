@@ -13,7 +13,7 @@ class PostQueryController(
     private val service: PostReadService,
 ) {
     @GetMapping("/api/v1/posts/{postId}", produces = ["application/json"])
-    fun read(
+    fun execute(
         @PathVariable postId: String,
     ): ResponseEntity<PostResponse> {
         // PostId로 변환 (유효성 검증 포함)

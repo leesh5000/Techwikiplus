@@ -47,7 +47,12 @@
       "Bash(dir \"C:\\Users\\leesh\\Desktop\\Study\\Techwikiplus\\src\\main\\kotlin\\me\\helloc\\techwikiplus\\post\\interfaces\\web\\dto\" /B)",
       "Bash(gradlew.bat openapi3:*)",
       "Bash(.gradlew.bat openapi3:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(chmod:*)",
+      "Bash(find:*)",
+      "Bash(sudo apt:*)",
+      "Bash(sudo apt install:*)",
+      "Bash(xargs cat:*)"
     ],
     "deny": [],
     "ask": []

@@ -48,6 +48,7 @@ enum class PostErrorCode {
 
     // Pagination Validation
     INVALID_PAGINATION_LIMIT,
+    INVALID_PAGE_NUMBER,
 
     // Review
     INVALID_REVIEW_STATE,

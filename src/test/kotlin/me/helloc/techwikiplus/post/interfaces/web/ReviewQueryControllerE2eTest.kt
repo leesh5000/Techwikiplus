@@ -110,7 +110,7 @@ class ReviewQueryControllerE2eTest : BaseE2eTest() {
             .andExpect(MockMvcResultMatchers.jsonPath("$.winningRevisionId").isEmpty)
             .andDo(
                 documentWithResource(
-                    "리뷰 조회 성공",
+                    "get-review-success",
                     builder()
                         .tag("Review")
                         .summary("리뷰 조회")
@@ -181,7 +181,7 @@ class ReviewQueryControllerE2eTest : BaseE2eTest() {
             .andExpect(MockMvcResultMatchers.jsonPath("$.winningRevisionId").value(revision.id.value))
             .andDo(
                 documentWithResource(
-                    "완료된 리뷰 조회",
+                    "get-completed-review",
                     builder()
                         .tag("Review")
                         .summary("리뷰 조회 - 완료된 리뷰")
@@ -243,7 +243,7 @@ class ReviewQueryControllerE2eTest : BaseE2eTest() {
             .andExpect(MockMvcResultMatchers.jsonPath("$.winningRevisionId").isEmpty)
             .andDo(
                 documentWithResource(
-                    "취소된 리뷰 조회",
+                    "get-cancelled-review",
                     builder()
                         .tag("Review")
                         .summary("리뷰 조회 - 취소된 리뷰")
@@ -298,7 +298,7 @@ class ReviewQueryControllerE2eTest : BaseE2eTest() {
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("REVIEW_NOT_FOUND"))
             .andDo(
                 documentWithResource(
-                    "존재하지 않는 리뷰 조회",
+                    "get-non-existent-review",
                     builder()
                         .tag("Review")
                         .summary("리뷰 조회 - 존재하지 않는 리뷰")
@@ -332,7 +332,7 @@ class ReviewQueryControllerE2eTest : BaseE2eTest() {
             .andExpect(MockMvcResultMatchers.status().is4xxClientError)
             .andDo(
                 documentWithResource(
-                    "잘못된 형식의 ID로 리뷰 조회",
+                    "get-review-invalid-id-format",
                     builder()
                         .tag("Review")
                         .summary("리뷰 조회 - 잘못된 ID 형식")
@@ -367,7 +367,7 @@ class ReviewQueryControllerE2eTest : BaseE2eTest() {
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").exists())
             .andDo(
                 documentWithResource(
-                    "음수 ID로 리뷰 조회",
+                    "get-review-negative-id",
                     builder()
                         .tag("Review")
                         .summary("리뷰 조회 - 음수 ID")
@@ -404,7 +404,7 @@ class ReviewQueryControllerE2eTest : BaseE2eTest() {
             .andExpect(MockMvcResultMatchers.jsonPath("$.postId").value(post.id.value))
             .andDo(
                 documentWithResource(
-                    "인증 없이 리뷰 조회",
+                    "get-review-without-auth",
                     builder()
                         .tag("Review")
                         .summary("리뷰 조회 - 인증 불필요")
@@ -441,6 +441,11 @@ class ReviewQueryControllerE2eTest : BaseE2eTest() {
                                 .description("선정된 수정본 ID")
                                 .optional(),
                         )
+                        .responseSchema(
+                            schema(
+                                "${PostReviewResponse::class.simpleName}",
+                            ),
+                        )
                         .build(),
                 ),
             )
@@ -465,7 +470,7 @@ class ReviewQueryControllerE2eTest : BaseE2eTest() {
             .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(review.id.value))
             .andDo(
                 documentWithResource(
-                    "인증된 사용자의 리뷰 조회",
+                    "get-review-with-auth",
                     builder()
                         .tag("Review")
                         .summary("리뷰 조회 - 인증된 사용자")
@@ -507,6 +512,11 @@ class ReviewQueryControllerE2eTest : BaseE2eTest() {
                                 .type(JsonFieldType.NUMBER)
                                 .description("선정된 수정본 ID")
                                 .optional(),
+                        )
+                        .responseSchema(
+                            schema(
+                                "${PostReviewResponse::class.simpleName}",
+                            ),
                         )
                         .build(),
                 ),

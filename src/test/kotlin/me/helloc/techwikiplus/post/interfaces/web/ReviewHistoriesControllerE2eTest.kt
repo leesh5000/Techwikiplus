@@ -1,6 +1,7 @@
 package me.helloc.techwikiplus.post.interfaces.web
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters.Companion.builder
+import com.epages.restdocs.apispec.Schema
 import me.helloc.techwikiplus.common.config.BaseE2eTest
 import me.helloc.techwikiplus.common.config.annotations.E2eTest
 import me.helloc.techwikiplus.common.config.documentation.withStandardErrorResponse
@@ -147,6 +148,7 @@ class ReviewHistoriesControllerE2eTest : BaseE2eTest() {
                                 .description("리뷰 완료 시간 (ISO-8601 형식, COMPLETED 상태일 때만)")
                                 .optional(),
                         )
+                        .responseSchema(Schema("ReviewHistoryResponseList"))
                         .build(),
                 ),
             )
@@ -187,6 +189,7 @@ class ReviewHistoriesControllerE2eTest : BaseE2eTest() {
                                 .type(JsonFieldType.ARRAY)
                                 .description("빈 리뷰 내역 배열"),
                         )
+                        .responseSchema(Schema("ReviewHistoryResponseList"))
                         .build(),
                 ),
             )

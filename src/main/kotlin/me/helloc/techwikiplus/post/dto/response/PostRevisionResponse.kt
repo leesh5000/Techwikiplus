@@ -26,7 +26,7 @@ data class PostRevisionResponse(
                 authorId = revision.authorId,
                 submittedAt = revision.submittedAt,
                 voteCount = revision.voteCount,
-                reviewComments = revision.reviewComments.map { ReviewCommentResponse.Companion.from(it) },
+                reviewComments = revision.reviewComments.map { ReviewCommentResponse.from(it) },
             )
         }
 
@@ -44,7 +44,7 @@ data class PostRevisionResponse(
                 voteCount = revision.voteCount,
                 originalTitle = originalPost.title.value,
                 originalBody = originalPost.body.value,
-                reviewComments = revision.reviewComments.map { ReviewCommentResponse.Companion.from(it) },
+                reviewComments = revision.reviewComments.map { ReviewCommentResponse.from(it) },
             )
         }
     }

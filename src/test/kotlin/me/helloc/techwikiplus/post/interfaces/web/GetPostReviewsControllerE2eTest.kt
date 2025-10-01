@@ -96,7 +96,7 @@ class GetPostReviewsControllerE2eTest : BaseE2eTest() {
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].status").exists())
             .andDo(
                 documentWithResource(
-                    "게시글 리뷰 목록 조회",
+                    "get-post-reviews",
                     builder()
                         .tag("Post Review")
                         .summary("게시글 리뷰 목록 조회")
@@ -162,7 +162,7 @@ class GetPostReviewsControllerE2eTest : BaseE2eTest() {
             .andExpect(MockMvcResultMatchers.jsonPath("$").isEmpty)
             .andDo(
                 documentWithResource(
-                    "게시글 리뷰 목록 조회 - 빈 목록",
+                    "get-post-reviews-empty",
                     builder()
                         .tag("Post Review")
                         .summary("게시글 리뷰 목록 조회 - 리뷰 없음")
@@ -207,7 +207,7 @@ class GetPostReviewsControllerE2eTest : BaseE2eTest() {
             .andExpect(MockMvcResultMatchers.jsonPath("$").isEmpty)
             .andDo(
                 documentWithResource(
-                    "게시글 리뷰 목록 조회 - 존재하지 않는 게시글",
+                    "get-post-reviews-non-existent",
                     builder()
                         .tag("Post Review")
                         .summary("게시글 리뷰 목록 조회 - 게시글 없음")
@@ -250,7 +250,7 @@ class GetPostReviewsControllerE2eTest : BaseE2eTest() {
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].status").value("COMPLETED"))
             .andDo(
                 documentWithResource(
-                    "게시글 리뷰 목록 조회 - 삭제된 게시글",
+                    "get-post-reviews-deleted-post",
                     builder()
                         .tag("Post Review")
                         .summary("삭제된 게시글의 리뷰 목록 조회")
@@ -324,7 +324,7 @@ class GetPostReviewsControllerE2eTest : BaseE2eTest() {
             .andExpect(MockMvcResultMatchers.jsonPath("$[2].status").value("COMPLETED"))
             .andDo(
                 documentWithResource(
-                    "게시글 리뷰 목록 조회 - 정렬 확인",
+                    "get-post-reviews-sorted",
                     builder()
                         .tag("Post Review")
                         .summary("게시글 리뷰 목록 시간순 정렬")
@@ -364,6 +364,11 @@ class GetPostReviewsControllerE2eTest : BaseE2eTest() {
                                 .type(JsonFieldType.NUMBER)
                                 .description("선정된 수정본 ID").optional(),
                         )
+                        .responseSchema(
+                            schema(
+                                "PostReviewResponseList",
+                            ),
+                        )
                         .build(),
                 ),
             )
@@ -385,7 +390,7 @@ class GetPostReviewsControllerE2eTest : BaseE2eTest() {
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(review.id.value.toString()))
             .andDo(
                 documentWithResource(
-                    "게시글 리뷰 목록 조회 - 인증 불필요",
+                    "get-post-reviews-no-auth",
                     builder()
                         .tag("Post Review")
                         .summary("게시글 리뷰 목록 조회 (공개 API)")
